@@ -1,0 +1,68 @@
+---
+title: Paper title
+date: ''
+output: 
+  pdf_document:
+    keep_tex: true
+    latex_engine: xelatex
+    includes:
+      in_header: preamble.sty
+fig_width: 4
+fig_height: 2.6
+bibliography: bibliography.bib
+csl: journal-of-health-economics.csl
+---
+
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE, comment = NA, error= FALSE, cache = FALSE}
+# Packages
+library(tidyverse)
+library(knitr)
+library(Hmisc)
+library(knitr)
+library(RColorBrewer)
+library(extrafont)
+loadfonts()
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=FALSE,
+	             cache=FALSE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE,
+               dev = "cairo_pdf",
+               fig.pos="H",
+               fig.path = 'figures/')
+opts_knit$set(width=75)
+options(xtable.comment = FALSE)
+```
+
+```{r}
+# Build document from contents of directory
+# Get a list of all the child documents
+rmds <- list.files(pattern = '*.Rmd', recursive = FALSE, include.dirs = FALSE)
+# Must include an underscore!
+rmds <- rmds[grepl('_', rmds)]
+
+
+chunks <- paste0("\n\n```{r child = '", 
+                 rmds, 
+                 "'}\n```\n")
+
+# Write our order / child-calls to a doc
+file_connection <- file('children.Rmd')
+writeLines(paste0('---\noutput: html_document\n---\n\n', 
+                  chunks), 
+           file_connection)
+close(file_connection)
+
+```
+```{r child='children.Rmd', echo = FALSE}
+```
+```{r, results='hide'}
+file.remove('children.Rmd')
+```
+
+

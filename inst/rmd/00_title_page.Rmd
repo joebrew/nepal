@@ -1,0 +1,56 @@
+
+
+\begin{center}
+\begin{large}
+
+```{r, results = 'asis', eval = TRUE}
+cat(
+  paste0(
+    'Author 1, Author 2'
+  # 'Joe Brew\\footremember{db}{Databrew, Toronto, Canada}\\footremember{cism}{Centro de Investigação em Saúde de Manhiça: Vila da Manhiça, Bairro Cambeve, Rua 12, Distrito da Manhiça, CP 1929, Maputo, Mozambique, Mozambique} \\footnote{Corresponding Author}  Ben Brew\\footrecall{db}   Xing Brew\\footrecall{db}'
+  )
+)
+
+```
+
+\end{large}
+\end{center}
+
+\vspace{5mm}
+
+\begin{center}
+\textbf{Abstract}  
+\end{center}
+
+\vspace{5mm}
+\begin{center}
+\begin{changemargin}{3cm}{3cm} 
+
+Abstract goes here
+
+\end{changemargin}
+\end{center}
+
+\vspace{20mm}
+
+\noindent\fbox{%
+    \parbox{\textwidth}{%
+        \subsection*{Research Highlights}
+        \begin{itemize}
+          \item Main point 1
+          \item Main point 2
+          \item Main point 3
+        \end{itemize}
+        \vspace{2mm}
+    }%
+}
+
+\vfill
+\null
+
+\subsection*{Keywords}
+\textbf{Some; keywords; go; here}
+
+\vspace{3mm}
+
+\newpage
