@@ -1,8 +1,9 @@
 Package: nepal
 Version: 0.0.0.9000
-Title: What the Package Does (one line, title case)
-Description: What the package does (one paragraph).
-Authors@R: person("First", "Last", , "first.last@example.com", c("aut", "cre"))
+Title: Package of the Nepal Data Hub
+Description: Build, update, and deploy the Nepal Data Hub web application (www.databrew.cc/nepal)
+Authors@R: person("Joe", "Brew", , "joebrew@gmail.com", c("aut", "cre"))
+URL: https://github.com/joebrew/nepal
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -10,5 +11,15 @@ ByteCompile: true
 Suggests: 
     MASS,
     testthat
+Depends:
+    R (>= 3.0.0)
+Imports:
+    raster,
+    sp,
+    devtools,
+    rgdal,
+    magrittr,
+    tidyverse,
+    RColorBrewer
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1

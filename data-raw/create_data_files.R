@@ -3,6 +3,8 @@ library(raster)
 library(rgdal)
 library(sp)
 library(tidyverse)
+library(RColorBrewer)
+library(raster)
 
 # Initiate the raw-data into package session
 devtools::use_data_raw()
@@ -34,9 +36,7 @@ devtools::use_data(cities,
 devtools::use_data(cities_sp,
                    overwrite = TRUE)
 
-library(rgdal)
-library(RColorBrewer)
-library(raster)
+
 
 # GRD
 dpath<- 'SRTM v4.1 - Resampled/srtmv4_30s/'
