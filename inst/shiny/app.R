@@ -60,7 +60,7 @@ body <- dashboardBody(
         fluidRow(
           h1('The Nepal Data Hub', align = 'center'),
           h5("An initiative of Stony Brook University's Global Health Institute", align = 'center'),
-          h3('Harnessing the power of the era of data'),
+          h3('Harnessing data to power research'),
           p('The Nepal Data Hub aims to bring diverse datasets pertaining to Nepal under one roof, making data available for research and analysis.')
         ),
         fluidRow(
@@ -196,25 +196,30 @@ server <- function(input, output) {
                                 nepal::cities_sp@data$pop)) 
   })
   output$leaf_elevation <- renderLeaflet({
-    pal <- colorNumeric(c('white', 'red'), values(era),
+    pal <- colorNumeric(c('darkgreen', 'red', 'yellow'), values(elevation_raster_small),
                         na.color = "transparent")
     
     leaflet() %>% 
       addTiles() %>%
       # addProviderTiles('Esri.NatGeoWorldMap') %>%
       addRasterImage(elevation_raster_small, colors = pal, opacity = 0.8) %>%
-      addLegend(pal = pal, values = values(era),
+      addLegend(pal = pal, values = values(elevation_raster_small),
                 title = "Elevation")
   })
   output$leaf_misc <- renderLeaflet({
     leaflet() %>%
       addProviderTiles('CartoDB.DarkMatter') %>%
       addPolylines(data = nepal::nep0,
-                   color = 'yellow',
+                   color = 'red',
                    weight = 2) %>%
-      addPolylines(data = nepal::nep2,
+      addPolygons(data = nepal::nep2,
                    color = 'yellow',
-                   weight = 0.6)
+                   weight = 0.6,
+                  fillOpacity = 0,
+                  popup = nepal::nep2@data$NAME_2) %>%
+      addPolylines(data = nepal::nep1,
+                  color = 'red',
+                  weight = 0.5)
   })
 
 }
