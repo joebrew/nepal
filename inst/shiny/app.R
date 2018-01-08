@@ -147,6 +147,12 @@ body <- dashboardBody(
                           color = 'blue',
                           icon = icon("microchip"))),
         fluidRow(
+          h3('Want to contribute?'),
+          p('The NDH is an entirely transparent, open-source project. The underlying data and documentation (in the form of an R package) are hosted at ',
+            a(href = 'https://github.com/joebrew/nepal', 'on github'),
+            ', the application can be downloaded and run locally, and pull requests are more than welcome.')
+        ),
+        fluidRow(
           div(img(src='logo_clear.png', align = "center"), style="text-align: center;"),
                  h4('This web application was built in partnership with ',
                    a(href = 'http://databrew.cc',
