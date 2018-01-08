@@ -5,6 +5,7 @@ library(jsonlite)
 library(dplyr)
 library(leaflet)
 library(nepal)
+library(raster)
 
 header <- dashboardHeader(title="Nepal Data Hub")
 sidebar <- dashboardSidebar(
@@ -58,10 +59,12 @@ body <- dashboardBody(
       tabName="main",
       fluidPage(
         fluidRow(
+          # h1(icon('line-chart'), align = 'center'),
           h1('The Nepal Data Hub', align = 'center'),
           h5("An initiative of Stony Brook University's Global Health Institute", align = 'center'),
-          h3('Harnessing data to power research'),
-          p('The Nepal Data Hub aims to bring diverse datasets pertaining to Nepal under one roof, making data available for research and analysis.')
+          h1(icon('sitemap'), align = 'center'),
+          h3('Harnessing data to power insight'),
+          p('The Nepal Data Hub brings diverse datasets pertaining to Nepal into one integrated data platform, making data available for research. Through integration, the NDH aims to streamline analyses, improve reproducibility, and guide policy through insight, rigor, and transparency.')
         ),
         fluidRow(
           column(6,
@@ -147,10 +150,18 @@ body <- dashboardBody(
                           color = 'blue',
                           icon = icon("microchip"))),
         fluidRow(
+          h3('Project details'),
+          p('The NDH is a sub-project of ',
+            a(href = 'http://www.stonybrook.edu/commcms/ghi/projects/drots', "Stony Brook University Global Health Institute's Drone Observed Therapy System"),'.')
+        ),
+        fluidRow(
           h3('Want to contribute?'),
           p('The NDH is an entirely transparent, open-source project. The underlying data and documentation (in the form of an R package) are hosted at ',
             a(href = 'https://github.com/joebrew/nepal', 'on github'),
             ', the application can be downloaded and run locally, and pull requests are more than welcome.')
+        ),
+        fluidRow(
+          h3('App construction and hosting')
         ),
         fluidRow(
           div(img(src='logo_clear.png', align = "center"), style="text-align: center;"),
