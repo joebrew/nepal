@@ -1,10 +1,8 @@
-# nepal
-
-The goal of nepal is to ...
+# nepal: The R package of the Nepal DrOTS team
 
 ## Installation
 
-You can install nepal from github with:
+You can install `nepal` from github with:
 
 
 ``` r
@@ -12,10 +10,10 @@ You can install nepal from github with:
 devtools::install_github("joebrew/nepal")
 ```
 
-## Example
+## Web application
 
-This is a basic example which shows you how to solve a common problem:
+To run the shiny web application:
 
-``` r
-## basic example code
+```r
+nepal::run_app()
 ```
