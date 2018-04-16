@@ -1,0 +1,127 @@
+---
+output:
+  html_document:
+    theme: united
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+# Basic knitr options
+opts_chunk$set(comment = NA, 
+               echo = TRUE, 
+               warning = FALSE, 
+               message = FALSE, 
+               error = TRUE, 
+               cache = F,
+               fig.width = 4,
+               fig.height = 3)
+knit_engines$set(asis = function(options) {
+  if (options$echo && options$eval) knit_child(text = options$code)
+})
+```
+
+# Overview
+
+## The task 
+
+We want to do something similar to your typical epi chi-squared 2x2, but intead of a 2x2, we have a NxN (n being > 2). This suggests doing a Pearson's Chi-Squared test Fisher's exact test (though this is not a straightforward decision unto itself - there is a lot of controversey over which test to use in multiple categories with relatively small counts; see https://stats.stackexchange.com/questions/14226/given-the-power-of-computers-these-days-is-there-ever-a-reason-to-do-a-chi-squa/14230#14230).
+
+## But...
+
+We're not dealing with "true" categorical data (ie, "sick" vs. "health", or "male" vs. "female"). Rather, we've taken a continuous numeric variable (AFB) and applied cut-points to make them into categories. Once you take contingency tables between the usual 2x2 approach, putting the null and alternative hypotheses into plain English becomes increasinlgy difficult: "there is some kind of relationship between lab A and B"... Also, contingency table approaches treat categories as wholly independent, whereas in reality yours are ordinal.
+
+The two below approaches, I think, would be more principled:
+
+1. **Don't apply cut points**. Rather, analyze the raw data as is, and compare the distributions using a two-sample Kolmogorov-Smirnov test.  
+2. **Apply cut points**, but not so many. The more cut-points, the greater the likelihood of a spurious low p-value. For example, in two populations of similar wealth, were cut-points applied at every dollar in wages, they would almost certainly show up as "significantly" different using contingency table approaches, even though a KS test would suggest otherwise. If the cut points don't have inherent meaning _per se_, it'd be better to reduce the number of them to only meaningful cut-offs (ie, "ill" or "not ill").
+
+Assuming that you do have access to the raw data (ie, the actual AFB values, rather than their categorical equivalents), my preference would be for number 1.
+
+
+That said, let's do the contingency table approach (for now).
+
+# Contingency tables
+
+```{r}
+# Manually enter the data
+data <- matrix(c(104,0,17,6,1,0,
+                    99,1,35,11,13,2,
+                    299,2,196,166,101,13,
+                    91,3,115,113,113,10,
+                    51,0,68,99,192,42,
+                    0,0,0,1,0,0),
+                  byrow = TRUE,
+                  nrow = 6)
+```
+
+
+## Take a look to make sure our entered data is correct.
+
+```{r}
+print(data)
+```
+
+## Chi-squared test
+
+We're using Pearson's chi-squared test to see if the distributions is as random, or not. A p-value of less than 0.05 suggests significant differences between the labs.
+
+```{r}
+test <- chisq.test(x = data,
+                   simulate.p.value = TRUE,
+                   B = 10000)
+test
+```
+
+## Fisher's exact test
+
+
+We're testing for the "null independence of rows and columns".
+
+```{r}
+test <- fisher.test(x = data,
+                    hybrid = TRUE,
+                    simulate.p.value = TRUE,
+                    B = 10000)
+test
+```
+
+# A better way
+
+Instead of a 2 dimensional contingency table, a better way to deal with these data would be to create two independent vectors of identical length with the lab results. The data would take the following form:
+
+```{r}
+better <- data.frame(id = c(1:10, 1:10),
+                     lab = c(rep('A', 10),
+                             rep('B', 10)),
+                     value = rnorm(mean = 50, n = 20, sd = 30)) %>%
+  mutate(value = ifelse(value < 0, 0, value))
+print(better)
+```
+
+Since we're now using numeric values, we can compare the distributions...
+
+```{r}
+library(ggplot2)
+ggplot(data = better,
+       aes(x = value,
+           group = lab,
+           fill = lab)) +
+  geom_density(alpha = 0.75) +
+  labs(x = 'Value',
+       y = 'Density')
+```
+
+... and test for sameness of distribution.
+
+```{r}
+ks.test(x = better$value[better$lab == 'A'],
+        y = better$value[better$lab == 'B'])
+```
+
+
+# In stata...
+
+- `tabi`, `tabchi` and `tabulate` allow for reporting of Fisher's and Pearson's values: https://www.stata.com/statalist/archive/2005-06/msg00052.html / https://www3.nd.edu/~rwilliam/stats1/Categorical-Stata.pdf 
+- `ksmirnov` handles Kolmogorov-Smirnov testing if you choose to go the "continuous" route (https://www.stata.com/manuals13/rksmirnov.pdf)

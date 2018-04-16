@@ -168,6 +168,12 @@ devtools::use_data(elevation_aspect,
 devtools::use_data(elevation_hill,
                    overwrite = TRUE)
 
+# nep2
+nep2@data$elevation_max = raster::extract(x = elevation, y = nep2, fun = max, na.rm = TRUE)
+nep2@data$elevation_avg = raster::extract(x = elevation, y = nep2, fun = mean, na.rm = TRUE)
+spplot(nep2, zcol = 'elevation_max')
+
+                                          
 # x <- terrain(elevation, opt = c("slope", "aspect"), unit = "degrees")
 # plot(x)
 # slope <- terrain(elevation, opt = "slope")

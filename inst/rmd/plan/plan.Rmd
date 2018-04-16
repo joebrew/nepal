@@ -1,0 +1,367 @@
+---
+title: "DrOTS Nepal: The Plan"
+output: 
+  html_document:
+    toc: false
+    toc_depth: 2
+    toc_float: true
+    number_sections: false
+    self_contained: yes
+    css: corp-styles.css
+    highlight: tango
+    theme: united
+---
+
+
+<img src="img/logo.jpg" style="position:absolute;top:0px;right:0px;height:40px"/>
+<div class="watermark">DRAFT</div>
+
+
+```{r setup, include=FALSE}
+library(knitr)
+# Basic knitr options
+opts_chunk$set(comment = NA, 
+               echo = FALSE, 
+               warning = FALSE, 
+               message = FALSE, 
+               error = TRUE, 
+               cache = F,
+               fig.width = 4,
+               fig.height = 3)
+knit_engines$set(asis = function(options) {
+  if (options$echo && options$eval) knit_child(text = options$code)
+})
+```
+
+```{r}
+library(leaflet)
+library(leaflet.extras)
+library(sp)
+library(raster)
+library(ggmap)
+library(dplyr)
+library(maptools)
+library(rgdal)
+library(RColorBrewer)
+```
+
+# DrOTS Nepal: The Plan {.tabset .tabset-fade} 
+
+
+```{r, fig.height=2, message=FALSE}
+nep0 <- raster::getData(name = 'GADM', download = TRUE, country = 'NPL', level = 0)
+nep0_fortified <- broom::tidy(nep0, region = 'NAME_ENGLISH')
+
+
+nep3 <- raster::getData(name = 'GADM', download = TRUE, country = 'NPL', level = 3)
+nep3_fortified <- broom::tidy(nep3, region = 'NAME_3')
+```
+
+
+<img src="img/mountains_small.png" alt="logo" width='100%' style="float: center;align:center;">
+
+
+## Overview
+
+### Summary
+
+The Nepal Drone Observed Therapy System (DrOTS) project will work with the Nepali National Tuberculosis Center (NTC), the Birat Nepal Medical Trust (BNMT), the Nick Simons Institute (NSI) and Nepal Flying Labs (NFL) to improve TB case detection through active case finding (ACF) of tuberculosis (TB), drone transport of specimens and supplies, and rapid molecular diagnostics, and improve treatment completion through electronic reminders and video
+curriculums.
+
+
+```{r, fig.align='center', fig.height=2}
+
+# Map types we like
+maps <- c('Stamen.Watercolor',
+          'Stamen.TerrainBackground',
+          'Stamen.TonerBackground',
+          'Esri.WorldPhysical')
+maps <- maps[1]
+l <- leaflet(options = leafletOptions(zoomControl = FALSE), width = '100%')
+
+for (i in 1:length(maps)){
+  this_map <- maps[i]
+  l <- l %>%
+    addProviderTiles(this_map, group = this_map)
+}
+
+
+l <- l %>%
+    leaflet::fitBounds(lng1 = 40, lng2 = 100,
+                       lat1 = 10, lat2 = 50) %>%
+  addPolygons(data = nep0,
+              fillOpacity = 0.8,
+              color = NA,
+              weight = 0,
+              fillColor = 'darkred') #%>%
+    # leaflet.extras::addFullscreenControl() %>%
+  # addLayersControl(
+  #       baseGroups = maps,
+  #       options = layersControlOptions(collapsed = TRUE)
+  #   )
+l
+```
+
+
+### This document  
+
+This document contains the skeleton of a plan. It is basic, and where it delves into detail it relies heavily on assumption and speculation. It is internal and meant to be suggestive, rather than descriptive, its content subject to inevitable changes based on input from partners. It is divided into four sections.
+
+> **Objectives** covers the main goals of the program, the intermediate deliverables, and a vision for scale-up after the program ends.  
+
+> **Timeline** gives an overview of when each activity is expected to take place.
+
+> **Roles** covers the respective responsibilities of each partner organization.
+
+> **Budget** gives details on we expect to allot resources.
+
+
+
+## Objectives 
+
+### Primary objectives
+
+The objectives of the Nepal DrOTS program are three-fold:
+
+1. Establish an "on-demand" drone service in the mountainous/hilly area, which includes an appropriately equipped and staffed base camp and a cadre of
+health workers who are able to request a drone when appropriate, manage the drone and
+related technology upon arrival, and launch the drone for its return flight.
+2. Remotely Diagnose TB: The same cadre of health workers will be trained to recognize TB
+symptoms in people, explain to them the need for testing, and safely obtain quality sputum
+samples to be flown via drones for TB diagnosis with rapid molecular diagnostics.
+3. Remotely Observe TB Therapy – By combining conventional health provider interaction and
+innovative technologies, we will monitor patients during their TB treatment for adverse drug
+reactions, ensure medication adherence, and assess trends in symptoms.
+
+### Secondary objectives
+
+Our secondary objectives are (i) to educate and empower local partners to assume full ownership of the DrOTS program, so as to ensure its sustainability after the project ends; and (2) to generate evidence regarding the feasibility, acceptance, and cost-effectiveness of the DrOTS program, with a focusing on informing an eventual scale-up of its services nationwide.  
+
+
+## Timeline
+
+The DrOTS program will last 30 months and consists of 5 phases:
+
+### Phase 1: Design and planning 
+
+**March 2018 - September 2018** (7 months): 
+
+The "Design and planning" phase - already in progress - consists of two main activities: (i) the identification and establishment of partners and (ii) the detailing of the project's activities and goals. The identification and establishment of partners will entail the following activities:  
+
+- 3 visits by program manager to Nepal (March, May, July), the last one with the Stony Brook GHI DrOTS Project Leader from Madagascar.  
+- Detailed preparation of internal planning documents and protocols for standard operating procedures.  
+- Communication with partners regarding their roles and responsibilities in the project.  
+- Preparation and legal review of the financial plan and budget.  
+- Preparation and legal review of a cohesive, unified MOU.  
+- Preparation and submission of administrative documents related to GHI's official presence in Nepal, as well as that of the program manager.  
+- Preparation and submission of all permissions related to flight.
+
+**Deliverables**:   
+```
+1. Identification of stakeholders
+```
+```
+2. This document seen, edited, and approved by all stakeholders, and submitted to NSI  
+```
+```
+3. A memorandum of understanding signed by all stakeholders    
+```
+```
+4. Administrative aspects relating to program manager's in-country status (ie, visa / residency permit) and program's status (bank accounts, status as business vs. research project, etc.) approved 
+```
+```
+5. Approval by relevant ministry(ies) to fly; clarification re: line-of-sight vs. autonomous flight
+```
+
+### Phase 2: Pilot 
+
+**October 2018 - March 2019** (6 months): 
+
+The "Pilot" phase is intended as a time to ensure that all individual components of the program work at one site: that the drones fly, that the mechanisms for making payments to partners and paying wages in-country work, that the laboratories perform their duties, that are data collection tools are functional, that educational technology (phones+tablets with video curricula) are programmed and deployed, and that our legal status is solid, etc. In other words, all the activities in this phase are geared towards achieving one thing: the production of a Nepal DrOTS Minimal Viable Product (MVP), ie a bare-minimum (but fully working) program at one site.
+
+It is not possible to fully enumerate the activities in this phase, since the process of building the MVP will be iterative, and highly contingent on the successes and failures of prior sub-processes. That said, in a general sense, pilot will require the following activities:  
+
+- Establishment of an in-country presence (office, etc.) by program manager.  
+- Purchase of equipment for data collection and information dissemination (tablets and phones). 
+- Purchase of laboratory and medical equipment for specimen collection and transport. 
+- Purchase of resources (both physical and virtual) for data collection, management, and real-time analysis. - Training of staff involved at each step of the DrOTS process (flying, suspect case identification, laboratory diagnostics, data management).  
+- On-the-ground recruitment of partners/champions from local communities.  
+
+**Deliverables**:   
+
+```
+1. Acquisition and establishment of an on-site office.
+```
+```
+2. All main roles receiving funding either directly (through employment/grants) or indirectly (through partnership contracts).
+```
+```
+3. Data collection and educational software deployed, tested, re-deployed. 
+```
+```
+4. Successful "full cycle": remote flagging of suspect TB case, drone call, specimen transport, diagnosis, treatment initiation
+```
+```
+5. Write-up of field learnings and "pre-mortem autopsy" (ie, stress points which need to be addressed)
+```
+```
+6. Write-up of SOP / protocol for expansion phase
+```
+
+
+
+### Phase 3: Expansion 
+
+**April 2019 - December 2019** (9 months): 
+
+The "Expansion" phase is meant to build on the successes and lessons of the "Pilot" phase, and expand from the (one) Pilot site to multiple sites. This will take one of the following three forms:
+
+1. The "wave" model, which seeks to translate the static model of the Pilot into a more dynamic/mobile model (ie, there is not longer one base, but rather a mobile laboratory with mobile teams, making a "wave" across the country to identify and initiate treatment in as many locations as possible).  
+2. The "clone" model, which essentially copies the Pilot to other locations, always relying on a basic fieldworker-health post-hospital-lab hierarchy.  
+3. The "hybrid" model, which expands to several other laboratory/clinic sites, while also beginning experimentation into mobile laboratories so as to penetrate more hard-to-reach areas.  
+
+The form to be taken in the Expansion phase will be finalized at the end of the Pilot phase, in conjunction with the partners. Regardless of the form, the activities will be similar to the Pilot phase, with one main difference: the program manager will take a more "hands-off" approach, delegating operations to local partners, and focusing on the gathering of data generated by the project (so as to assess its scalability in an organic setting).
+
+
+**Deliverables**:   
+```
+1. Local program managers hired at each expansion site OR for each mobile team.
+```
+```
+2. Data standardization and operational protocols understood and enforced for each autonomous team.
+```
+```
+3. Redaction of scale-up grant application.
+```
+```
+4. Major expansion of catchment, services and cases (to be defined in detail during Pilot phase).
+```
+```
+5. Guidelines written, in conjunction with NTC, for national DrOTS program.
+```
+
+
+### Phase 4: Hand-over 
+
+**January 2020 - April 2020** (4 months):  
+
+The "Hand-over" phase is, in fact, a continuation of the Expansion phase, with the focus shifted to empowering local capacity, identifying areas where external support may be needed, acquiring the financing for further expansion, and ensuring local ownership of and engagement with the technological, social, and medical aspects of the program. The purpose of the Hand-over phase is essentially to make the program manager's role irrelevant and ensure that the program is sustainable without outside management or coordination. As the program manager's role is replaced ever more fully by local partners, his/her attention will shift to securing the financing (either through a large grant from a donor such as the Global Fund or through government budgetary commitments) to ensure the program's sustainability, as well as to preparing the data and operational lessons for dissemination.
+
+
+**Deliverables**:   
+```
+1. Full hand-over of operations and management to local partners. 
+```
+```
+2. Financial sustainability ensured (either through grant or budget).
+```
+
+### Phase 5: Knowledge dissemination 
+
+**May 2020 - August 2020** (4 months):  
+
+The final phase of the project consists of sharing the lessons of the program with the global health community at large. 
+
+**Deliverables**:   
+```
+1. Academic publications regarding the program's impact and cost-effectiveness  
+```
+```
+2. Open-sourcing of all data which is not private health information, so to allow other researchers to confirm/challenge results.
+```
+```
+3. An online toolkit of program resources and lessons, so as to guide similar endeavors in regards to best practices.
+```
+
+## Geography
+
+The program office and Pilot phase will take place in Pyuthan district, in the near western hill country.
+
+```{r}
+# NSI hospitals with BNMT cooperation:
+districts <- 'Pyuthan'
+# districts <- c('Pyuthan', 'Kapilbastu', 'Bardiya', 'Gulmi')
+# districts <- c('Gulmi', 'Kapilbastu', 'Arghakhanchi', 'Pyuthan', 'Salyan', 'Bardiya', 'Achham', 'Doti')
+color <- nep3$NAME_3 %in% districts
+color <- ifelse(color, 'red', 'grey')
+leaflet(nep3, options = leafletOptions(zoomControl = FALSE), width = '100%') %>%
+  addPolylines(weight = 1,
+               color = 'black') %>%
+  # addPolygons(fillColor = color,
+  #             weight = 0,
+  #             fillOpacity = 0.7) %>%
+    addProviderTiles('Stamen.TonerBackground') %>%
+  addPolygons(data = nep3[nep3$NAME_3 == districts,],
+              fillColor = 'red',
+              weight = 0,
+              fillOpacity = 0.7) #%>%
+  # leaflet::fitBounds(lng1 = 70, lng2 = 90,
+  #                      lat1 = 10, lat2 = 50)
+# plot(nep3,
+#      col = color)
+# library(nepal)
+# plot(nepal::elevation)
+# plot(nep3,
+#      col = color, 
+#      add = TRUE)
+# text(coordinates(nep3), label = nep3$NAME_3, cex = 0.2)
+
+# x <- nep3[nep3$NAME_3 %in% districts,]
+# y <- raster::extract(x = nepal::elevation, y = x, 
+#                      fun = function(x, na.rm = TRUE){max(x, na.rm = na.rm)})
+```
+
+
+## Roles
+
+## Budget
+
+Spending time together and speaking with partners and people on the ground gave us the opportunity to start etching out a very general vision for what the DrOTS Nepal franchise will look like.
+
+
+### Overview
+
+
+> Here is another paragraph.
+
+
+<p>>Here is another paragraph.</p>
+The DrOTS project will be carried out in three phases: 1) Design Phase, 2) Pilot
+Phase, and 3) DrOTS Implementation Phase. We consider beginning of each of the three phases
+as a separate milestone. At the end of the project, we will have generated crucial data and
+experience that will inform scale up of DrOTS across Nepal with support from international
+organizations including the Global Fund and World Bank. In this proposal, the SBU Global
+Health Institute request the Simons Foundation a funding in the amount of US$ 498,525 for the
+DrOTS project that could be disbursed at the above three milestones. We have described below
+the three phases of our DrOTS project proposal with accompanying budget.
+
+
+
+### Time
+
+- Start in late 2018.
+- There will be no distinction between "planning", "implementation", and "analysis" phases - all will be simultaneous and iterative.  
+- Joe will move to Nepal in late 2018, once all partnerships and bureaucratic formalities have been cleared.
+
+### Core components 
+
+- We will strive to have as minor an institutional presence as possible.
+- Our main task will be to facilitate connections and overcome obstacles by provisioning the necessary funding.  
+- Our hired team will likely be a doctor, nurse, tech-person, etc.; to the extent that these hires can be managed by others, this is ideal (assuming we still exercise some degree of control).
+- Two competing visions for implementation: (i) wave across the country (ie, elimination campaign) vs. (ii) hunker down in one place, tweak, and learn 
+- Empowerment of local organizations and participating individuals needs to be core to program, not an afterthought. This applies to case-finding, adherence, management deliverables, etc.
+- 1 primary partner: NTC (main purpose of May meeting)
+- 3 kinds of secondary partners: 
+  - 1. Drone (WeRobotics / Nepal Flying Labs)
+  - 2. TB (policies, geneXpert) (BNMT)
+  - 3. Communities (NSI)
+  
+### Open questions
+- How can we shape this into a Global Fund grant in 2020?
+- What are the knowledge products (ie, paper abstracts) we want to generate?
+- What is our pitch to NTC in May?
+- How can we ensure NSI is a helpful and willing partner without violating the trust of the institution that our work won't be burdensome (ie, provide data/analysis services)?
+- Any role for "discarded" partners (Possible, Medic Mobile, HERD, etc.?)
+
+	
+	
