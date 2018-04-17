@@ -19,6 +19,8 @@ output:
 
 ```{r setup, include=FALSE}
 library(knitr)
+library(rgl)
+library(rglwidget)
 # Basic knitr options
 opts_chunk$set(comment = NA, 
                echo = FALSE, 
@@ -28,12 +30,15 @@ opts_chunk$set(comment = NA,
                cache = F,
                fig.width = 4,
                fig.height = 3)
+knit_hooks$set(webgl = hook_webgl)
+
 knit_engines$set(asis = function(options) {
   if (options$echo && options$eval) knit_child(text = options$code)
 })
 ```
 
 ```{r}
+library(ggthemes)
 library(leaflet)
 library(leaflet.extras)
 library(sp)
@@ -65,7 +70,7 @@ nep3_fortified <- broom::tidy(nep3, region = 'NAME_3')
 
 ### Summary
 
-The Nepal Drone Observed Therapy System (DrOTS) project will work with the Nepali National Tuberculosis Center (NTC), the Birat Nepal Medical Trust (BNMT), the Nick Simons Institute (NSI) and Nepal Flying Labs (NFL) to improve TB case detection through active case finding (ACF) of tuberculosis (TB), drone transport of specimens and supplies, and rapid molecular diagnostics, and improve treatment completion through electronic reminders and video
+The Nepal Drone Observed Therapy System (DrOTS) project will work with the Nepali National Tuberculosis Center (NTC), the Birat Nepal Medical Trust (BNMT), the Nick Simons Institute (NSI), Nepal Flying Labs (NFL) and the World Health Organisation (WHO) to improve TB case detection through active case finding (ACF) of tuberculosis (TB), drone transport of specimens and supplies, and rapid molecular diagnostics, and improve treatment completion through electronic reminders and video
 curriculums.
 
 
@@ -110,6 +115,8 @@ This document contains the skeleton of a plan. It is basic, and where it delves 
 > **Objectives** covers the main goals of the program, the intermediate deliverables, and a vision for scale-up after the program ends.  
 
 > **Timeline** gives an overview of when each activity is expected to take place.
+
+> **Geography** provides details on two potential locations selected for the project.
 
 > **Roles** covers the respective responsibilities of each partner organization.
 
@@ -275,93 +282,281 @@ The final phase of the project consists of sharing the lessons of the program wi
 
 ## Geography
 
-The program office and Pilot phase will take place in Pyuthan district, in the near western hill country.
+The program office and Pilot phase will take place in one of the following two areas:
+
+1. Jiri (Dolakha district, Central region)  
+2. Beni (Myagdi district, Western region)
+
 
 ```{r}
+
+# NSI hospital
+# Or Myagdi (west)?
+sites <- data.frame(label = c('Jiri Hospital', 'Myagdi Hospital'),
+                   lat = c(27.6249183, 28.3457615),
+                   lng = c(86.2091993, 83.5664077))
+districts <- c('Dolakha', 'Myagdi') # Jiri
+# districts <- 'Solukhumbu' # nothing, but Lukla airport and Phaplu NSI
+
+#BNMT TB reach (page 4)
+# http://www.bnmtnepal.org.np/uploads/files/pdf/BNMT%20TB%20REACH%20Year%202.pdf
+# districts <- c('Ilam', 'Jhapa', 'Morang', 'Sunsari', 'Saptari', 'Siraha', 'Udayapur',
+#                'Dhanusa', 'Mahottari', 'Sarlahi', 'Rautahat', 'Bara', 'Parsa', 'Makwanpur', 'Chitawan')
+
+# # National Tuberculosis Program (Global Fund / Save the Children) of BNMT
+# districts <- c('Ilam', 'Jhapa', 'Morang', 'Saptari', 'Sunsari', 'Siraha',  'Udayapur', # eastern
+#                'Achham', 'Baitadi', 'Banke', 'Bardiya', 'Dadeldhura', 'Dang', 'Doti', 'Kailali', 'Kanchanpur', 'Pyuthan', 'Rolpa', 'Salyan', 'Surkhet') # western
 # NSI hospitals with BNMT cooperation:
-districts <- 'Pyuthan'
+# districts <- 'Pyuthan'
 # districts <- c('Pyuthan', 'Kapilbastu', 'Bardiya', 'Gulmi')
 # districts <- c('Gulmi', 'Kapilbastu', 'Arghakhanchi', 'Pyuthan', 'Salyan', 'Bardiya', 'Achham', 'Doti')
 color <- nep3$NAME_3 %in% districts
 color <- ifelse(color, 'red', 'grey')
 leaflet(nep3, options = leafletOptions(zoomControl = FALSE), width = '100%') %>%
-  addPolylines(weight = 1,
-               color = 'black') %>%
+  addPolygons(weight = 1,
+              fillOpacity = 0,
+              fillColor = NA,
+               color = 'black',
+               popup = nep3$NAME_3) %>%
   # addPolygons(fillColor = color,
   #             weight = 0,
   #             fillOpacity = 0.7) %>%
-    addProviderTiles('Stamen.TonerBackground') %>%
-  addPolygons(data = nep3[nep3$NAME_3 == districts,],
+    addProviderTiles('Esri.NatGeoWorldMap') %>%
+  addPolygons(data = nep3[nep3$NAME_3 %in% districts,],
               fillColor = 'red',
               weight = 0,
-              fillOpacity = 0.7) #%>%
+              fillOpacity = 0.7,
+              popup = ~NAME_3) %>%
+  addMarkers(data = sites,
+             popup = ~label)
   # leaflet::fitBounds(lng1 = 70, lng2 = 90,
   #                      lat1 = 10, lat2 = 50)
-# plot(nep3,
-#      col = color)
-# library(nepal)
-# plot(nepal::elevation)
-# plot(nep3,
-#      col = color, 
-#      add = TRUE)
-# text(coordinates(nep3), label = nep3$NAME_3, cex = 0.2)
 
-# x <- nep3[nep3$NAME_3 %in% districts,]
-# y <- raster::extract(x = nepal::elevation, y = x, 
-#                      fun = function(x, na.rm = TRUE){max(x, na.rm = na.rm)})
 ```
 
 
+There are three reasons why these areas are ideal for the Pilot.
+
+**Reason 1: Proximity to Kathmandu**
+
+Jiri is a 7.5 hour drive from Kathmandu. Beni is an 8.5 hour drive from Kathmandu (or 3 hour drive from Pokhara, which has an airport).
+
+```{r, fig.width = 7}
+kathmandu <- data.frame(label = 'Kathmandu',
+                        lat = 27.700293,
+                        lng = 85.3097815)
+
+places <- bind_rows(kathmandu, sites)
+
+ggplot() +
+  geom_polygon(data = nep0_fortified,
+               aes(x = long,
+                   y = lat,
+                   group = group),
+               fill = 'pink',
+               alpha = 0.2,
+               color = 'black',
+               size = 0.1) +
+  theme_map() +
+  geom_point(data = places,
+             aes(x = lng,
+                 y = lat,
+                 color = label),
+             size = 3) +
+  geom_curve(data = places,
+             aes(x = lng[2],
+                 y = lat[2],
+                 xend = lng[1],
+                 yend = lat[1]),
+             # lty = 2,
+             size = 0.2,
+             alpha = 0.4) +
+    geom_curve(data = places,
+             aes(x = lng[1],
+                 y = lat[1],
+                 xend = lng[3],
+                 yend = lat[3]),
+             # lty = 2,
+             size = 0.4,
+             alpha = 0.4) +
+  scale_color_manual(name = '',
+                     values = c('darkorange', 'black', 'lightblue')) +
+  # coord_map() +
+  coord_cartesian()
+```
+
+**Reason 2: Hill-mountain blend**
+
+Both districts have mixed terrain: more easily accessible "hill" areas, as well as more remote "mountain" areas. The below shows Dolakha's and Myagdi's elevation profiles (in meters) respectively, as well as Nepal's (with each district's borders marked).
+
+
+```{r}
+# plot(nep3,
+#      col = color)
+library(nepal)
+# plot(nepal::elevation)
+# plot(nep3,
+#      col = color,
+#      add = TRUE)
+# text(coordinates(nep3), label = nep3$NAME_3, cex = 0.2)
+
+x <- nep3[nep3$NAME_3 %in% districts,]
+dolakha <- nep3[nep3$NAME_3 == 'Dolakha',]
+myagdi <- nep3[nep3$NAME_3 == 'Myagdi',]
+
+r_dolakha <- crop(nepal::elevation, extent(dolakha))
+r_dolakha <- mask(r_dolakha, dolakha)
+
+r_myagdi <- crop(nepal::elevation, extent(myagdi))
+r_myagdi <- mask(r_myagdi, myagdi)
+
+library(RColorBrewer)
+cols <- colorRampPalette(brewer.pal(11, "BrBG"))
+xx <- nep3[nep3$NAME_3 %in% districts,]
+```
+
+```{r, fig.align = 'center', fig.width = 5, fig.height = 5}
+plot(r_dolakha,  col = cols(100), main = 'Dolakha')
+plot(xx, add = TRUE)
+points(places$lng, places$lat, pch = 10)
+# text(nepal::cities_sp,  label = nepal::cities_sp$city, cex = 0.7)
+```
+
+
+```{r, fig.align = 'center', fig.width = 5, fig.height = 5}
+plot(r_myagdi,  col = cols(100), main = 'Myagdi')
+plot(xx, add = TRUE)
+points(places$lng, places$lat, pch = 10)
+# text(nepal::cities_sp, add = T, label = nepal::cities_sp$city, cex = 0.7)
+```
+
+
+```{r, fig.align = 'center', fig.width = 5, fig.height = 5}
+plot(nepal::elevation,main = 'Nepal', col = cols(100))
+plot(xx, add = T)
+# text(nepal::cities_sp, add = T, label = nepal::cities_sp$city, cex = 0.3, alpha = 0.3)
+
+# plot(nep0, add = T)
+```
+
+```{r}
+
+# mfrow3d(nr = 1, nc = 1, sharedMouse = T)  
+# rasterVis::plot3D(r)
+# rglwidget()
+# # par(mfrow = c(2, 2))
+# library(rasterVis)
+# plot(r)
+# plot(nep3, add = T)
+# hist(values(r), xlab = 'Meters', main = '')
+# rasterVis::contourplot(r)
+# par(mfrow = c(1,1))
+# y <- raster::extract(x = nepal::elevation, y = x,
+#                      fun = function(x, na.rm = TRUE){max(x, na.rm = na.rm)})
+```
+
+**Reason 3: NSI connections**
+
+Both Dolakha and Myagdi are districts whose hospitals are part of the NSI's "Rural Staff Support Program" ([link](http://nsi.edu.np/en/page/programs/district_hospital_support_program/rural_staff_support_program_rssp_)).
+
+**Comments on geography**
+
+- Initially, we tried to identify districts with active BNMT supported hospitals and/or laboratories. However, these were all low or medium altitude, in areas where road access is not a major challenge. 
+- Jiri (Dolakha) has the additional advantage of being only 2 hours from Charikot district (where Possible's hospital is).
+- No final decision has yet been made on geography. These two options are suggestive, not exhaustive. A final decision will be made in conjunction with partner organizations.
+
 ## Roles
 
-## Budget
+### Nepali National Tuberculosis Center (NTC)
 
-Spending time together and speaking with partners and people on the ground gave us the opportunity to start etching out a very general vision for what the DrOTS Nepal franchise will look like.
+The NTC will be the primary coordinating organization for the Nepal DrOTS program. In addition to providing technical and medical expertise, the NTC will approve activities, steer the program's strategy, and lead the scale-up phase of the project. 
 
+### Birat Nepal Medical Trust (BNMT)
+
+The BNMT will oversee most operations. Human resources / hiring specific to this project will be made through the BNMT. Materials procurement (geneXpert machines, laboratory supplies, etc.) will also be managed by the BNMT. The BNMT will provide subject area expertise, and work closely with the NTC on strategy and evaluation.
+
+### Nick Simons Institute (NSI)
+
+The NSI's role will be community engagement, worker empowerment and training, incentives management, and technical consulting. Piggy-backing on the connections and experiences from the "Rural Staff Support Program", the NSI will facilitate contacts with the local laboratories and hospitals, assist in the design and deployment of the "community" portion of the project (specifically the role of rural health care workers in their interactions with DrOTS), and help to establish an institutional presence.
+
+### Nepal Flying Labs (NFL) 
+
+NFL will handle all matters related to flight. This covers not only directly-related activities (vehicle procurement, piloting, repairs), but also secondary but pre-requisite activities such as importation duties, legal clearance, government permissions, etc.
+
+### World Health Organisation (WHO)
+
+The WHO will provide technical consulting and guidance, specifically in the Expansion phase.
+
+### Stony Brook University Global Health Institute (GHI)
+
+The GHI will handle coordination between groups, budget issues, research, and evaluation. 
+
+
+## Budget  
 
 ### Overview
 
+The below is a rough approximation of expected expenses:
 
-> Here is another paragraph.
+```{r, fig.width = 8, fig.align = 'center'}
+budget <- c('Salaries' = c(240000),
+             'Travel\n(international)' = c(10000),
+            'Travel\n(national)' = 25000,
+             'Laboratory' = c(80000),
+             'Dissemination' = 10000,
+             'Drones' = 110000,
+            'Admin' = 15000)
+budget <- data_frame(Category = names(budget),
+                     USD = budget)
 
+ggplot(data = budget,
+       aes(x = Category,
+           y = USD)) +
+  geom_bar(stat = 'identity',
+           fill = 'darkorange',
+           alpha = 0.4) +
+  geom_label(aes(label = paste0(USD/1000, 'K'))) +
+  theme_fivethirtyeight() +
+  labs(title = 'Distribution of 490,000 USD')
+```
 
-<p>>Here is another paragraph.</p>
-The DrOTS project will be carried out in three phases: 1) Design Phase, 2) Pilot
-Phase, and 3) DrOTS Implementation Phase. We consider beginning of each of the three phases
-as a separate milestone. At the end of the project, we will have generated crucial data and
-experience that will inform scale up of DrOTS across Nepal with support from international
-organizations including the Global Fund and World Bank. In this proposal, the SBU Global
-Health Institute request the Simons Foundation a funding in the amount of US$ 498,525 for the
-DrOTS project that could be disbursed at the above three milestones. We have described below
-the three phases of our DrOTS project proposal with accompanying budget.
+- **Administration** is meant to cover incidentals related to project logistics: legal fees, internet and utilities, communication, taxes, etc.  
+- **Dissemination** will cover publication fees, web hosting, academic conference(s), etc.  
+- **Drones** will cover all costs related to flight, including (but not limited to) vehicle acquisition, repairs, piloting, permissions, etc.  
+- **Laboratory** will cover all costs related to diagnostics, including (but not limited to) geneXpert machine(s), disposable materials, etc.  
+- **Salaries** will cover 2 years of the program manager's salary (50%), as well as local salaries (or salary supplements) for program staff (or partner staff integrated into program) including (but not limited to) medical professionals and fieldworkers, drivers, etc. (but not including salaries for laboratory or drone workers, whose salaries should be covered in their respective budgets).  
+- **Travel** includes the program manager's relocation to Nepal (International) and ongoing (National) transportation between Kathmandu, the Pilot site, expansion sites, and the field.   
 
+### Burn rate
 
+The below shows estimated project funds remaining (blue) and spent each month (red). Resource burn rate is expected to be highest in late 2018 and early 2019, due to material acquisition, during the Pilot phase.
 
-### Time
+```{r, fig.width = 5, fig.align = 'center'}
+dates <- seq.Date(from = as.Date('2018-01-01'),
+                  to = as.Date('2020-08-01'),
+                  by = 'month')
+burny <- sin(seq(0, 3, length.out = length(dates)))^2
+burny <- burny / sum(burny) * sum(budget$USD)
+burn <- data_frame(date = dates,
+                   USD = burny) %>%
+  mutate(cum = cumsum(USD)) %>%
+  mutate(left = sum(budget$USD) - cum)
 
-- Start in late 2018.
-- There will be no distinction between "planning", "implementation", and "analysis" phases - all will be simultaneous and iterative.  
-- Joe will move to Nepal in late 2018, once all partnerships and bureaucratic formalities have been cleared.
+options(scipen = '999')
+ggplot(data = burn,
+       aes(x = date,
+           y = left)) +
+  geom_area(fill = 'lightblue',
+            alpha = 0.5,
+            color = 'black',
+            size = 0.2) +
+  geom_bar(stat = 'identity',
+           aes(y = USD),
+           fill = 'red',
+           alpha = 0.5) +
+  theme_fivethirtyeight()
+```
 
-### Core components 
+### Payment contracts
 
-- We will strive to have as minor an institutional presence as possible.
-- Our main task will be to facilitate connections and overcome obstacles by provisioning the necessary funding.  
-- Our hired team will likely be a doctor, nurse, tech-person, etc.; to the extent that these hires can be managed by others, this is ideal (assuming we still exercise some degree of control).
-- Two competing visions for implementation: (i) wave across the country (ie, elimination campaign) vs. (ii) hunker down in one place, tweak, and learn 
-- Empowerment of local organizations and participating individuals needs to be core to program, not an afterthought. This applies to case-finding, adherence, management deliverables, etc.
-- 1 primary partner: NTC (main purpose of May meeting)
-- 3 kinds of secondary partners: 
-  - 1. Drone (WeRobotics / Nepal Flying Labs)
-  - 2. TB (policies, geneXpert) (BNMT)
-  - 3. Communities (NSI)
-  
-### Open questions
-- How can we shape this into a Global Fund grant in 2020?
-- What are the knowledge products (ie, paper abstracts) we want to generate?
-- What is our pitch to NTC in May?
-- How can we ensure NSI is a helpful and willing partner without violating the trust of the institution that our work won't be burdensome (ie, provide data/analysis services)?
-- Any role for "discarded" partners (Possible, Medic Mobile, HERD, etc.?)
-
-	
-	
+Whenever possible, both for the sake of administrative simplicity as well as local empowerment, the project will hire staff _through_ partner organizations and pay for services, rather than directly hiring staff or providing services. The final MOU will contain dated deliverables/milestones and expectations for each partner organization, as well as the funding amounts to be unlocked upon completion/delivery of milestones. 
