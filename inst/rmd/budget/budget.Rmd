@@ -1,0 +1,270 @@
+---
+output:
+  html_document:
+    theme: united
+    highlight: tango
+---
+
+
+
+
+```{r setup, include=FALSE}
+options(scipen=999)
+
+library(knitr)
+# Basic knitr options
+opts_chunk$set(comment = NA, 
+               echo = FALSE, 
+               warning = FALSE, 
+               message = FALSE, 
+               error = TRUE, 
+               cache = F,
+               fig.width = 7,
+               fig.height = 5)
+knit_engines$set(asis = function(options) {
+  if (options$echo && options$eval) knit_child(text = options$code)
+})
+```
+
+```{r}
+library(leaflet)
+library(leaflet.extras)
+library(sp)
+library(raster)
+library(ggmap)
+library(dplyr)
+library(maptools)
+library(rgdal)
+library(RColorBrewer)
+library(googlesheets)
+library(knitr)
+library(tidyr)
+library(databrew)
+budget <- gs_title('Nepal DrOTS combined budgets')
+budget <- gs_read(budget)
+
+```
+
+# Budget overview {.tabset .tabset-fade} 
+
+<img src="img/mountains_small.png" alt="logo" width='100%' style="float: center;align:center;">
+
+
+## Summary
+
+### Total budget
+
+- The total project budget is `r sum(budget$usd)`.
+- The funded project budget is `r sum(budget$usd[budget$phase <= 2])`.
+- The SBU-funded project budget is `r sum(budget$usd[budget$phase <= 2 & budget$source == 'SBU'])`.
+- The in-kind (WeRobotics) funded project budget is `r sum(budget$usd[budget$phase <= 2 & budget$source == 'WeRobotics'])`
+
+### By phase
+
+```{r}
+budget %>% group_by(phase) %>% summarise(`$` = sum(usd)) %>% kable
+```
+
+### By recipient partner
+
+```{r}
+budget %>% group_by(partner) %>% summarise(`$` = sum(usd)) %>% kable
+```
+
+
+### By phase and funding source
+
+```{r}
+budget %>% group_by(phase, source) %>% summarise(`$` = sum(usd)) %>% spread(key = phase, value = `$`) %>% kable
+```
+
+### By recipient partner and funding source
+
+```{r}
+budget %>% group_by(partner = paste0('Recepient: ', partner), source) %>% summarise(`$` = sum(usd)) %>% spread(key = partner, value = `$`) %>% kable
+```
+
+## Visualizations
+
+### Spending by phase and source
+
+```{r}
+x <- budget %>%
+  group_by(phase, source) %>%
+  summarise(usd = sum(usd)) %>%
+  ungroup %>%
+  group_by(source) %>%
+  mutate(cum_usd = cumsum(usd)) %>%
+  ungroup
+x$source <- factor(x$source,
+                   levels = rev(sort(unique(x$source))))
+
+label_df <- 
+  data_frame(x = c( 2.5),
+             y = c( 300000),
+             label = c('End of\nguaranteed\nfunding'))
+
+ggplot(data = x,
+       aes(x = phase,
+           y = usd,
+           group = source,
+           fill = source)) +
+  geom_bar(stat = 'identity', position = 'stack') +
+  scale_fill_manual(name = 'Source',
+                    values = databrew::make_colors(n = length(levels(x$source)), categorical = FALSE, b2g = TRUE)) +
+  geom_vline(xintercept = 2.5,
+             lty = 2,
+             alpha = 0.7) + 
+  geom_label(data = label_df,
+             aes(x = x,
+                 y = y,
+                 label = label),
+             group = NA,
+             fill = 'white',
+             alpha = 0.7) +
+  theme_databrew() +
+  theme(legend.position = 'right') +
+  labs(x = 'Phase',
+       y = 'USD',
+       title = 'Spending by phase and source') +
+  ylim(0, 350000)
+```
+
+
+### Cumulative spending by phase and source
+
+```{r}
+x <- budget %>%
+  group_by(phase, source) %>%
+  summarise(usd = sum(usd)) %>%
+  ungroup %>%
+  group_by(source) %>%
+  mutate(cum_usd = cumsum(usd)) %>%
+  ungroup
+x$source <- factor(x$source,
+                   levels = rev(sort(unique(x$source))))
+
+label_df <- 
+  data_frame(x = c(1, 2.5),
+             y = c(500000, 700000),
+             label = c('SBU funds', 'End of\nguaranteed\nfunding'))
+
+ggplot(data = x,
+       aes(x = phase,
+           y = cum_usd,
+           group = source,
+           fill = source)) +
+  geom_bar(stat = 'identity', position = 'stack') +
+  scale_fill_manual(name = 'Source',
+                    values = databrew::make_colors(n = length(levels(x$source)), categorical = FALSE, b2g = TRUE)) +
+  geom_vline(xintercept = 2.5,
+             lty = 2,
+             alpha = 0.7) + 
+  geom_hline(yintercept = 500000,
+             lty = 2, alpha = 0.7) +
+  geom_label(data = label_df,
+             aes(x = x,
+                 y = y,
+                 label = label),
+             group = NA,
+             fill = 'white',
+             alpha = 0.7) +
+  theme_databrew() +
+  theme(legend.position = 'right') +
+    ylim(0, 800000) +
+  labs(x = 'Phase',
+       y = 'USD',
+       title = 'Cumulative spending by phase and source')
+```
+
+### Spending by recipient parnter and source
+
+```{r}
+x <- budget %>%
+  group_by(partner, source) %>%
+  summarise(usd = sum(usd)) %>%
+  ungroup %>%
+  group_by(source) %>%
+  mutate(cum_usd = cumsum(usd)) %>%
+  ungroup
+x$source <- factor(x$source,
+                   levels = rev(sort(unique(x$source))))
+ggplot(data = x,
+       aes(x = partner,
+           y = usd,
+           group = source,
+           fill = source)) +
+  geom_bar(stat = 'identity', position = position_dodge()) + 
+  geom_label(aes(label = round(usd)),
+             position = position_dodge()) +
+  scale_fill_manual(name = 'Source',
+                    values = databrew::make_colors(n = length(levels(x$source)), categorical = FALSE, b2g = TRUE)) +
+  theme_databrew() +
+  theme(legend.position = 'right') +
+  labs(x = 'Phase',
+       y = 'USD',
+       title = 'Spending by partner and source') +
+  ylim(0, 350000)
+```
+
+### Cumulative spending by partner, source, and phase
+
+```{r}
+x <- budget %>%
+  group_by(phase, partner, source) %>%
+  summarise(usd = sum(usd)) %>%
+  ungroup %>%
+  group_by(source, partner) %>%
+  mutate(cum_usd = cumsum(usd)) %>%
+  ungroup
+
+ggplot(data = x,
+       aes(x = phase,
+           y = cum_usd,
+           group = source,
+           fill = source)) +
+  geom_bar(stat = 'identity',
+           position = 'stack') +
+  facet_wrap(~partner) +
+  scale_fill_manual(name = 'Source',
+                    values = databrew::make_colors(n = length(unique(x$source)), categorical = FALSE, b2g = TRUE)) +
+  theme_databrew() +
+  theme(legend.position = 'right') +
+  labs(x = 'Phase',
+       y = 'USD',
+       title = 'Spending by partner, phase, and source')
+```
+
+## Guaranteed vs. contingent
+
+```{r}
+x <- budget %>%
+  group_by(guaranteed = ifelse(phase <=2, 'Guaranteed', 'Contingent'),
+           source = paste0('Funding source: ', source),
+           partner) %>%
+  summarise(usd = sum(usd)) %>%
+  ungroup
+x$guaranteed <- factor(x$guaranteed,
+                       levels = rev(sort(unique(x$guaranteed))))
+
+ggplot(data = x,
+       aes(x = partner,
+           y = usd,
+           fill = guaranteed,
+           group = guaranteed)) +
+  geom_bar(stat = 'identity',
+           position=position_dodge(width=1)) +
+  facet_wrap(~source) +
+  geom_text(aes(label = round(usd),
+                 group = guaranteed),
+           vjust = 0,
+           alpha = 0.6,
+           position=position_dodge(width=1)) +
+  scale_fill_manual(name = 'Funding\nstatus',
+                    values = databrew::make_colors(n = length(unique(x$guaranteed)), categorical = FALSE, b2g = TRUE)) +
+  theme_databrew() +
+  # theme(legend.position = 'right') +
+  labs(x = 'Receipient partner',
+       y = 'USD',
+       title = 'Funding status by partner and source')
+```
