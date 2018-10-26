@@ -5,9 +5,6 @@ output:
     highlight: tango
 ---
 
-
-
-
 ```{r setup, include=FALSE}
 options(scipen=999)
 
@@ -59,17 +56,43 @@ budget <- gs_read(budget)
 - The SBU-funded project budget is `r sum(budget$usd[budget$phase <= 2 & budget$source == 'SBU'])`.
 - The in-kind (WeRobotics) funded project budget is `r sum(budget$usd[budget$phase <= 2 & budget$source == 'WeRobotics'])`
 
+
 ### By phase
 
+(Including partner in-kind contributions)
+
 ```{r}
-budget %>% group_by(phase) %>% summarise(`$` = sum(usd)) %>% kable
+budget %>% group_by(phase) %>% summarise(`$` = sum(usd)) %>%
+  ungroup %>%
+  mutate(`Cumulative $` = cumsum(`$`)) %>% kable
+```
+
+
+(Only showing SBU-funded items)
+
+```{r}
+budget %>% filter(source == 'SBU') %>% group_by(phase) %>% summarise(`$` = sum(usd)) %>%
+  ungroup %>%
+  mutate(`Cumulative $` = cumsum(`$`)) %>% kable
 ```
 
 ### By recipient partner
 
+(Including partner in-kind contributions)
+
+
+
 ```{r}
 budget %>% group_by(partner) %>% summarise(`$` = sum(usd)) %>% kable
 ```
+
+
+(Only showing SBU-funded items)
+
+```{r}
+budget %>% filter(source == 'SBU') %>% group_by(partner) %>% summarise(`$` = sum(usd)) %>% kable
+```
+
 
 
 ### By phase and funding source
@@ -78,10 +101,18 @@ budget %>% group_by(partner) %>% summarise(`$` = sum(usd)) %>% kable
 budget %>% group_by(phase, source) %>% summarise(`$` = sum(usd)) %>% spread(key = phase, value = `$`) %>% kable
 ```
 
-### By recipient partner and funding source
+### By recipient partner and funding source (phases 0-2)
 
 ```{r}
-budget %>% group_by(partner = paste0('Recepient: ', partner), source) %>% summarise(`$` = sum(usd)) %>% spread(key = partner, value = `$`) %>% kable
+budget %>% filter(phase <= 2) %>% group_by(partner = paste0('Recepient: ', partner), source) %>% summarise(`$` = sum(usd)) %>% spread(key = partner, value = `$`) %>% kable
+```
+
+### By spending category
+
+SBU-funded only, only guaranteed phases
+
+```{r}
+budget %>% filter(source == 'SBU', phase <=2) %>%  group_by(Recipient = paste0(partner), Category = jeanne_category) %>% summarise(`$` = sum(usd)) %>% kable
 ```
 
 ## Visualizations
@@ -177,10 +208,14 @@ ggplot(data = x,
        title = 'Cumulative spending by phase and source')
 ```
 
-### Spending by recipient parnter and source
+
+### Spending by recipient partner and source
+
+(Guaranteed funding only)
 
 ```{r}
 x <- budget %>%
+  filter(phase <= 2) %>%
   group_by(partner, source) %>%
   summarise(usd = sum(usd)) %>%
   ungroup %>%
@@ -194,9 +229,9 @@ ggplot(data = x,
            y = usd,
            group = source,
            fill = source)) +
-  geom_bar(stat = 'identity', position = position_dodge()) + 
+  geom_bar(stat = 'identity', position = position_dodge(width = 1)) + 
   geom_label(aes(label = round(usd)),
-             position = position_dodge()) +
+             position = position_dodge(width = 1)) +
   scale_fill_manual(name = 'Source',
                     values = databrew::make_colors(n = length(levels(x$source)), categorical = FALSE, b2g = TRUE)) +
   theme_databrew() +

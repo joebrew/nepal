@@ -41,20 +41,20 @@ library(knitr)
 library(tidyr)
 library(databrew)
 library(readr)
-# budget <- gs_title('Nepal DrOTS BNMT budget comparison')
-# budget <- gs_read(budget)
+budget <- gs_title('Nepal DrOTS combined budgets')
+budget_new <- gs_read(budget)
 
 budget <- 
   bind_rows(
     read_csv('budget_data/budget_2018-07-15.csv') %>%
       mutate(key = 'Old'),
-    read_csv('budget_data/budget_2018-08-15.csv') %>%
+    budget_new %>%
       mutate(key = 'New')
   )
 
 ```
 
-# BNMT budget comparison (July vs. August versions) {.tabset .tabset-fade} 
+# WeRobotics budget comparison (July vs. August versions) {.tabset .tabset-fade} 
 
 <img src="img/mountains_small.png" alt="logo" width='100%' style="float: center;align:center;">
 
@@ -63,42 +63,35 @@ budget <-
 
 ### Funding guaranteed (phases 0-2)
 
-- Old: `r sum(budget$usd[budget$partner == 'BNMT' & budget$phase <=2 & budget$key == 'Old'])`
-- New: `r sum(budget$usd[budget$partner == 'BNMT' & budget$phase <=2 & budget$key == 'New'])`
+- Old (SBU-funded): `r sum(budget$usd[budget$partner == 'WeRobotics' & budget$phase <=2 & budget$key == 'Old' & budget$source == 'SBU'])`
+- Old (WR in-kind): `r sum(budget$usd[budget$partner == 'WeRobotics' & budget$phase <=2 & budget$key == 'Old' & budget$source == 'WeRobotics'])`
+- New (SBU-funded): `r sum(budget$usd[budget$partner == 'WeRobotics' & budget$phase <=2 & budget$key == 'New' & budget$source == 'SBU'])`
+- New (WR in-kind): `r sum(budget$usd[budget$partner == 'WeRobotics' & budget$phase <=2 & budget$key == 'New' & budget$source == 'WeRobotics'])`
 
-### Funding not guaranteed (phases 3)
-
-- Old: `r sum(budget$usd[budget$partner == 'BNMT' & budget$phase >=3 & budget$key == 'Old'])`
-- New: `r sum(budget$usd[budget$partner == 'BNMT' & budget$phase >=3 & budget$key == 'New'])`
-
-### Total (guaranteed and not guaranteed; phases 0-3)
-
-- Old: `r sum(budget$usd[budget$partner == 'BNMT' & budget$key == 'Old'])`
-- New: `r sum(budget$usd[budget$partner == 'BNMT' & budget$key == 'New'])`
-
-## Differences by phase
+## Explanation of differences
 
 ### Overview
 
-- Phase 1: Relative to the previous budget, more money would be allotted for phase 1 (ground operations) in order to account for the fact that it has increased from 6 to 8 months.
+- Phase 1: Due to administrative delays, more money has to be alloted for phase 1 (ground operations) in order to account for the fact that it has increased from 6 to 8 months.
 - Phase 2: Relative to the previous budget, less money has been allotted for phase 2 (air operations) in order to account for the fact that this phase has decreased in duration from 6 to 3 months.
-- Phase 3: There is now a new phase 3 (bridge funding) which would entail 3 additional months (Jun-Aug 2019) of ground/air operations. Funding will be sought for this, but is not guaranteed.
+
 
 ### Visual
 
 ```{r}
 x <- budget %>%
-  filter(partner == 'BNMT') %>%
-  group_by(phase, key) %>%
+  filter(partner == 'WeRobotics',
+         phase <= 2) %>%
+  group_by(source, key) %>%
   summarise(usd = sum(usd))
-left <- expand.grid(phase = 1:3,
+left <- expand.grid(phase = 1:2,
                     key = c('New', 'Old'))
 x <- left_join(left, x)
 x$usd[is.na(x$usd)] <- 0
 x$key <- factor(x$key, levels = c('Old', 'New'))
-
+x$source <- paste0('Funding source:\n', x$source)
 ggplot(data = x,
-       aes(x = phase,
+       aes(x = source,
            y = usd,
            group = key)) +
   geom_bar(stat = 'identity',
@@ -108,25 +101,19 @@ ggplot(data = x,
   geom_label(aes(label = round(usd)),
              position = position_dodge(width = 1)) +
   scale_fill_manual(name = 'Version',
-                    values = c('black','blue')) +
+                    values = make_colors(categorical = FALSE, n = 4)[1:2]) +
   theme_databrew() +
   labs(x = 'Phase',
        y = 'USD')
-x <- x %>% spread(key = phase, value = usd)
-names(x)[1] <- 'Budget version'
-names(x)[2:4] <- paste0('Phase ', names(x)[2:4])
-x %>% kable
 ```
 
 ## Differences by item
 
 ### Overview 
 
-- Phase 1 is largely characterized by increases (due to increasing the period's length from 6 to 8 months), albeit only for on-the-ground / otherwise essential staff (ie, lab / field / district); increases were not made for non-field staff, assuming that they can go on "hiatus" for the 2 month period of August / September (ie, for "hiatus" staff, phase 1 still contains only 6 working months).
+- Changes to phase 1 are largely irrelevant to WeRobotics (since almost all phase 1 operations are carried out by SBU and BNMT).
 
 - Phase 2 is largely characterized by decreases in HR expenditures, due to the reduction in phase length from 6 to 3 months. Equipment and materials costs, as well as the costs of meetings, remain identical. Overhead remains identical (meaning that it's likely too large).
-
-- Phase 3 consists solely of increases (since this phase did not exist before). However, funding for phase 3 is not yet guaranteed.
 
 ### Breakdown
 
@@ -136,8 +123,10 @@ The below shows an itemized comparison between the old and new budgets. Increase
 ```{r}
 right <- 
   budget %>%
-  filter(partner == 'BNMT') %>%
-  group_by(item, phase) %>%
+  filter(partner == 'WeRobotics',
+         phase <= 2) %>%
+  mutate(source = paste0('Funded by ', source)) %>%
+  group_by(item, phase, source) %>%
   summarise(old = sum(usd[key == 'Old']),
             new = sum(usd[key == 'New'])) %>%
   arrange(phase, item) %>%
@@ -163,19 +152,47 @@ k <- kable(right) %>%
 k
 ```
 
+## Phase 3 
+
+Phase 3 is not yet funded. The plan will be to seek "bridge funding" from the current funder at the beginning of phase 2 (April 2019) so as to expand air operations from 3 to 6 months. If this were approved, then total WeRobotics-associated budget would look like the below (very similar to the July proposal):
+
+```{r}
+x <- budget %>%
+  filter(partner == 'WeRobotics',
+         phase <= 3,
+         key == 'New') %>%
+  group_by(source, phase) %>%
+  summarise(usd = sum(usd))
+left <- expand.grid(phase = 1:3,
+                    source = c('WeRobotics', 'SBU'))
+x <- left_join(left, x)
+x$usd[is.na(x$usd)] <- 0
+x$source <- paste0('Funding source:\n', x$source)
+x$phase <- factor(x$phase)
+ggplot(data = x,
+       aes(x = source,
+           y = usd)) +
+  geom_bar(stat = 'identity',
+           alpha = 0.7,
+           position = position_dodge(width = 1)) +
+  facet_wrap(~phase) +
+  geom_label(aes(label = round(usd)),
+             position = position_dodge(width = 1)) +
+  theme_databrew() +
+  theme(legend.position = 'none') +
+  labs(x = 'Phase',
+       y = 'USD') 
+```
+
+
 ## Raw data
 
-
-### Live URLS
-
-- Old (July 2018) budget: https://docs.google.com/spreadsheets/d/10bR5WRcS_jug_bVf-9nmoz0vm_4t0ke4zDF4Z1rlNa4/edit?usp=sharing
-
-- New (August 2018) budget: https://docs.google.com/spreadsheets/d/1wYJ-yuZ3gmCr39dO3Gef0wv8R5pistgP0tOs8FbEcQI/edit#gid=0
 
 ### Old version
 
 ```{r}
-prettify(budget %>% filter(key == 'Old'), 
+prettify(budget %>% filter(partner == 'WeRobotics',
+                           key == 'Old'), 
          download_options = TRUE)
 ```
 
@@ -183,7 +200,19 @@ prettify(budget %>% filter(key == 'Old'),
 
 
 ```{r}
-prettify(budget %>% filter(key == 'New'), 
+prettify(budget %>% filter(partner == 'WeRobotics',
+                           key == 'New',
+                           phase <= 2), 
          download_options = TRUE)
 ```
 
+
+### Full new version (including phase 3)
+
+
+```{r}
+prettify(budget %>% filter(partner == 'WeRobotics',
+                           key == 'New',
+                           phase <= 3), 
+         download_options = TRUE)
+```

@@ -168,10 +168,94 @@ devtools::use_data(elevation_aspect,
 devtools::use_data(elevation_hill,
                    overwrite = TRUE)
 
-# nep2
-nep2@data$elevation_max = raster::extract(x = elevation, y = nep2, fun = max, na.rm = TRUE)
-nep2@data$elevation_avg = raster::extract(x = elevation, y = nep2, fun = mean, na.rm = TRUE)
-spplot(nep2, zcol = 'elevation_max')
+# # nep2
+# nep2@data$elevation_max = raster::extract(x = elevation, y = nep2, fun = max, na.rm = TRUE)
+# nep2@data$elevation_avg = raster::extract(x = elevation, y = nep2, fun = mean, na.rm = TRUE)
+# spplot(nep2, zcol = 'elevation_max')
+
+# Get pyuthan
+pyuthan <- nep2[56,]
+use_data(pyuthan,
+         overwrite = TRUE)
+# Get pyuthan elevation
+# Subset the raster
+r <- nepal::elevation
+r_sub <- crop(r, extent(pyuthan))
+r <- mask(r_sub, pyuthan)
+pyuthan_elevation <- r
+devtools::use_data(pyuthan_elevation,
+                   overwrite = TRUE)
+
+# Get more detailed elevation
+setwd('elevation/')
+# zips <- readLines('TDM90-url-list.txt')
+# zips <- unlist(lapply(strsplit(zips, '/'), function(x){x[8]}))
+# for(i in 1:length(zips)){
+#   this_zip <- zips[i]
+#   unzip(this_zip)
+# }
+dirs <- dir()
+dirs <- dirs[!grepl('.', dirs, fixed = TRUE)]
+out_list <- list()
+for(i in 1:length(dirs)){
+  this_dir <- dirs[i]
+  file_name <- dir(paste0(this_dir, '/DEM'))
+  read_this <- paste0(this_dir, '/DEM/',
+                      file_name)
+  out_list[[i]] <- raster(read_this)
+}
+setwd('..')
+
+final <- out_list[[1]]
+for(i in 2:length(out_list)){
+  final <- merge(final, out_list[[i]])
+}
+# Get rid of bizarre values
+values(final)[values(final) < 0] <- NA
+ra <- final
+cr <- crop(ra, 
+           polygons(nepal::nep0),
+           # extent(nepal0), 
+           snap="out")    
+er <- mask(cr, nepal::nep0)
+elevation_detailed <- er
+devtools::use_data(elevation_detailed,
+                   overwrite = TRUE)
+# Get detailed elevation just for pyuthan
+ra <- elevation_detailed
+cr <- crop(ra, 
+           polygons(pyuthan),
+           # extent(nepal0), 
+           snap="out")    
+er <- mask(cr, pyuthan)
+plot(er)
+# # Make a smaller version of er
+# era <- raster::aggregate(er, fact = 1000, fun = mean)
+# Save
+pyuthan_elevation_detailed <- er
+devtools::use_data(pyuthan_elevation_detailed,
+                   overwrite = TRUE)
+
+# Population
+
+# Read in data
+setwd('population/')
+str_name<-'NPL_ppp_2015_adj_v2.tif' 
+r <- raster(str_name)
+# Subset the raster for nepal
+r_sub <- crop(r, extent(nep0))
+r <- mask(r_sub, nep0)
+population <- r
+devtools::use_data(population,
+                   overwrite = TRUE)
+# Subset the raster for pyuthan
+r_sub <- crop(r, extent(pyuthan))
+r <- mask(r_sub, pyuthan)
+pyuthan_population <- r
+devtools::use_data(pyuthan_population,
+                   overwrite = TRUE)
+
+setwd('..')
 
                                           
 # x <- terrain(elevation, opt = c("slope", "aspect"), unit = "degrees")

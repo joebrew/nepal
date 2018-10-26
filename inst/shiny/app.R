@@ -6,7 +6,9 @@ library(dplyr)
 library(leaflet)
 library(nepal)
 library(raster)
-
+library(databrew)
+library(ggplot2)
+library(ggrepel)
 header <- dashboardHeader(title="Nepal Data Hub")
 sidebar <- dashboardSidebar(
   sidebarMenu(
@@ -14,6 +16,16 @@ sidebar <- dashboardSidebar(
       text="Main",
       tabName="main",
       icon=icon("database")),
+    menuItem(
+      text = 'Pyuthan',
+      tabName = 'pyuthan',
+      icon = icon('map')
+    ),
+    menuItem(
+      text = 'Flight planner',
+      tabName = 'flight_planner',
+      icon = icon('plane')
+    ),
     menuItem(
       text="Atlas",
       tabName="atlas",
@@ -85,6 +97,43 @@ body <- dashboardBody(
         )
       )
     ),
+    tabItem(
+      tabName = 'pyuthan',
+      fluidPage(
+        fluidRow(
+          column(6,
+                 h2('Elevation'),
+                 leafletOutput('pyuthan_elevation')),
+          column(6,
+                 h2('Elevation'),
+                 leafletOutput('pyuthan_elevation_rough'))
+        ),
+        fluidRow(
+          column(6,
+                 h2('Population density'),
+                 leafletOutput('pyuthan_population'))
+        )
+      )
+    ),
+    tabItem(tabName = 'flight_planner',
+            fluidPage(
+              fluidRow(
+              h1('Flight planner'),
+              column(8,
+                     h3('Map tool'),
+                     leafletOutput('flights')),
+              column(4,
+                     h3('Geo-coordinates'),
+                     plotOutput('flight_path_plot'))
+            ),
+            fluidRow(column(12,
+                            h3('Elevation profile'),
+                            plotOutput('flight_path_elevation_plot'))),
+            fluidRow(
+              column(12,
+                     h3('Raw data'),
+                     DT::dataTableOutput('raw_data'))
+            ))),
     tabItem(
       tabName="atlas",
       fluidPage(
@@ -187,6 +236,71 @@ ui <- dashboardPage(header, sidebar, body, skin="blue")
 # Server
 server <- function(input, output) {
   
+  pathx <-reactiveVal(value = 0)
+  pathy <-reactiveVal(value = 0)
+  distance <- reactiveVal(value = 0)
+  
+  flight_path <- reactive({
+    x <- pathx()
+    y <- pathy()
+    if(is.null(x) | length(x) <= 1){
+      return(NULL)
+    } else {
+      # Get distance
+      dr <- data_frame(x,y) 
+      # save(dr,
+      #      file = 'dr.RData')
+      coordinates(dr) <- ~x+y
+      proj4string(dr) <- proj4string(nepal::pyuthan_elevation_detailed)
+      n <- nrow(dr@coords)
+      distances <- rep(0, n)
+      for(i in 2:n){
+        distances[i] <- geosphere::distGeo(dr[(i-1),],
+                                           dr[i,])
+      }
+      distances <- cumsum(distances)
+
+      # Get path
+      expandify <- function(df){
+        new_df <- data_frame(x = seq(df$x[1],
+                                     df$x[2],
+                                     length =  round(df$d[2]) - round(df$d[1])),
+                             y = seq(df$y[1],
+                                     df$y[2],
+                                     length =  round(df$d[2]) - round(df$d[1])),
+                             d = seq(df$d[1],
+                                     df$d[2],
+                                     length =  round(df$d[2]) - round(df$d[1])))
+        return(new_df)
+      }
+      # Get how many coords
+      df <- data_frame(x = x,
+                       y = y,
+                       d = distances)
+      if(nrow(df) == 2){
+        df <- expandify(df)
+      } else {
+        # Need to build for multi stop journey
+        out_list <- list()
+        for(i in 1:(nrow(df) - 1)){
+          out_list[[i]] <- expandify(df[i:(i+1),])
+        }
+        df <- bind_rows(out_list)
+      }
+      # Get elevation
+      print('FLIGHT PATH IS')
+      print(head(df))
+      df_data<- df
+      coordinates(df) <- ~x+y
+      proj4string(df) <- proj4string(nepal::pyuthan_elevation_detailed)
+      values <- raster::extract(nepal::pyuthan_elevation_detailed,
+                                y = df)
+      df <- df_data
+      df$elevation <- values
+    }
+    return(df)
+  })
+  
   output$leaf <- renderLeaflet({
     leaflet() %>%
       addProviderTiles('OpenTopoMap') %>%
@@ -206,6 +320,244 @@ server <- function(input, output) {
                                 ', Population: ',
                                 nepal::cities_sp@data$pop)) 
   })
+  
+  output$pyuthan_elevation <- renderLeaflet({
+    
+    r <- pyuthan_elevation_detailed
+    # cols <- c("#0C2C84", "#41B6C4", 'brown', "#FFFFCC")
+    cols <- rainbow(10)
+    pal <- colorNumeric(cols, values(r),
+                        na.color = "transparent")
+    
+    leaflet() %>% addTiles() %>%
+
+      addRasterImage(r, colors = pal, opacity = 0.8) %>%
+      addLegend(pal = pal, values = values(r),
+                title = "Elevation") 
+    
+  })
+  
+  output$flights <- renderLeaflet({
+    require(leaflet.extras)
+    
+    r <- pyuthan_elevation_detailed
+    # cols <- c("#0C2C84", "#41B6C4", 'brown', "#FFFFCC")
+    cols <- rainbow(10)
+    pal <- colorNumeric(cols, values(r),
+                        na.color = "transparent")
+    
+    mydrawPolylineOptions <- function (allowIntersection = TRUE, 
+                                       drawError = list(color = "#b00b00", timeout = 2500), 
+                                       guidelineDistance = 20, metric = TRUE, feet = FALSE, zIndexOffset = 2000, 
+                                       shapeOptions = drawShapeOptions(fill = FALSE), repeatMode = FALSE) {
+      leaflet::filterNULL(list(allowIntersection = allowIntersection, 
+                               drawError = drawError, guidelineDistance = guidelineDistance, 
+                               metric = metric, feet = feet, zIndexOffset = zIndexOffset,
+                               shapeOptions = shapeOptions,  repeatMode = repeatMode)) }
+    
+    leaflet() %>% 
+      addProviderTiles(providers$OpenTopoMap) %>%
+      addProviderTiles(providers$Hydda.RoadsAndLabels, group = 'Place names', options = providerTileOptions(zIndex = 1000000)) %>%
+      addProviderTiles(providers$Esri.WorldImagery,
+                       group = 'Satellite') %>%
+      # add graticules from a NOAA webserver
+      addWMSTiles(
+        "https://gis.ngdc.noaa.gov/arcgis/services/graticule/MapServer/WMSServer/",
+        layers = c("1-degree grid", "5-degree grid"),
+        options = WMSTileOptions(format = "image/png8", transparent = TRUE),
+        attribution = NULL,group = 'Graticules') %>%
+      addRasterImage(r, colors = pal, opacity = 0.6) %>%
+      addLegend(pal = pal, values = values(r),
+                position = 'bottomleft',
+                title = "Elevation") %>%
+      # addSearchOSM() %>%
+      # addSearchGoogle() %>%
+      addDrawToolbar(
+        polylineOptions = mydrawPolylineOptions(metric=TRUE, feet=FALSE),
+        editOptions=editToolbarOptions(edit = FALSE,
+                                       remove = TRUE,
+                                       selectedPathOptions=selectedPathOptions()),
+        # editOptions = TRU,
+        polygonOptions = FALSE,
+        circleOptions = FALSE,
+        rectangleOptions = FALSE,
+        markerOptions = FALSE,
+        circleMarkerOptions = FALSE) %>%
+        addResetMapButton() %>%
+      addLayersControl(overlayGroups = c('Place names',
+                                         'Graticules',
+                                         'Satellite',
+                                         'District borders',
+                                         'Day/Night'),
+                       options = layersControlOptions(collapsed = FALSE),
+                       position = 'bottomright') %>%
+      addTerminator(group = 'Day/Night') %>%
+      hideGroup(c('Place names')) %>%
+      hideGroup(c('Graticules')) %>%
+      hideGroup(c('Satellite')) %>%
+      hideGroup(c('Day/Night')) %>%
+      addPolylines(data = nepal::pyuthan,
+                   color = 'red',
+                   weight = 2,
+                   group = 'District borders') %>%
+      addScaleBar(position = 'topright') %>%
+      addMiniMap(
+        tiles = providers$Esri.WorldStreetMap,
+        toggleDisplay = TRUE) %>%
+      addEasyButton(easyButton(
+        icon="fa-crosshairs", title="Locate Me",
+        onClick=JS("function(btn, map){ map.locate({setView: true}); }")))
+    
+    
+      
+  })
+  
+  # observeEvent(input$flights_marker_click, {
+  #   print('MARKER CLICK')
+  #   print(input$flights_marker_click)
+  # })
+  observeEvent(input$flights_draw_new_feature, {
+    print('DRAW NEW FEATURE')
+    drawn_coordinates <- input$flights_draw_new_feature$geometry$coordinates
+    drawn_coordinates <- unlist(drawn_coordinates)
+    print(drawn_coordinates)
+    if(!is.null(drawn_coordinates)){
+      if(length(drawn_coordinates) >= 2){
+        x <- drawn_coordinates[seq(1, length(drawn_coordinates), 2)]
+        y <- drawn_coordinates[seq(2, length(drawn_coordinates), 2)]
+        pathx(x)
+        pathy(y)  
+      }    
+    }
+
+    # print(input$flights_draw_new_feature)
+  })
+  
+  output$raw_data <- DT::renderDataTable({
+    df <- flight_path()
+    if(!is.null(df)){
+      if(nrow(df) > 0){
+        df <- df %>%
+          dplyr::rename(longitude = x,
+                        latitude = y,
+                        distance = d)
+        df$distance<- round(df$distance)
+        databrew::prettify(df,
+                           download_options = TRUE,
+                           round_digits = 5)
+      }
+    }
+  })
+  
+  output$flight_path_plot <- renderPlot({
+    df <- flight_path()
+    if(!is.null(df)){
+      if(nrow(df) > 0){
+        df$n <- 1:nrow(df)
+        extremes <- 
+          df %>%
+          filter(n == max(n) |
+                   n == min(n) |
+                   elevation == max(elevation) |
+                   elevation == min(elevation))
+        extremes <- extremes %>%
+          mutate(label = ifelse(n == min(n), 'Start location',
+                                ifelse(n == max(n), 'End location',
+                                       ifelse(elevation == max(elevation), 'High point',
+                                              ifelse(elevation == min(elevation), 'Low point', NA)))))
+        extremes <- extremes %>%
+          dplyr::distinct(label,
+                          .keep_all = TRUE)
+        ggplot(data = df,
+               aes(x = x, y = y)) +
+          geom_path() +
+          theme_databrew() +
+          labs(x = "Longitude", y = 'Latitude') +
+          geom_point(data = extremes,
+                     aes(x = x,
+                         y = y)) +
+          geom_label_repel(data = extremes,
+                     aes(x = x,
+                         y = y,
+                         label = label))
+      }
+    }
+  })
+  
+  output$flight_path_elevation_plot <- renderPlot({
+    df <- flight_path()
+    
+    if(!is.null(df)){
+      if(nrow(df) > 0){
+        df$n <- 1:nrow(df)
+        
+        extremes <- 
+          df %>%
+          filter(n == max(n) |
+                   n == min(n) |
+                   elevation == max(elevation) |
+                   elevation == min(elevation))
+        extremes <- extremes %>%
+          mutate(label = ifelse(n == min(n), 'Start location',
+                                ifelse(n == max(n), 'End location',
+                                       ifelse(elevation == max(elevation), 'High point',
+                                              ifelse(elevation == min(elevation), 'Low point', NA)))))
+        extremes <- extremes %>%
+          dplyr::distinct(label,
+                          .keep_all = TRUE)    
+        
+        # save(extremes,
+        #      file = 'extremes.RData')
+        
+        ggplot(data = df,
+               aes(x = d, y = elevation)) +
+          geom_line() +
+          geom_area(fill = 'darkorange',
+                    alpha = 0.5) +
+          theme_databrew() +
+          labs(x = 'Distance (meters)',
+               y = 'Elevation (meters)') +
+          geom_vline(xintercept = extremes$d[extremes$label %in% c('High point', 'Low point')],
+                     alpha = 0.6,
+                     lty = 2) +
+          geom_label(data = extremes %>%
+                       filter(label %in% c('High point', 'Low point')),
+                     aes(x = d,
+                         y = 0,
+                         label = label))
+      }
+    }
+  })
+  
+  output$pyuthan_elevation_rough <- renderLeaflet({
+    
+    r <- pyuthan_elevation
+    # cols <- c("#0C2C84", "#41B6C4", 'brown', "#FFFFCC")
+    cols <- rainbow(10)
+    pal <- colorNumeric(cols, values(r),
+                        na.color = "transparent")
+    
+    leaflet() %>% addTiles() %>%
+      addRasterImage(r, colors = pal, opacity = 0.8) %>%
+      addLegend(pal = pal, values = values(r),
+                title = "Elevation") 
+    
+  })
+  
+  output$pyuthan_population <- renderLeaflet({
+    
+    r <- pyuthan_population
+    cols <- c(rainbow(10))#  "#41B6C4", 'brown', "#FFFFCC")
+    pal <- colorNumeric(cols, values(r),
+                        na.color = "transparent")
+    
+    leaflet() %>% addTiles() %>%
+      addRasterImage(r, colors = pal, opacity = 0.8) %>%
+      addLegend(pal = pal, values = values(r),
+                title = "Population")
+    
+  })
+  
   output$leaf_elevation <- renderLeaflet({
     pal <- colorNumeric(c('darkgreen', 'red', 'yellow'), values(elevation_raster_small),
                         na.color = "transparent")
@@ -215,7 +567,7 @@ server <- function(input, output) {
       # addProviderTiles('Esri.NatGeoWorldMap') %>%
       addRasterImage(elevation_raster_small, colors = pal, opacity = 0.8) %>%
       addLegend(pal = pal, values = values(elevation_raster_small),
-                title = "Elevation")
+                title = "Elevation") 
   })
   output$leaf_misc <- renderLeaflet({
     leaflet() %>%

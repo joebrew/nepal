@@ -1,0 +1,78 @@
+---
+output:
+  html_document:
+    theme: united
+    highlight: tango
+---
+
+
+
+
+```{r setup, include=FALSE}
+options(scipen=999)
+
+library(knitr)
+# Basic knitr options
+opts_chunk$set(comment = NA, 
+               echo = FALSE, 
+               warning = FALSE, 
+               message = FALSE, 
+               error = TRUE, 
+               cache = F,
+               fig.width = 7,
+               fig.height = 5)
+knit_engines$set(asis = function(options) {
+  if (options$echo && options$eval) knit_child(text = options$code)
+})
+```
+
+```{r}
+library(leaflet)
+library(leaflet.extras)
+library(sp)
+library(raster)
+library(ggmap)
+library(dplyr)
+library(maptools)
+library(rgdal)
+library(RColorBrewer)
+library(googlesheets)
+library(knitr)
+library(tidyr)
+library(databrew)
+library(readr)
+# budget <- gs_title('Nepal DrOTS BNMT budget comparison')
+# budget <- gs_read(budget)
+
+budget <- read_csv('budget_data/pre_irb_request.csv')
+
+```
+
+# Pre-IRB budget request {.tabset .tabset-fade} 
+
+<img src="img/mountains_small.png" alt="logo" width='100%' style="float: center;align:center;">
+
+
+## Total
+
+`r scales::comma(sum(round(budget$usd)))` US dollars.
+
+## Breakdown by category
+
+```{r}
+x <- budget %>%
+  group_by(Category = jeanne_category) %>%
+  summarise(USD = sum(usd))
+kable(x)
+```
+
+## Itemized details
+
+```{r}
+prettify(budget %>%
+           dplyr::select(partner, item, usd, details, jeanne_category) %>%
+           dplyr::rename(category = jeanne_category,
+                         USD = usd),
+         nrows = nrow(budget),
+         download_options = TRUE)
+```
