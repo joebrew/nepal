@@ -1,0 +1,143 @@
+---
+title: "Flight Path"
+params:
+  fp: NA
+  dir: NA
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)# Basic knitr options
+opts_chunk$set(comment = NA, 
+               echo = FALSE, 
+               warning = FALSE, 
+               message = FALSE, 
+               error = TRUE, 
+               cache = F,
+               fig.height = 6,
+               fig.width = 8)
+# knit_engines$set(asis = function(options) {
+#   if (options$echo && options$eval) knit_child(text = options$code)
+# })
+```
+
+
+```{r}
+# Specify paramaters
+for (i in 1:length(params)){
+  assign(names(params)[i],
+         params[[i]],
+         env = .GlobalEnv)
+}
+library(ggplot2)
+library(databrew)
+library(extrafont)
+library(ggmap)
+library(nepal)
+extrafont::loadfonts()
+fp <- params$fp
+dir <- params$dir
+source(paste0(dir, '/global.R'))
+```
+
+
+# Flight overview
+
+```{r}
+pyuthan_fortified <- fortify(pyuthan, id = OBJECTID)
+nepal_fortified <- fortify(nep0, id = OBJECTID)
+g1 <- ggplot(data = nepal_fortified,
+       aes(x = long,
+           y = lat)) +
+  geom_polygon() +
+  theme_databrew() +
+  coord_map() +
+  theme(axis.text = element_blank(),
+        axis.title = element_blank()) +
+  geom_polygon(data = pyuthan_fortified,
+               aes(x = long,
+                   y = lat),
+               fill = 'darkorange') +
+  geom_path(data = fp,
+            aes(x = x,
+                y = y),
+            color = 'darkorange') +
+  labs(title = 'Nepal')
+g2 <-  ggplot(data = pyuthan_fortified,
+       aes(x = long,
+           y = lat)) +
+  geom_polygon() +
+  geom_path(data = fp,
+            aes(x = x,
+                y = y),
+            color = 'darkorange') +
+  theme_databrew() +
+  coord_map() +
+  theme(axis.text = element_blank(),
+        axis.title = element_blank()) +
+  labs(title = 'Pyuthan district')
+Rmisc::multiplot(g1, g2, cols = 2)
+```
+
+# Flight path
+
+```{r}
+make_flight_path_plot(df = fp)
+```
+
+# Flight elevation profile
+
+```{r}
+make_flight_path_elevation_plot(df = fp)
+```
+
+# Population centers
+
+```{r}
+library(ggthemes)
+test_spdf <- as(nepal::pyuthan_population, "SpatialPixelsDataFrame")
+test_df <- as.data.frame(test_spdf)
+colnames(test_df) <- c("value", "x", "y")
+ggplot() +  
+  geom_tile(data=test_df, aes(x=x, y=y, fill=value), alpha=0.8) + 
+  # scale_fill_viridis() +
+  coord_equal() +
+  theme_map() +
+  theme(legend.position="bottom") +
+  theme(legend.key.width=unit(2, "cm")) +
+  scale_fill_gradientn(colours = terrain.colors(10),
+                       limits=c(0,ceiling(max(test_df$value))),  
+                 space = "Lab",name=paste("People per\nSquared Km. \n"),na.value = NA) +
+  geom_path(data = fp,
+            aes(x = x,
+                y = y),
+            color = 'darkorange')
+```
+
+# Satellite map
+
+```{r}
+# r <- pyuthan_elevation_detailed
+library(mapview)
+m <- 
+leaflet() %>% 
+      # addProviderTiles(providers$OpenTopoMap) %>%
+      addProviderTiles(providers$Esri.WorldImagery) %>%
+      # addRasterImage(r, colors = pal, opacity = 0.6) %>%
+      # addLegend(pal = pal, values = values(r),
+      #           position = 'bottomleft',
+      #           title = "Elevation") %>%
+      # addPolylines(data = nepal::pyuthan,
+      #              color = 'red',
+      #              weight = 2,
+      #              group = 'District borders') %>%
+      addScaleBar(position = 'topright') %>%
+  addPolylines(data = fp,
+               lng = ~x,
+               lat = ~y)
+    
+mapshot(m, file = paste0(getwd(), "/map.png"),
+        remove_controls = c('homeButton', 'layersControl'))
+```
+
+\includegraphics{map}

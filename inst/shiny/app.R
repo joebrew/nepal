@@ -6,12 +6,20 @@ library(dplyr)
 library(leaflet)
 library(nepal)
 library(raster)
-library(databrew)
 library(ggplot2)
 library(ggrepel)
+library(DT)
+library(RColorBrewer)
+library(databrew)
+library(geosphere)
+source('global.R')
 header <- dashboardHeader(title="Nepal Data Hub")
 sidebar <- dashboardSidebar(
   sidebarMenu(
+    menuItem(
+      text = 'Flight planner',
+      tabName = 'flight_planner',
+      icon = icon('plane')),
     menuItem(
       text="Main",
       tabName="main",
@@ -20,11 +28,6 @@ sidebar <- dashboardSidebar(
       text = 'Pyuthan',
       tabName = 'pyuthan',
       icon = icon('map')
-    ),
-    menuItem(
-      text = 'Flight planner',
-      tabName = 'flight_planner',
-      icon = icon('plane')
     ),
     menuItem(
       text="Atlas",
@@ -123,8 +126,7 @@ body <- dashboardBody(
                      h3('Map tool'),
                      leafletOutput('flights')),
               column(4,
-                     h3('Geo-coordinates'),
-                     plotOutput('flight_path_plot'))
+                     uiOutput('geo_coordinates_ui'))
             ),
             fluidRow(column(12,
                             h3('Elevation profile'),
@@ -337,6 +339,59 @@ server <- function(input, output) {
     
   })
   
+  
+  output$report <- downloadHandler(
+    # For PDF output, change this to "report.pdf"
+    filename = "report.pdf",
+    content = function(file) {
+      # Copy the report file to a temporary directory before processing it, in
+      # case we don't have write permissions to the current working dir (which
+      # can happen when deployed).
+      tempReport <- file.path(tempdir(), "report.Rmd")
+      file.copy("report.Rmd", tempReport, overwrite = TRUE)
+      
+      # Set up parameters to pass to Rmd document
+      params <- list(fp = flight_path(),
+                     dir = getwd())
+      
+      # Knit the document, passing in the `params` list, and eval it in a
+      # child of the global environment (this isolates the code in the document
+      # from the code in this app).
+      rmarkdown::render(tempReport, output_file = file,
+                        params = params,
+                        envir = new.env(parent = globalenv())
+      )
+    }
+  )
+
+  output$geo_coordinates_ui <- renderUI({
+    fp <- flight_path()
+    print(head(fp))
+    ok <- FALSE
+    if(!is.null(fp)){
+      if(nrow(fp) > 1){
+        ok <- TRUE 
+      }
+    }
+    if(ok){
+      fluidPage(
+        fluidRow(
+          h3('Download report'),
+          downloadButton('report', 'Download report.', width = '100%'),
+          h3('Geo-coordinates'),
+          plotOutput('flight_path_plot')
+        )
+      )
+    } else {
+      fluidPage(
+        fluidRow(
+          h3('Geo-coordinates'),
+          h5('First create a flight path on the map.')
+        )
+      ) 
+    }
+  })
+  
   output$flights <- renderLeaflet({
     require(leaflet.extras)
     
@@ -360,6 +415,8 @@ server <- function(input, output) {
       addProviderTiles(providers$Hydda.RoadsAndLabels, group = 'Place names', options = providerTileOptions(zIndex = 1000000)) %>%
       addProviderTiles(providers$Esri.WorldImagery,
                        group = 'Satellite') %>%
+      addProviderTiles(providers$OpenStreetMap,
+                       group = 'OSM') %>%
       # add graticules from a NOAA webserver
       addWMSTiles(
         "https://gis.ngdc.noaa.gov/arcgis/services/graticule/MapServer/WMSServer/",
@@ -387,6 +444,7 @@ server <- function(input, output) {
       addLayersControl(overlayGroups = c('Place names',
                                          'Graticules',
                                          'Satellite',
+                                         'OSM',
                                          'District borders',
                                          'Day/Night'),
                        options = layersControlOptions(collapsed = FALSE),
@@ -395,6 +453,7 @@ server <- function(input, output) {
       hideGroup(c('Place names')) %>%
       hideGroup(c('Graticules')) %>%
       hideGroup(c('Satellite')) %>%
+      hideGroup(c('OSM')) %>%
       hideGroup(c('Day/Night')) %>%
       addPolylines(data = nepal::pyuthan,
                    color = 'red',
@@ -453,33 +512,7 @@ server <- function(input, output) {
     df <- flight_path()
     if(!is.null(df)){
       if(nrow(df) > 0){
-        df$n <- 1:nrow(df)
-        extremes <- 
-          df %>%
-          filter(n == max(n) |
-                   n == min(n) |
-                   elevation == max(elevation) |
-                   elevation == min(elevation))
-        extremes <- extremes %>%
-          mutate(label = ifelse(n == min(n), 'Start location',
-                                ifelse(n == max(n), 'End location',
-                                       ifelse(elevation == max(elevation), 'High point',
-                                              ifelse(elevation == min(elevation), 'Low point', NA)))))
-        extremes <- extremes %>%
-          dplyr::distinct(label,
-                          .keep_all = TRUE)
-        ggplot(data = df,
-               aes(x = x, y = y)) +
-          geom_path() +
-          theme_databrew() +
-          labs(x = "Longitude", y = 'Latitude') +
-          geom_point(data = extremes,
-                     aes(x = x,
-                         y = y)) +
-          geom_label_repel(data = extremes,
-                     aes(x = x,
-                         y = y,
-                         label = label))
+        make_flight_path_plot(df = df)
       }
     }
   })
@@ -489,42 +522,10 @@ server <- function(input, output) {
     
     if(!is.null(df)){
       if(nrow(df) > 0){
-        df$n <- 1:nrow(df)
         
-        extremes <- 
-          df %>%
-          filter(n == max(n) |
-                   n == min(n) |
-                   elevation == max(elevation) |
-                   elevation == min(elevation))
-        extremes <- extremes %>%
-          mutate(label = ifelse(n == min(n), 'Start location',
-                                ifelse(n == max(n), 'End location',
-                                       ifelse(elevation == max(elevation), 'High point',
-                                              ifelse(elevation == min(elevation), 'Low point', NA)))))
-        extremes <- extremes %>%
-          dplyr::distinct(label,
-                          .keep_all = TRUE)    
+        make_flight_path_elevation_plot(df = df)
         
-        # save(extremes,
-        #      file = 'extremes.RData')
         
-        ggplot(data = df,
-               aes(x = d, y = elevation)) +
-          geom_line() +
-          geom_area(fill = 'darkorange',
-                    alpha = 0.5) +
-          theme_databrew() +
-          labs(x = 'Distance (meters)',
-               y = 'Elevation (meters)') +
-          geom_vline(xintercept = extremes$d[extremes$label %in% c('High point', 'Low point')],
-                     alpha = 0.6,
-                     lty = 2) +
-          geom_label(data = extremes %>%
-                       filter(label %in% c('High point', 'Low point')),
-                     aes(x = d,
-                         y = 0,
-                         label = label))
       }
     }
   })
