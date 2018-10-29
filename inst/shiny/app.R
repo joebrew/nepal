@@ -248,6 +248,7 @@ ui <- dashboardPage(header, sidebar, body, skin="blue")
 # Server
 server <- function(input, output) {
   
+  
   pathx <-reactiveVal(value = 0)
   pathy <-reactiveVal(value = 0)
   distance <- reactiveVal(value = 0)
@@ -263,7 +264,16 @@ server <- function(input, output) {
       # save(dr,
       #      file = 'dr.RData')
       coordinates(dr) <- ~x+y
-      proj4string(dr) <- proj4string(nepal::pyuthan_elevation_detailed)
+      ic <- input$country
+      if(is.null(ic)){
+        return(NULL)
+      }
+      if(ic == 'Nepal'){
+        proj4string(dr) <- proj4string(nepal::pyuthan_elevation_detailed)
+      } else {
+        proj4string(dr) <- proj4string(nepal::fiana_elevation_detailed)
+        
+      }
       n <- nrow(dr@coords)
       distances <- rep(0, n)
       for(i in 2:n){
@@ -304,11 +314,23 @@ server <- function(input, output) {
       print(head(df))
       df_data<- df
       coordinates(df) <- ~x+y
-      proj4string(df) <- proj4string(nepal::pyuthan_elevation_detailed)
-      values <- raster::extract(nepal::pyuthan_elevation_detailed,
+      
+
+      if(ic == 'Nepal'){
+        proj4string(df) <- proj4string(nepal::pyuthan_elevation_detailed)
+        values <- raster::extract(nepal::pyuthan_elevation_detailed,
+                                  y = df)
+        pops <- raster::extract(nepal::pyuthan_population,
                                 y = df)
-      pops <- raster::extract(nepal::pyuthan_population,
+      } else {
+        proj4string(df) <- proj4string(nepal::fiana_elevation_detailed)
+        values <- raster::extract(nepal::fiana_elevation_detailed,
+                                  y = df)
+        pops <- raster::extract(nepal::fiana_population,
                                 y = df)
+        
+      }
+      
       df <- df_data
       df$elevation <- values
       df$population <- pops
@@ -384,7 +406,8 @@ server <- function(input, output) {
       
       # Set up parameters to pass to Rmd document
       params <- list(fp = flight_path(),
-                     dir = getwd())
+                     dir = getwd(),
+                     country = input$country)
       
       # Knit the document, passing in the `params` list, and eval it in a
       # child of the global environment (this isolates the code in the document
@@ -427,7 +450,18 @@ server <- function(input, output) {
   output$flights <- renderLeaflet({
     require(leaflet.extras)
     
-    r <- pyuthan_elevation_detailed
+    ic <- input$country
+    if(is.null(ic)){
+      return(NULL)
+    }
+    if(ic == 'Nepal'){
+      r <- pyuthan_elevation_detailed
+      district_borders <- nepal::pyuthan
+    } else {
+      r <- fiana_elevation_small
+      district_borders <- nepal::fiana
+    }
+    
     # cols <- c("#0C2C84", "#41B6C4", 'brown', "#FFFFCC")
     cols <- rainbow(10)
     pal <- colorNumeric(cols, values(r),
@@ -487,7 +521,7 @@ server <- function(input, output) {
       hideGroup(c('Satellite')) %>%
       hideGroup(c('OSM')) %>%
       hideGroup(c('Day/Night')) %>%
-      addPolylines(data = nepal::pyuthan,
+      addPolylines(data = district_borders,
                    color = 'red',
                    weight = 2,
                    group = 'District borders') %>%

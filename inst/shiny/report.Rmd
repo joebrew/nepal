@@ -3,6 +3,7 @@ title: "Flight Path"
 params:
   fp: NA
   dir: NA
+  country: 'Nepal'
 output: pdf_document
 ---
 
@@ -39,6 +40,7 @@ library(ggthemes)
 extrafont::loadfonts()
 fp <- params$fp
 dir <- params$dir
+country <- params$country
 source(paste0(dir, '/global.R'))
 ```
 
@@ -46,9 +48,23 @@ source(paste0(dir, '/global.R'))
 # Flight overview
 
 ```{r, fig.width = 6,fig.height = 3}
-pyuthan_fortified <- fortify(pyuthan, id = OBJECTID)
-nepal_fortified <- fortify(nep0, id = OBJECTID)
-g1 <- ggplot(data = nepal_fortified,
+if(country == 'Nepal'){
+  pyuthan_fortified <- fortify(pyuthan, id = OBJECTID)
+  nepal_fortified <- fortify(nep0, id = OBJECTID)
+  district_fortified <- pyuthan_fortified
+  country_fortified <- nepal_fortified
+  district_name <- 'Pyuthan'
+  country_name <- 'Nepal'
+} else {
+  fiana_fortified <- fortify(fiana, id = OBJECTID)
+  madagascar_fortified <- fortify(mdg0, id = OBJECTID)
+  district_fortified <- fiana_fortified
+  country_fortified <- madagascar_fortified
+  district_name <- 'Fianarantsoa'
+  country_name <- 'Madagascar'
+}
+
+g1 <- ggplot(data = district_fortified,
        aes(x = long,
            y = lat)) +
   geom_polygon() +
@@ -56,7 +72,7 @@ g1 <- ggplot(data = nepal_fortified,
   coord_map() +
   theme(axis.text = element_blank(),
         axis.title = element_blank()) +
-  geom_polygon(data = pyuthan_fortified,
+  geom_polygon(data = district_fortified,
                aes(x = long,
                    y = lat),
                fill = 'darkorange') +
@@ -64,8 +80,8 @@ g1 <- ggplot(data = nepal_fortified,
             aes(x = x,
                 y = y),
             color = 'black') +
-  labs(title = 'Nepal')
-g2 <-  ggplot(data = pyuthan_fortified,
+  labs(title = country_name)
+g2 <-  ggplot(data = district_fortified,
        aes(x = long,
            y = lat)) +
   geom_polygon() +
@@ -77,7 +93,7 @@ g2 <-  ggplot(data = pyuthan_fortified,
   coord_map() +
   theme(axis.text = element_blank(),
         axis.title = element_blank()) +
-  labs(title = 'Pyuthan district')
+  labs(title = district_name)
 Rmisc::multiplot(g1, g2, cols = 2)
 ```
 
@@ -92,7 +108,12 @@ make_flight_path_plot(df = fp)
 
 ```{r, fig.width = 6,fig.height = 4, fig.align='center'}
 library(ggthemes)
-test_spdf <- as(nepal::pyuthan_elevation_detailed, "SpatialPixelsDataFrame")
+if(country == 'Nepal'){
+  test_spdf <- as(nepal::pyuthan_elevation_detailed, "SpatialPixelsDataFrame")
+} else {
+  test_spdf <- as(nepal::fiana_elevation_detailed, "SpatialPixelsDataFrame")
+}
+
 test_df <- as.data.frame(test_spdf)
 colnames(test_df) <- c("value", "x", "y")
 ggplot() +  

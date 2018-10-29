@@ -110,3 +110,5 @@ make_flight_path_population_plot <- function(df){
                    label = label),
               alpha = 0.7)
 }
+
+fiana_elevation_small <- raster::aggregate(fiana_elevation_detailed, fact = 5, fun = mean)
