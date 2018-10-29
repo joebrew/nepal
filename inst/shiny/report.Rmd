@@ -14,8 +14,8 @@ opts_chunk$set(comment = NA,
                message = FALSE, 
                error = TRUE, 
                cache = F,
-               fig.height = 6,
-               fig.width = 8)
+               fig.height = 4,
+               fig.width = 5)
 # knit_engines$set(asis = function(options) {
 #   if (options$echo && options$eval) knit_child(text = options$code)
 # })
@@ -34,6 +34,8 @@ library(databrew)
 library(extrafont)
 library(ggmap)
 library(nepal)
+library(ggthemes)
+
 extrafont::loadfonts()
 fp <- params$fp
 dir <- params$dir
@@ -43,7 +45,7 @@ source(paste0(dir, '/global.R'))
 
 # Flight overview
 
-```{r}
+```{r, fig.width = 6,fig.height = 3}
 pyuthan_fortified <- fortify(pyuthan, id = OBJECTID)
 nepal_fortified <- fortify(nep0, id = OBJECTID)
 g1 <- ggplot(data = nepal_fortified,
@@ -61,7 +63,7 @@ g1 <- ggplot(data = nepal_fortified,
   geom_path(data = fp,
             aes(x = x,
                 y = y),
-            color = 'darkorange') +
+            color = 'black') +
   labs(title = 'Nepal')
 g2 <-  ggplot(data = pyuthan_fortified,
        aes(x = long,
@@ -81,20 +83,45 @@ Rmisc::multiplot(g1, g2, cols = 2)
 
 # Flight path
 
-```{r}
+```{r, fig.width = 4,fig.height = 3, fig.align='center'}
 make_flight_path_plot(df = fp)
 ```
 
+# Elevation
+
+
+```{r, fig.width = 6,fig.height = 4, fig.align='center'}
+library(ggthemes)
+test_spdf <- as(nepal::pyuthan_elevation_detailed, "SpatialPixelsDataFrame")
+test_df <- as.data.frame(test_spdf)
+colnames(test_df) <- c("value", "x", "y")
+ggplot() +  
+  geom_tile(data=test_df, aes(x=x, y=y, fill=value), alpha=0.8) + 
+  # scale_fill_viridis() +
+  coord_equal() +
+  theme_map() +
+  theme(legend.position="bottom") +
+  theme(legend.key.width=unit(2, "cm")) +
+  scale_fill_gradientn(colours = terrain.colors(10),
+                       limits=c(0,ceiling(max(test_df$value))),  
+                 space = "Lab",name=paste("Meters \n"),na.value = NA) +
+  geom_path(data = fp,
+            aes(x = x,
+                y = y),
+            color = 'darkorange')
+```
+
+
 # Flight elevation profile
 
-```{r}
+```{r, fig.width = 6,fig.height = 4}
 make_flight_path_elevation_plot(df = fp)
 ```
 
-# Population centers
 
-```{r}
-library(ggthemes)
+# Flown-over population density
+
+```{r, fig.width = 6,fig.height = 4, fig.align='center'}
 test_spdf <- as(nepal::pyuthan_population, "SpatialPixelsDataFrame")
 test_df <- as.data.frame(test_spdf)
 colnames(test_df) <- c("value", "x", "y")
@@ -114,13 +141,17 @@ ggplot() +
             color = 'darkorange')
 ```
 
+```{r, fig.width = 6,fig.height = 4, fig.align='center'}
+make_flight_path_population_plot(df = fp)
+```
+
 # Satellite map
 
-```{r}
+```{r, fig.width = 6,fig.height = 4}
 # r <- pyuthan_elevation_detailed
 library(mapview)
 m <- 
-leaflet() %>% 
+leaflet(options = leafletOptions(zoomControl = FALSE)) %>% 
       # addProviderTiles(providers$OpenTopoMap) %>%
       addProviderTiles(providers$Esri.WorldImagery) %>%
       # addRasterImage(r, colors = pal, opacity = 0.6) %>%
@@ -137,7 +168,8 @@ leaflet() %>%
                lat = ~y)
     
 mapshot(m, file = paste0(getwd(), "/map.png"),
-        remove_controls = c('homeButton', 'layersControl'))
+        remove_controls = c("zoomControl", "layersControl", "homeButton",
+  "scaleBar"))
 ```
 
 \includegraphics{map}

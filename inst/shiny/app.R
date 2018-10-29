@@ -120,22 +120,32 @@ body <- dashboardBody(
     ),
     tabItem(tabName = 'flight_planner',
             fluidPage(
-              fluidRow(
-              h1('Flight planner'),
-              column(8,
-                     h3('Map tool'),
-                     leafletOutput('flights')),
-              column(4,
-                     uiOutput('geo_coordinates_ui'))
-            ),
-            fluidRow(column(12,
-                            h3('Elevation profile'),
-                            plotOutput('flight_path_elevation_plot'))),
-            fluidRow(
-              column(12,
-                     h3('Raw data'),
-                     DT::dataTableOutput('raw_data'))
-            ))),
+              fluidRow(column(4,
+                              h1('Flight planner')),
+                       column(6,
+                              selectInput('country',
+                                          'Country',
+                                          choices = c('Nepal', 'Madagascar')))),
+                               fluidPage(
+                                 column(8,
+                                        h3('Map tool'),
+                                        leafletOutput('flights')),
+                                 column(4,
+                                        uiOutput('geo_coordinates_ui'))
+                               ),
+                               fluidRow(column(6,
+                                               h3('Elevation profile'),
+                                               plotOutput('flight_path_elevation_plot')),
+                                        column(6,
+                                               h3('Population density profile'),
+                                               plotOutput('flight_path_population_plot'))),
+                               fluidRow(
+                                 column(12,
+                                        h3('Raw data'),
+                                        DT::dataTableOutput('raw_data'))
+                               )
+                               )
+             ),
     tabItem(
       tabName="atlas",
       fluidPage(
@@ -297,12 +307,34 @@ server <- function(input, output) {
       proj4string(df) <- proj4string(nepal::pyuthan_elevation_detailed)
       values <- raster::extract(nepal::pyuthan_elevation_detailed,
                                 y = df)
+      pops <- raster::extract(nepal::pyuthan_population,
+                                y = df)
       df <- df_data
       df$elevation <- values
+      df$population <- pops
     }
     return(df)
   })
-  
+
+  # observeEvent(input$flights_marker_click, {
+  #   print('MARKER CLICK')
+  #   print(input$flights_marker_click)
+  # })
+  observeEvent(input$flights_draw_new_feature, {
+    print('DRAW NEW FEATURE')
+    drawn_coordinates <- input$flights_draw_new_feature$geometry$coordinates
+    drawn_coordinates <- unlist(drawn_coordinates)
+    print(drawn_coordinates)
+    if(!is.null(drawn_coordinates)){
+      if(length(drawn_coordinates) >= 2){
+        x <- drawn_coordinates[seq(1, length(drawn_coordinates), 2)]
+        y <- drawn_coordinates[seq(2, length(drawn_coordinates), 2)]
+        pathx(x)
+        pathy(y)  
+      }    
+    }
+  })
+    
   output$leaf <- renderLeaflet({
     leaflet() %>%
       addProviderTiles('OpenTopoMap') %>%
@@ -471,27 +503,6 @@ server <- function(input, output) {
       
   })
   
-  # observeEvent(input$flights_marker_click, {
-  #   print('MARKER CLICK')
-  #   print(input$flights_marker_click)
-  # })
-  observeEvent(input$flights_draw_new_feature, {
-    print('DRAW NEW FEATURE')
-    drawn_coordinates <- input$flights_draw_new_feature$geometry$coordinates
-    drawn_coordinates <- unlist(drawn_coordinates)
-    print(drawn_coordinates)
-    if(!is.null(drawn_coordinates)){
-      if(length(drawn_coordinates) >= 2){
-        x <- drawn_coordinates[seq(1, length(drawn_coordinates), 2)]
-        y <- drawn_coordinates[seq(2, length(drawn_coordinates), 2)]
-        pathx(x)
-        pathy(y)  
-      }    
-    }
-
-    # print(input$flights_draw_new_feature)
-  })
-  
   output$raw_data <- DT::renderDataTable({
     df <- flight_path()
     if(!is.null(df)){
@@ -522,10 +533,17 @@ server <- function(input, output) {
     
     if(!is.null(df)){
       if(nrow(df) > 0){
-        
         make_flight_path_elevation_plot(df = df)
-        
-        
+      }
+    }
+  })
+  
+  output$flight_path_population_plot <- renderPlot({
+    df <- flight_path()
+    save(df, file = 'tmp.RData')
+    if(!is.null(df)){
+      if(nrow(df) > 0){
+        make_flight_path_population_plot(df = df)
       }
     }
   })
