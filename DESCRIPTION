@@ -20,6 +20,23 @@ Imports:
     rgdal,
     magrittr,
     tidyverse,
-    RColorBrewer
+    RColorBrewer,
+    dplyr,
+    ggmap,
+    ggplot2,
+    ggthemes,
+    leaflet,
+    lubridate,
+    maps,
+    DT,
+    Hmisc,
+    extrafont,
+    grDevices,
+    grid,
+    scales,
+    googlesheets,
+    shiny,
+    shinydashboard,
+    geosphere
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0
