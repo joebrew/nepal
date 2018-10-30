@@ -1,0 +1,479 @@
+---
+output:
+  html_document:
+    theme: united
+    highlight: tango
+---
+
+
+
+
+```{r setup, include=FALSE}
+library(knitr)
+# Basic knitr options
+opts_chunk$set(comment = NA, 
+               echo = FALSE, 
+               warning = FALSE, 
+               message = FALSE, 
+               error = TRUE, 
+               cache = F,
+               fig.width = 7,
+               fig.height = 6)
+knit_engines$set(asis = function(options) {
+  if (options$echo && options$eval) knit_child(text = options$code)
+})
+```
+
+```{r}
+library(leaflet)
+library(leaflet.extras)
+library(sp)
+library(raster)
+library(ggmap)
+library(dplyr)
+library(maptools)
+library(rgdal)
+library(RColorBrewer)
+library(nepal)
+library(databrew)
+library(ggthemes)
+library(ggrepel)
+```
+
+# Pyuthan Project: Initial Flights {.tabset .tabset-fade} 
+
+
+<img src="img/mountains_small.png" alt="logo" width='100%' style="float: center;align:center;">
+
+
+## Overview
+
+### Summary
+
+<p>>This document contains recommendations for initial test flights, as well as some associated details </p>
+
+## Recommendation
+
+1. Bijubar to Dakhanwadi (5.64 km)
+2. Swargadwarikhal to Kochiwang (6.16 km)
+
+## Rationale
+
+
+The rationale for the recommendation is as follows:  
+
+- The "base" site should bee one of either Bijubar (the district hospital) or Swargadwarikhal. This is because this is where the GeneXpert machines will be located.
+- The coordinates of these sites are below:
+
+```{r}
+hf <- coordinates(nepal::pyuthan_health_facilities)
+hf <- data.frame(hf)
+names(hf) <- c('x', 'y')
+hf <- bind_cols(hf, nepal::pyuthan_health_facilities@data)
+hf <- hf %>%
+  filter(!HF_TYPE %in% c('District Cold Room', 'DPHO'))
+x <- hf %>% filter((VDC_NAME1 %in% c('Swargadwarikhal')) | (VDC_NAME1 == 'Bijubar' & HF_TYPE == 'Hospital'))
+x %>%
+  dplyr::select(HF_TYPE, VDC_NAME1, x, y) %>%
+  dplyr::rename(Longitude = x,
+                Latitude = y,
+                Type = HF_TYPE,
+                Name = VDC_NAME1) %>%
+  kable
+```
+
+- Using one or both of these sites as the "base", we recommend making the flight to a "Sub health post" (of which there are 35 in the district). The below chart shows the distances to each health sub health post from the above base sites.
+
+```{r, fig.width = 10, fig.height = 10}
+x <- nepal::pyuthan_health_facilities
+y <- x[x@data$HF_TYPE == 'Sub Health Post',]
+base <- x[(x@data$VDC_NAME1 == 'Bijubar' &
+            x@data$HF_TYPE == 'Hospital') | 
+            x@data$VDC_NAME1 =='Swargadwarikhal' ,]
+distances <- data_frame(Base = 'Bijubar',
+                        To = as.character(paste0(y@data$VDC_NAME1, ' ', y@data$HF_TYPE)),
+                        Meters = geosphere::distGeo(p1 = base[base@data$VDC_NAME1 == 'Bijubar',],
+                   p2 = y)) %>%
+  bind_rows(
+    data_frame(Base = 'Swargadwarikhal',
+                        To = as.character(paste0(y@data$VDC_NAME1, ' ', y@data$HF_TYPE)),
+                        Meters = geosphere::distGeo(p1 = base[base@data$VDC_NAME1 == 'Swargadwarikhal',],
+                   p2 = y))
+  )
+ggplot(data = distances,
+       aes(x = To,
+           y = Meters)) +
+  geom_bar(width = 0.1, stat = 'identity',
+           fill = 'black') +
+  coord_flip() +
+    geom_point() +
+  geom_label(aes(y = Meters + 5000, label = round(Meters)),
+             alpha = 0.6) +
+  facet_wrap(~Base) +
+  theme_minimal() +
+  theme(strip.text = element_text(size = 20))
+
+```
+
+- Below is a table of the same data.
+
+```{r}
+distances %>% databrew::prettify(download_options = TRUE,
+                                 nrows = nrow(distances))
+```
+
+- Given the distances, we suggest the following two flights for an initial test:
+
+1. Bijubar to Dakhanwadi (5.64 km)
+2. Swargadwarikhal to Kochiwang (6.16 km)
+
+## Recommendation details
+
+### Flight 1: Bijubar to Dakhanwadi (5.64 km)
+
+```{r}
+source('../../shiny/global.R')
+f1 <- x[(x@data$VDC_NAME1 == 'Bijubar' &
+            x@data$HF_TYPE == 'Hospital') | 
+            x@data$VDC_NAME1 =='Dakhanwadi' ,]
+f1c <-data.frame(coordinates(f1)); names(f1c) <- c('x', 'y')
+f1@data %>%
+  bind_cols(f1c) %>%
+  dplyr::select(HF_TYPE, VDC_NAME1, x, y) %>%
+  dplyr::rename(Longitude = x,
+                Latitude = y,
+                Type = HF_TYPE,
+                Name = VDC_NAME1) %>%
+  kable
+
+f1r <- make_flight_path(x = f1c$x,
+                        y = f1c$y,
+                        country = 'Nepal')
+```
+
+#### Flight coordinates overview
+
+```{r}
+make_flight_path_plot(df = f1r)
+```
+
+
+#### Interactive topographic map
+
+```{r}
+
+leaflet() %>%
+  addProviderTiles(providers$Esri.WorldTopoMap) %>%
+  addMarkers(data = f1,
+             popup = f1@data$VDC_NAME1) %>%
+  addPolylines(data = f1r,
+               lng = f1r$x,
+               lat = f1r$y)
+```
+
+#### Interactive satellite map
+
+
+```{r}
+
+leaflet() %>%
+  addProviderTiles(providers$Esri.WorldImagery) %>%
+  addMarkers(data = f1,
+             popup = f1@data$VDC_NAME1) %>%
+  addPolylines(data = f1r,
+               lng = f1r$x,
+               lat = f1r$y)
+```
+
+#### Interactive place names map
+
+
+```{r}
+
+leaflet() %>%
+  addProviderTiles(providers$OpenStreetMap.BlackAndWhite) %>%
+  addProviderTiles(providers$Stamen.TonerLabels) %>% 
+  addProviderTiles(providers$Stamen.TopOSMRelief) %>%
+  addMarkers(data = f1,
+             popup = f1@data$VDC_NAME1) %>%
+  addPolylines(data = f1r,
+               lng = f1r$x,
+               lat = f1r$y)
+```
+
+
+
+#### Static elevation map
+
+```{r}
+test_spdf <- as(nepal::pyuthan_elevation_detailed, "SpatialPixelsDataFrame")
+
+test_df <- as.data.frame(test_spdf)
+colnames(test_df) <- c("value", "x", "y")
+ggplot() +  
+  geom_tile(data=test_df, aes(x=x, y=y, fill=value), alpha=0.8) + 
+  # scale_fill_viridis() +
+  coord_equal() +
+  theme_map() +
+  theme(legend.position="bottom") +
+  theme(legend.key.width=unit(2, "cm")) +
+  scale_fill_gradientn(colours = terrain.colors(10),
+                       limits=c(0,ceiling(max(test_df$value))),  
+                 space = "Lab",name=paste("Meters \n"),na.value = NA) +
+  geom_path(data = f1r,
+            aes(x = x,
+                y = y),
+            color = 'darkorange') +
+  geom_point(data = f1c,
+             aes(x = x,
+                 y = y))
+```
+
+#### Elevation profile
+
+```{r}
+make_flight_path_elevation_plot(df = f1r)
+```
+
+#### Static population density map
+
+```{r}
+test_spdf <- as(nepal::pyuthan_population, "SpatialPixelsDataFrame")
+
+test_df <- as.data.frame(test_spdf)
+colnames(test_df) <- c("value", "x", "y")
+ggplot() +  
+  geom_tile(data=test_df, aes(x=x, y=y, fill=value), alpha=0.8) + 
+  # scale_fill_viridis() +
+  coord_equal() +
+  theme_map() +
+  theme(legend.position="bottom") +
+  theme(legend.key.width=unit(2, "cm")) +
+  scale_fill_gradientn(colours = terrain.colors(10),
+                       limits=c(0,ceiling(max(test_df$value))),  
+                 space = "Lab",name=paste("People per\nsq. km. \n"),na.value = NA) +
+  geom_path(data = f1r,
+            aes(x = x,
+                y = y),
+            color = 'darkorange') +
+  geom_point(data = f1c,
+             aes(x = x,
+                 y = y))
+```
+
+#### Population density profile
+
+```{r}
+make_flight_path_population_plot(df = f1r)
+```
+
+### Flight 2: Swargadwarikhal to Kochiwang (6.16 km)
+
+```{r}
+f1 <- x[(x@data$VDC_NAME1 == 'Swargadwarikhal') | 
+            x@data$VDC_NAME1 =='Kochiwang' ,]
+f1c <-data.frame(coordinates(f1)); names(f1c) <- c('x', 'y')
+f1@data %>%
+  bind_cols(f1c) %>%
+  dplyr::select(HF_TYPE, VDC_NAME1, x, y) %>%
+  dplyr::rename(Longitude = x,
+                Latitude = y,
+                Type = HF_TYPE,
+                Name = VDC_NAME1) %>%
+  kable
+
+f1r <- make_flight_path(x = f1c$x,
+                        y = f1c$y,
+                        country = 'Nepal')
+```
+
+#### Flight coordinates overview
+
+```{r}
+make_flight_path_plot(df = f1r)
+```
+
+
+#### Interactive topographic map
+
+```{r}
+
+leaflet() %>%
+  addProviderTiles(providers$Esri.WorldTopoMap) %>%
+  addMarkers(data = f1,
+             popup = f1@data$VDC_NAME1) %>%
+  addPolylines(data = f1r,
+               lng = f1r$x,
+               lat = f1r$y)
+```
+
+#### Interactive satellite map
+
+
+```{r}
+
+leaflet() %>%
+  addProviderTiles(providers$Esri.WorldImagery) %>%
+  addMarkers(data = f1,
+             popup = f1@data$VDC_NAME1) %>%
+  addPolylines(data = f1r,
+               lng = f1r$x,
+               lat = f1r$y)
+```
+
+#### Interactive place names map
+
+
+```{r}
+
+leaflet() %>%
+  addProviderTiles(providers$OpenStreetMap.BlackAndWhite) %>%
+  addProviderTiles(providers$Stamen.TonerLabels) %>% 
+  addProviderTiles(providers$Stamen.TopOSMRelief) %>%
+  addMarkers(data = f1,
+             popup = f1@data$VDC_NAME1) %>%
+  addPolylines(data = f1r,
+               lng = f1r$x,
+               lat = f1r$y)
+```
+
+
+#### Static elevation map
+
+```{r}
+test_spdf <- as(nepal::pyuthan_elevation_detailed, "SpatialPixelsDataFrame")
+
+test_df <- as.data.frame(test_spdf)
+colnames(test_df) <- c("value", "x", "y")
+ggplot() +  
+  geom_tile(data=test_df, aes(x=x, y=y, fill=value), alpha=0.8) + 
+  # scale_fill_viridis() +
+  coord_equal() +
+  theme_map() +
+  theme(legend.position="bottom") +
+  theme(legend.key.width=unit(2, "cm")) +
+  scale_fill_gradientn(colours = terrain.colors(10),
+                       limits=c(0,ceiling(max(test_df$value))),  
+                 space = "Lab",name=paste("Meters \n"),na.value = NA) +
+  geom_path(data = f1r,
+            aes(x = x,
+                y = y),
+            color = 'darkorange') +
+  geom_point(data = f1c,
+             aes(x = x,
+                 y = y))
+```
+
+#### Elevation profile
+
+```{r}
+make_flight_path_elevation_plot(df = f1r)
+```
+
+#### Static population density map
+
+```{r}
+test_spdf <- as(nepal::pyuthan_population, "SpatialPixelsDataFrame")
+
+test_df <- as.data.frame(test_spdf)
+colnames(test_df) <- c("value", "x", "y")
+ggplot() +  
+  geom_tile(data=test_df, aes(x=x, y=y, fill=value), alpha=0.8) + 
+  # scale_fill_viridis() +
+  coord_equal() +
+  theme_map() +
+  theme(legend.position="bottom") +
+  theme(legend.key.width=unit(2, "cm")) +
+  scale_fill_gradientn(colours = terrain.colors(10),
+                       limits=c(0,ceiling(max(test_df$value))),  
+                 space = "Lab",name=paste("People per\nsq. km. \n"),na.value = NA) +
+  geom_path(data = f1r,
+            aes(x = x,
+                y = y),
+            color = 'darkorange') +
+  geom_point(data = f1c,
+             aes(x = x,
+                 y = y))
+```
+
+## Raw data (100 meter samples)
+
+### Flight 1: Bijubar to Dakhanwadi (5.64 km)
+
+```{r}
+f1 <- x[(x@data$VDC_NAME1 == 'Bijubar' &
+            x@data$HF_TYPE == 'Hospital') | 
+            x@data$VDC_NAME1 =='Dakhanwadi' ,]
+f1c <-data.frame(coordinates(f1)); names(f1c) <- c('x', 'y')
+f1c <-data.frame(coordinates(f1)); names(f1c) <- c('x', 'y')
+
+f1r <- make_flight_path(x = f1c$x,
+                        y = f1c$y,
+                        country = 'Nepal')
+# Keep only 100 meter samples
+f1r <- f1r %>%
+  mutate(d = round(d)) %>%
+           filter(d == 0 | 
+                       d %% 100 == 0 |
+                        d == max(d)) %>%
+           filter(!duplicated(d))
+databrew::prettify(f1r,
+                   nrows = nrow(f1r),
+                   round_digits = 8)
+```
+
+### Flight 2: Swargadwarikhal to Kochiwang (6.16 km)
+
+```{r}
+f1 <- x[(x@data$VDC_NAME1 == 'Swargadwarikhal') | 
+            x@data$VDC_NAME1 =='Kochiwang' ,]
+f1c <-data.frame(coordinates(f1)); names(f1c) <- c('x', 'y')
+
+
+f1r <- make_flight_path(x = f1c$x,
+                        y = f1c$y,
+                        country = 'Nepal')
+# Keep only 100 meter samples
+f1r <- f1r %>%
+  mutate(d = round(d)) %>%
+           filter(d == 0 | 
+                       d %% 100 == 0 |
+                        d == max(d)) %>%
+           filter(!duplicated(d))
+databrew::prettify(f1r,
+                   nrows = nrow(f1r),
+                   round_digits = 8)
+```
+
+
+## Alternatives
+
+The below map shows other health facilities to/from which we can fly.
+
+
+```{r, fig.width = 8, fig.height = 8}
+library(ggrepel)
+library(ggthemes)
+
+ggplot( ) +
+  geom_polygon(data = pyuthan_fortified,
+               aes(x = long,
+                   y = lat,
+                   group = group),
+               fill = 'blue',
+               alpha = 0.6) +
+  geom_point(data = hf,
+             aes(x = x,
+                 y = y)) +
+  geom_label_repel(data = hf,
+             aes(x = x,
+                 y = y,
+                 label = paste0(VDC_NAME1)),
+             size = 2,
+             alpha = 0.85) +
+  theme_map() +
+  coord_map() +
+  facet_wrap(~HF_TYPE)
+```
+
+To get elevation/population profiles of any of the above locations, go to http://databrew.cc/nepal and use the flight planner app.
