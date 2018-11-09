@@ -110,63 +110,16 @@ This document contains visuals of and data relating to planned flights in Pyutha
 The below map shows all flights planned in the Pyuthan district.
 
 ```{r}
-# x <- hps <- nepal::pyuthan_health_facilities
-# y <- hps[hps@data$HF_TYPE == 'Sub Health Post' |
-#            (hps@data$VDC_NAME1 == 'Bijubar' &
-#             hps@data$HF_TYPE == 'Hospital') | 
-#             hps@data$VDC_NAME1 =='Swargadwarikhal' ,]
-# y$hospital <- (y@data$VDC_NAME1 == 'Bijubar' &
-#             y@data$HF_TYPE == 'Hospital') | 
-#             y@data$VDC_NAME1 =='Swargadwarikhal'
-# cc <- coordinates(y)
-# cc <- data.frame(cc)
-# names(cc) <- c('x', 'y')
-# y@data <- bind_cols(y@data, cc)
-# y$distances <- y$min_distance <- y$min_name <- y$route <- y$x_end <- y$y_end<- NA
-# for(i in 1:nrow(y)){
-#   x <- distGeo(p1 = y[i,],
-#                             p2 = y)
-#   closest_index <- order(x)[2]
-#   closest_distance <- x[closest_index]
-#   closest_name <- as.character(y$VDC_NAME1[closest_index])
-#   closest_type <- as.character(y$HF_TYPE)
-#   route <- sort(c(as.character(y$VDC_NAME1[i]),
-#                 closest_name))
-#   route <- paste0(route, collapse = ' - ')
-#   y_end <- y@data$y[closest_index]
-#   x_end <- y@data$x[closest_index]
-#   # y$distances[i] <- list(x)
-#   y$min_distance[i] <- closest_distance
-#   y$min_name[i] <- closest_name
-#   y$route[i] <- route
-#   y$x_end[i] <- x_end
-#   y$y_end[i] <- y_end
-# }
-# 
-# 
-# 
-# only_short <- y@data #%>% dplyr::distinct(route, .keep_all = T)
-# only_short <- only_short %>%
-#   mutate(xmid = (x + x_end)/2,
-#          ymid = (y+y_end)/2)
-# only_short_single <- only_short %>% dplyr::distinct(route, .keep_all = T)
-# ggplot(data = only_short) +
-#   geom_point(aes(x = x,y=y,
-#                  color = hospital)) +
-#   geom_segment(data = only_short_single,
-#                aes(x = x,
-#            y = y,
-#            xend = x_end,
-#            yend = y_end)) +
-#   geom_text_repel(
-#     data = only_short_single,
-#     aes(x = xmid,
-#         y = ymid,
-#         label = paste0(route, '\n',
-#                        round(min_distance/1000, digits = 1),
-#                        ' km')),
-#     size = rel(2)
-#   )
+all_files <- dir('data')
+file_list <- list()
+for(i in 1:length(all_files)){
+  message('reading file ', i, ' of ', length(all_files))
+  this_file <- all_files[i]
+  this_route <- gsub('.csv', '', this_file, fixed = TRUE)
+  file_list[[i]] <-
+    read_csv(paste0('data/',this_file)) %>% mutate(route = this_route)
+}
+all_flights <- bind_rows(file_list)
 ```
 
 ```{r, fig.height = 7}
@@ -184,50 +137,11 @@ y$hub <- y$hospital | y$VDC_NAME1 == 'Khawang'
 y$type <- ifelse(y$hub, 'Hub',
                  ifelse(y$health_post, 'Health post',
                         ifelse(y$sub_health_post, 'Sub health post', NA)))
-
-cc <- coordinates(y)
-cc <- data.frame(cc)
-names(cc) <- c('x', 'y')
-y@data <- bind_cols(y@data, cc)
-y$distances <- y$min_distance <- y$min_name <- y$route <- y$x_end <- y$y_end<- NA
-for(i in 1:nrow(y)){
-  if(y$type[i] != 'Hub'){
-    this_type <- y$type[i]
-  x <- distGeo(p1 = y[i,],p2 = y)
-  keep_index <- 1:nrow(y)
-  keep_index <- keep_index[keep_index != i]
-  keep_index <- which(y$hub)
-
-  hosp_index <- which.min(x[keep_index])
-  closest_index <- keep_index[hosp_index]
-  closest_distance <- x[closest_index]
-  closest_name <- as.character(y$VDC_NAME1[closest_index])
-  closest_type <- as.character(y$HF_TYPE)
-  route <- sort(c(as.character(y$VDC_NAME1[i]),
-                closest_name))
-  route <- paste0(route, collapse = ' - ')
-  y_end <- y@data$y[closest_index]
-  x_end <- y@data$x[closest_index]
-  # y$distances[i] <- list(x)
-  y$min_distance[i] <- closest_distance
-  y$min_name[i] <- closest_name
-  y$route[i] <- route
-  y$x_end[i] <- x_end
-  y$y_end[i] <- y_end
-  }
-}
-
-only_short <- y@data %>% 
-  # filter(min_distance <= max_distance) %>%
-  filter(min_distance > 0)
-only_short <- only_short %>%
-  mutate(xmid = x,#(x + x_end)/2,
-         ymid = y)#(y+y_end)/2)
-only_short_single <- only_short %>% dplyr::distinct(route, .keep_all = T)
-
-
-
-ggplot(data = only_short) +
+xy <- coordinates(y)
+xy <- data.frame(xy)
+names(xy) <- c('x', 'y')
+y@data <- bind_cols(y@data, xy)
+ggplot() +
   geom_polygon(data = pyuthan_fortified,
                aes(x = long,
                    y = lat,
@@ -236,6 +150,11 @@ ggplot(data = only_short) +
                alpha = 0.4,
                lwd = 0.2,
                color = 'black') +
+  geom_path(data = all_flights,
+            aes(x = x,
+                y = y,
+                group = route),
+            color = 'darkred') +
   geom_point(data = y@data,
              aes(x = x,y=y,
                  color = type),
@@ -246,28 +165,7 @@ ggplot(data = only_short) +
                   alpha = 0.6,
                   size = 3,
             nudge_y = 0.01) +
-  # geom_point(aes(x = x,y=y,
-  #                color = HF_TYPE)) +
-  geom_segment(data = only_short_single,
-               aes(x = x,
-           y = y,
-           xend = x_end,
-           yend = y_end),
-           color = 'red',
-           alpha = 0.4) +
-  geom_text(
-    data = only_short_single,
-    aes(x = xmid,
-        y = ymid,
-        label = paste0(#route, '\n',
-                       round(min_distance/1000, digits = 1),
-                       ' km')),
-    size = rel(2.2),
-    alpha = 0.6,
-    color = 'darkred',
-    nudge_y = -0.01
-    # segment.colour = 'white'
-  ) +
+
   theme_map() +
   scale_color_manual(name = '',
                      values = databrew::make_colors(3))
@@ -282,13 +180,18 @@ ggplot(data = only_short) +
 The below show strip maps (both complete and kilometer-specific) with a 500 meter buffer.
 
 ```{r}
-flights <- only_short_single
-flights$distance <- flights$min_distance
+flights <- all_flights
+flights <- flights %>%
+  group_by(route) %>%
+  mutate(distance = max(d)) %>%
+  ungroup
 # flights <- flights %>% arrange(distance)
 
 # flights <- flights[1,]
-titles <- distances <- subtitles <- rep(NA, nrow(flights))
-for(i in 1:nrow(flights)){
+unique_flights <- unique(flights$route)
+titles <- distances <- subtitles <- rep(NA, length(unique_flights))
+for(i in 1:length(unique_flights)){
+  this_flight <- unique_flights[i]
   if(i <= 26){
       this_letter <- letters[i]
     } else {
@@ -296,9 +199,8 @@ for(i in 1:nrow(flights)){
     }
     message('FLIGHT NUMBER ',i,'\nLETTER ', this_letter )
 
-  sub_flight <- flights[i,]
-  sub_df <- make_flight_path(x = c(sub_flight$x, sub_flight$x_end),
-                           y = c(sub_flight$y, sub_flight$y_end))
+  sub_df <- flights %>%
+    filter(route == this_flight)
   # sm <- make_strip_map(df = sub_df)
   sm <- as.list(1:ceiling(max(sub_df$d)/1000))
   g1 <- nepal::make_flight_path_elevation_plot(df = sub_df)
@@ -313,8 +215,8 @@ for(i in 1:nrow(flights)){
   assign(paste0('g3', i),
          g3,
          envir = .GlobalEnv)
-  titles[i] <- sub_flight$route
-  distances[i] <- sub_flight$distance
+  titles[i] <- sub_df$route[1]
+  distances[i] <- sub_df$distance[1]
   
   # Save
   file_list <- list()
@@ -342,7 +244,7 @@ for(i in 1:nrow(flights)){
   }
 }
 
-nums <- 1:nrow(flights)
+nums <- 1:length(unique_flights)
 content <- paste0('\\newpage\n\n## ', titles, '\n\n',
                   round(distances, digits = 0), ' metres\n\n',
                   

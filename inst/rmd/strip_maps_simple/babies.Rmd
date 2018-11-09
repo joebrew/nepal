@@ -1,0 +1,729 @@
+---
+output: pdf_document
+---
+
+\newpage
+
+## Barjiwang - Bijubar
+
+9222 metres
+
+### Full flight
+
+\includegraphics{a_1}
+
+### Kilometer 1
+
+\includegraphics{a_2}
+
+
+### Kilometer 2
+
+\includegraphics{a_3}
+
+
+### Kilometer 3
+
+\includegraphics{a_4}
+
+
+### Kilometer 4
+
+\includegraphics{a_5}
+
+
+### Kilometer 5
+
+\includegraphics{a_6}
+
+
+### Kilometer 6
+
+\includegraphics{a_7}
+
+
+### Kilometer 7
+
+\includegraphics{a_8}
+
+
+### Kilometer 8
+
+\includegraphics{a_9}
+
+
+### Kilometer 9
+
+\includegraphics{a_10}
+
+
+### Kilometer 10
+
+\includegraphics{a_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g11
+
+g21
+
+g31
+
+```
+
+
+\newpage
+
+## Belwaspur - Swargadwarikhal
+
+15272 metres
+
+### Full flight
+
+\includegraphics{b_1}
+
+### Kilometer 1
+
+\includegraphics{b_2}
+
+
+### Kilometer 2
+
+\includegraphics{b_3}
+
+
+### Kilometer 3
+
+\includegraphics{b_4}
+
+
+### Kilometer 4
+
+\includegraphics{b_5}
+
+
+### Kilometer 5
+
+\includegraphics{b_6}
+
+
+### Kilometer 6
+
+\includegraphics{b_7}
+
+
+### Kilometer 7
+
+\includegraphics{b_8}
+
+
+### Kilometer 8
+
+\includegraphics{b_9}
+
+
+### Kilometer 9
+
+\includegraphics{b_10}
+
+
+### Kilometer 10
+
+\includegraphics{b_11}
+
+
+### Kilometer 11
+
+\includegraphics{b_12}
+
+
+### Kilometer 12
+
+\includegraphics{b_13}
+
+
+### Kilometer 13
+
+\includegraphics{b_14}
+
+
+### Kilometer 14
+
+\includegraphics{b_15}
+
+
+### Kilometer 15
+
+\includegraphics{b_16}
+
+
+### Kilometer 16
+
+\includegraphics{b_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g12
+
+g22
+
+g32
+
+```
+
+
+\newpage
+
+## Bijubar - Dharampani
+
+7057 metres
+
+### Full flight
+
+\includegraphics{c_1}
+
+### Kilometer 1
+
+\includegraphics{c_2}
+
+
+### Kilometer 2
+
+\includegraphics{c_3}
+
+
+### Kilometer 3
+
+\includegraphics{c_4}
+
+
+### Kilometer 4
+
+\includegraphics{c_5}
+
+
+### Kilometer 5
+
+\includegraphics{c_6}
+
+
+### Kilometer 6
+
+\includegraphics{c_7}
+
+
+### Kilometer 7
+
+\includegraphics{c_8}
+
+
+### Kilometer 8
+
+\includegraphics{c_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g13
+
+g23
+
+g33
+
+```
+
+
+\newpage
+
+## Bijubar - Dharmawati
+
+9853 metres
+
+### Full flight
+
+\includegraphics{d_1}
+
+### Kilometer 1
+
+\includegraphics{d_2}
+
+
+### Kilometer 2
+
+\includegraphics{d_3}
+
+
+### Kilometer 3
+
+\includegraphics{d_4}
+
+
+### Kilometer 4
+
+\includegraphics{d_5}
+
+
+### Kilometer 5
+
+\includegraphics{d_6}
+
+
+### Kilometer 6
+
+\includegraphics{d_7}
+
+
+### Kilometer 7
+
+\includegraphics{d_8}
+
+
+### Kilometer 8
+
+\includegraphics{d_9}
+
+
+### Kilometer 9
+
+\includegraphics{d_10}
+
+
+### Kilometer 10
+
+\includegraphics{d_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g14
+
+g24
+
+g34
+
+```
+
+
+\newpage
+
+## Bijubar - Dhuwang
+
+11263 metres
+
+### Full flight
+
+\includegraphics{e_1}
+
+### Kilometer 1
+
+\includegraphics{e_2}
+
+
+### Kilometer 2
+
+\includegraphics{e_3}
+
+
+### Kilometer 3
+
+\includegraphics{e_4}
+
+
+### Kilometer 4
+
+\includegraphics{e_5}
+
+
+### Kilometer 5
+
+\includegraphics{e_6}
+
+
+### Kilometer 6
+
+\includegraphics{e_7}
+
+
+### Kilometer 7
+
+\includegraphics{e_8}
+
+
+### Kilometer 8
+
+\includegraphics{e_9}
+
+
+### Kilometer 9
+
+\includegraphics{e_10}
+
+
+### Kilometer 10
+
+\includegraphics{e_11}
+
+
+### Kilometer 11
+
+\includegraphics{e_12}
+
+
+### Kilometer 12
+
+\includegraphics{e_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g15
+
+g25
+
+g35
+
+```
+
+
+\newpage
+
+## Bijubar - Jumrikanda
+
+9636 metres
+
+### Full flight
+
+\includegraphics{f_1}
+
+### Kilometer 1
+
+\includegraphics{f_2}
+
+
+### Kilometer 2
+
+\includegraphics{f_3}
+
+
+### Kilometer 3
+
+\includegraphics{f_4}
+
+
+### Kilometer 4
+
+\includegraphics{f_5}
+
+
+### Kilometer 5
+
+\includegraphics{f_6}
+
+
+### Kilometer 6
+
+\includegraphics{f_7}
+
+
+### Kilometer 7
+
+\includegraphics{f_8}
+
+
+### Kilometer 8
+
+\includegraphics{f_9}
+
+
+### Kilometer 9
+
+\includegraphics{f_10}
+
+
+### Kilometer 10
+
+\includegraphics{f_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g16
+
+g26
+
+g36
+
+```
+
+
+\newpage
+
+## Bijubar - Maranthana
+
+5426 metres
+
+### Full flight
+
+\includegraphics{g_1}
+
+### Kilometer 1
+
+\includegraphics{g_2}
+
+
+### Kilometer 2
+
+\includegraphics{g_3}
+
+
+### Kilometer 3
+
+\includegraphics{g_4}
+
+
+### Kilometer 4
+
+\includegraphics{g_5}
+
+
+### Kilometer 5
+
+\includegraphics{g_6}
+
+
+### Kilometer 6
+
+\includegraphics{g_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g17
+
+g27
+
+g37
+
+```
+
+
+\newpage
+
+## Gothiwang - Swargadwarikhal
+
+6129 metres
+
+### Full flight
+
+\includegraphics{h_1}
+
+### Kilometer 1
+
+\includegraphics{h_2}
+
+
+### Kilometer 2
+
+\includegraphics{h_3}
+
+
+### Kilometer 3
+
+\includegraphics{h_4}
+
+
+### Kilometer 4
+
+\includegraphics{h_5}
+
+
+### Kilometer 5
+
+\includegraphics{h_6}
+
+
+### Kilometer 6
+
+\includegraphics{h_7}
+
+
+### Kilometer 7
+
+\includegraphics{h_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g18
+
+g28
+
+g38
+
+```
+
+
+\newpage
+
+## Kochiwang - Swargadwarikhal
+
+6787 metres
+
+### Full flight
+
+\includegraphics{i_1}
+
+### Kilometer 1
+
+\includegraphics{i_2}
+
+
+### Kilometer 2
+
+\includegraphics{i_3}
+
+
+### Kilometer 3
+
+\includegraphics{i_4}
+
+
+### Kilometer 4
+
+\includegraphics{i_5}
+
+
+### Kilometer 5
+
+\includegraphics{i_6}
+
+
+### Kilometer 6
+
+\includegraphics{i_7}
+
+
+### Kilometer 7
+
+\includegraphics{i_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g19
+
+g29
+
+g39
+
+```
+
+
+\newpage
+
+## Sari - Swargadwarikhal
+
+10753 metres
+
+### Full flight
+
+\includegraphics{j_1}
+
+### Kilometer 1
+
+\includegraphics{j_2}
+
+
+### Kilometer 2
+
+\includegraphics{j_3}
+
+
+### Kilometer 3
+
+\includegraphics{j_4}
+
+
+### Kilometer 4
+
+\includegraphics{j_5}
+
+
+### Kilometer 5
+
+\includegraphics{j_6}
+
+
+### Kilometer 6
+
+\includegraphics{j_7}
+
+
+### Kilometer 7
+
+\includegraphics{j_8}
+
+
+### Kilometer 8
+
+\includegraphics{j_9}
+
+
+### Kilometer 9
+
+\includegraphics{j_10}
+
+
+### Kilometer 10
+
+\includegraphics{j_11}
+
+
+### Kilometer 11
+
+\includegraphics{j_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g110
+
+g210
+
+g310
+
+```
+
+
