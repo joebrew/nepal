@@ -393,29 +393,80 @@ server <- function(input, output) {
     pal <- colorNumeric(cols, values(r),
                         na.color = "transparent")
     
-    mydrawPolylineOptions <- function (allowIntersection = TRUE, 
-                                       drawError = list(color = "#b00b00", timeout = 2500), 
-                                       guidelineDistance = 20, metric = TRUE, feet = FALSE, zIndexOffset = 2000, 
-                                       shapeOptions = drawShapeOptions(fill = FALSE), repeatMode = FALSE) {
-      leaflet::filterNULL(list(allowIntersection = allowIntersection, 
-                               drawError = drawError, guidelineDistance = guidelineDistance, 
-                               metric = metric, feet = feet, zIndexOffset = zIndexOffset,
-                               shapeOptions = shapeOptions,  repeatMode = repeatMode)) }
+    mydrawPolylineOptions <- 
+      function(allowIntersection = TRUE, 
+                drawError = list(color = "#b00b00", timeout = 2500), 
+                guidelineDistance = 20, 
+                metric = TRUE, 
+                feet = FALSE, 
+                zIndexOffset = 2000, 
+                shapeOptions = drawShapeOptions(fill = FALSE), 
+                repeatMode = FALSE) {
+        leaflet::filterNULL(list(allowIntersection = allowIntersection, 
+                                 drawError = drawError, 
+                                 uidelineDistance = guidelineDistance, 
+                                 metric = metric, 
+                                 feet = feet, 
+                                 zIndexOffset = zIndexOffset,
+                                 shapeOptions = shapeOptions,  
+                                 repeatMode = repeatMode)) }
+    
+    hf_lab <- hf[hf@data$type == 'Hub',]
+    hf_hp <- hf[hf@data$type == 'Health post',]
+    hf_shp <- hf[hf@data$type == 'Sub health post',]
+    
+    hf_lab_icons <- awesomeIcons(
+      icon = 'hospital',
+      iconColor = 'black',
+      library = 'fa',
+      markerColor = 'red',
+      spin = TRUE
+    )
+    hf_hp_icons <- awesomeIcons(
+      icon = 'medkit',
+      iconColor = 'white',
+      library = 'fa',
+      markerColor = 'orange'
+    )
+    hf_shp_icons <- awesomeIcons(
+      # squareMarker = TRUE,
+      icon = 'home',
+      iconColor = 'blue',
+      library = 'fa',
+      markerColor = 'white'
+    )
+    
     
     leaflet() %>% 
       addProviderTiles(providers$OpenTopoMap) %>%
-      addProviderTiles(providers$Hydda.RoadsAndLabels, group = 'Place names', options = providerTileOptions(zIndex = 1000000)) %>%
       addProviderTiles(providers$Esri.WorldImagery,
                        group = 'Satellite') %>%
       addProviderTiles(providers$OpenStreetMap,
                        group = 'OSM') %>%
-      # add graticules from a NOAA webserver
-      addWMSTiles(
-        "https://gis.ngdc.noaa.gov/arcgis/services/graticule/MapServer/WMSServer/",
-        layers = c("1-degree grid", "5-degree grid"),
-        options = WMSTileOptions(format = "image/png8", transparent = TRUE),
-        attribution = NULL,group = 'Graticules') %>%
-      addRasterImage(r, colors = pal, opacity = 0.6) %>%
+      addProviderTiles(providers$Hydda.RoadsAndLabels, group = 'Place names', options = providerTileOptions(zIndex = 1000000)) %>%
+      # # add graticules from a NOAA webserver
+      # addWMSTiles(
+      #   "https://gis.ngdc.noaa.gov/arcgis/services/graticule/MapServer/WMSServer/",
+      #   layers = c("1-degree grid", "5-degree grid"),
+      #   options = WMSTileOptions(format = "image/png8", transparent = TRUE),
+      #   attribution = NULL,group = 'Graticules') %>%
+      addRasterImage(r, colors = pal, opacity = 0.6,
+                     group = 'Elevation') %>%
+      addAwesomeMarkers(data = hf_hp,
+                 icon = hf_hp_icons,
+                 # popup = hf_hp$VDC_NAME1,
+                 label = hf_hp$VDC_NAME1,
+                 group = 'Health posts') %>%
+      addAwesomeMarkers(data = hf_shp,
+                 icon = hf_shp_icons,
+                 # popup = hf_hp$VDC_NAME1,
+                 label = hf_hp$VDC_NAME1,
+                 group = 'Sub health posts') %>%
+      addAwesomeMarkers(data = hf_lab,
+                 icon = hf_lab_icons,
+                 # popup = hf_hp$VDC_NAME1,
+                 label = hf_hp$VDC_NAME1,
+                 group = 'Hospitals/labs') %>%
       addLegend(pal = pal, values = values(r),
                 position = 'bottomleft',
                 title = "Elevation") %>%
@@ -433,8 +484,11 @@ server <- function(input, output) {
         markerOptions = FALSE,
         circleMarkerOptions = FALSE) %>%
         addResetMapButton() %>%
-      addLayersControl(overlayGroups = c('Place names',
-                                         'Graticules',
+      addLayersControl(overlayGroups = c(
+        'Elevation',
+        'Hospitals/labs', 'Health posts', 'Sub health posts',
+        'Place names',
+                                         # 'Graticules',
                                          'Satellite',
                                          'OSM',
                                          'District borders',
