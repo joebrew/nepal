@@ -1,0 +1,27 @@
+{
+  "version": "1.9.1",
+  "aspectRatio": "1.7777777777777777",
+  "fps": 24,
+  "defaultBoardTiming": 2000,
+  "boards": [
+    {
+      "uid": "S8BBX",
+      "url": "board-1-S8BBX.png",
+      "newShot": false,
+      "lastEdited": 1540979472020,
+      "layers": {
+        "reference": {
+          "url": "board-1-S8BBX-reference.png",
+          "opacity": 0.75
+        },
+        "ink": {
+          "url": "board-1-S8BBX-ink.png"
+        }
+      },
+      "number": 1,
+      "shot": "1A",
+      "time": 0,
+      "lineMileage": 2408.5374175205243
+    }
+  ]
+}

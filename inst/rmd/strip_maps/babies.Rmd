@@ -1,0 +1,2324 @@
+---
+output: pdf_document
+---
+
+\newpage
+
+## Belwaspur - Jumrikanda
+
+6073 metres
+
+### Full flight
+
+\includegraphics{a_1}
+
+### Kilometer 1
+
+\includegraphics{a_2}
+
+
+### Kilometer 2
+
+\includegraphics{a_3}
+
+
+### Kilometer 3
+
+\includegraphics{a_4}
+
+
+### Kilometer 4
+
+\includegraphics{a_5}
+
+
+### Kilometer 5
+
+\includegraphics{a_6}
+
+
+### Kilometer 6
+
+\includegraphics{a_7}
+
+
+### Kilometer 7
+
+\includegraphics{a_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g11
+
+g21
+
+g31
+
+```
+
+
+\newpage
+
+## Dakhanwadi - Jumrikanda
+
+5830 metres
+
+### Full flight
+
+\includegraphics{b_1}
+
+### Kilometer 1
+
+\includegraphics{b_2}
+
+
+### Kilometer 2
+
+\includegraphics{b_3}
+
+
+### Kilometer 3
+
+\includegraphics{b_4}
+
+
+### Kilometer 4
+
+\includegraphics{b_5}
+
+
+### Kilometer 5
+
+\includegraphics{b_6}
+
+
+### Kilometer 6
+
+\includegraphics{b_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g12
+
+g22
+
+g32
+
+```
+
+
+\newpage
+
+## Baraula - Dharampani
+
+9205 metres
+
+### Full flight
+
+\includegraphics{c_1}
+
+### Kilometer 1
+
+\includegraphics{c_2}
+
+
+### Kilometer 2
+
+\includegraphics{c_3}
+
+
+### Kilometer 3
+
+\includegraphics{c_4}
+
+
+### Kilometer 4
+
+\includegraphics{c_5}
+
+
+### Kilometer 5
+
+\includegraphics{c_6}
+
+
+### Kilometer 6
+
+\includegraphics{c_7}
+
+
+### Kilometer 7
+
+\includegraphics{c_8}
+
+
+### Kilometer 8
+
+\includegraphics{c_9}
+
+
+### Kilometer 9
+
+\includegraphics{c_10}
+
+
+### Kilometer 10
+
+\includegraphics{c_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g13
+
+g23
+
+g33
+
+```
+
+
+\newpage
+
+## Sari - Swargadwarikhal
+
+7811 metres
+
+### Full flight
+
+\includegraphics{d_1}
+
+### Kilometer 1
+
+\includegraphics{d_2}
+
+
+### Kilometer 2
+
+\includegraphics{d_3}
+
+
+### Kilometer 3
+
+\includegraphics{d_4}
+
+
+### Kilometer 4
+
+\includegraphics{d_5}
+
+
+### Kilometer 5
+
+\includegraphics{d_6}
+
+
+### Kilometer 6
+
+\includegraphics{d_7}
+
+
+### Kilometer 7
+
+\includegraphics{d_8}
+
+
+### Kilometer 8
+
+\includegraphics{d_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g14
+
+g24
+
+g34
+
+```
+
+
+\newpage
+
+## Kochiwang - Swargadwarikhal
+
+6166 metres
+
+### Full flight
+
+\includegraphics{e_1}
+
+### Kilometer 1
+
+\includegraphics{e_2}
+
+
+### Kilometer 2
+
+\includegraphics{e_3}
+
+
+### Kilometer 3
+
+\includegraphics{e_4}
+
+
+### Kilometer 4
+
+\includegraphics{e_5}
+
+
+### Kilometer 5
+
+\includegraphics{e_6}
+
+
+### Kilometer 6
+
+\includegraphics{e_7}
+
+
+### Kilometer 7
+
+\includegraphics{e_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g15
+
+g25
+
+g35
+
+```
+
+
+\newpage
+
+## Dhobaghat(UdayapurKo - Gothiwang
+
+6825 metres
+
+### Full flight
+
+\includegraphics{f_1}
+
+### Kilometer 1
+
+\includegraphics{f_2}
+
+
+### Kilometer 2
+
+\includegraphics{f_3}
+
+
+### Kilometer 3
+
+\includegraphics{f_4}
+
+
+### Kilometer 4
+
+\includegraphics{f_5}
+
+
+### Kilometer 5
+
+\includegraphics{f_6}
+
+
+### Kilometer 6
+
+\includegraphics{f_7}
+
+
+### Kilometer 7
+
+\includegraphics{f_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g16
+
+g26
+
+g36
+
+```
+
+
+\newpage
+
+## Dhobaghat(UdayapurKo - Markawang
+
+4162 metres
+
+### Full flight
+
+\includegraphics{g_1}
+
+### Kilometer 1
+
+\includegraphics{g_2}
+
+
+### Kilometer 2
+
+\includegraphics{g_3}
+
+
+### Kilometer 3
+
+\includegraphics{g_4}
+
+
+### Kilometer 4
+
+\includegraphics{g_5}
+
+
+### Kilometer 5
+
+\includegraphics{g_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g17
+
+g27
+
+g37
+
+```
+
+
+\newpage
+
+## Dhobaghat(UdayapurKo - Nayagaun
+
+4215 metres
+
+### Full flight
+
+\includegraphics{h_1}
+
+### Kilometer 1
+
+\includegraphics{h_2}
+
+
+### Kilometer 2
+
+\includegraphics{h_3}
+
+
+### Kilometer 3
+
+\includegraphics{h_4}
+
+
+### Kilometer 4
+
+\includegraphics{h_5}
+
+
+### Kilometer 5
+
+\includegraphics{h_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g18
+
+g28
+
+g38
+
+```
+
+
+\newpage
+
+## Barjiwang - Jumrikanda
+
+4242 metres
+
+### Full flight
+
+\includegraphics{i_1}
+
+### Kilometer 1
+
+\includegraphics{i_2}
+
+
+### Kilometer 2
+
+\includegraphics{i_3}
+
+
+### Kilometer 3
+
+\includegraphics{i_4}
+
+
+### Kilometer 4
+
+\includegraphics{i_5}
+
+
+### Kilometer 5
+
+\includegraphics{i_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g19
+
+g29
+
+g39
+
+```
+
+
+\newpage
+
+## Jumrikanda - Phopli
+
+5921 metres
+
+### Full flight
+
+\includegraphics{j_1}
+
+### Kilometer 1
+
+\includegraphics{j_2}
+
+
+### Kilometer 2
+
+\includegraphics{j_3}
+
+
+### Kilometer 3
+
+\includegraphics{j_4}
+
+
+### Kilometer 4
+
+\includegraphics{j_5}
+
+
+### Kilometer 5
+
+\includegraphics{j_6}
+
+
+### Kilometer 6
+
+\includegraphics{j_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g110
+
+g210
+
+g310
+
+```
+
+
+\newpage
+
+## Damri - Khawang
+
+6785 metres
+
+### Full flight
+
+\includegraphics{k_1}
+
+### Kilometer 1
+
+\includegraphics{k_2}
+
+
+### Kilometer 2
+
+\includegraphics{k_3}
+
+
+### Kilometer 3
+
+\includegraphics{k_4}
+
+
+### Kilometer 4
+
+\includegraphics{k_5}
+
+
+### Kilometer 5
+
+\includegraphics{k_6}
+
+
+### Kilometer 6
+
+\includegraphics{k_7}
+
+
+### Kilometer 7
+
+\includegraphics{k_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g111
+
+g211
+
+g311
+
+```
+
+
+\newpage
+
+## Khawang - Ligha
+
+5682 metres
+
+### Full flight
+
+\includegraphics{l_1}
+
+### Kilometer 1
+
+\includegraphics{l_2}
+
+
+### Kilometer 2
+
+\includegraphics{l_3}
+
+
+### Kilometer 3
+
+\includegraphics{l_4}
+
+
+### Kilometer 4
+
+\includegraphics{l_5}
+
+
+### Kilometer 5
+
+\includegraphics{l_6}
+
+
+### Kilometer 6
+
+\includegraphics{l_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g112
+
+g212
+
+g312
+
+```
+
+
+\newpage
+
+## Khawang - Syauliwang
+
+9167 metres
+
+### Full flight
+
+\includegraphics{m_1}
+
+### Kilometer 1
+
+\includegraphics{m_2}
+
+
+### Kilometer 2
+
+\includegraphics{m_3}
+
+
+### Kilometer 3
+
+\includegraphics{m_4}
+
+
+### Kilometer 4
+
+\includegraphics{m_5}
+
+
+### Kilometer 5
+
+\includegraphics{m_6}
+
+
+### Kilometer 6
+
+\includegraphics{m_7}
+
+
+### Kilometer 7
+
+\includegraphics{m_8}
+
+
+### Kilometer 8
+
+\includegraphics{m_9}
+
+
+### Kilometer 9
+
+\includegraphics{m_10}
+
+
+### Kilometer 10
+
+\includegraphics{m_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g113
+
+g213
+
+g313
+
+```
+
+
+\newpage
+
+## Khawang - Rajbara
+
+9255 metres
+
+### Full flight
+
+\includegraphics{n_1}
+
+### Kilometer 1
+
+\includegraphics{n_2}
+
+
+### Kilometer 2
+
+\includegraphics{n_3}
+
+
+### Kilometer 3
+
+\includegraphics{n_4}
+
+
+### Kilometer 4
+
+\includegraphics{n_5}
+
+
+### Kilometer 5
+
+\includegraphics{n_6}
+
+
+### Kilometer 6
+
+\includegraphics{n_7}
+
+
+### Kilometer 7
+
+\includegraphics{n_8}
+
+
+### Kilometer 8
+
+\includegraphics{n_9}
+
+
+### Kilometer 9
+
+\includegraphics{n_10}
+
+
+### Kilometer 10
+
+\includegraphics{n_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g114
+
+g214
+
+g314
+
+```
+
+
+\newpage
+
+## Arkha - Khawang
+
+11173 metres
+
+### Full flight
+
+\includegraphics{o_1}
+
+### Kilometer 1
+
+\includegraphics{o_2}
+
+
+### Kilometer 2
+
+\includegraphics{o_3}
+
+
+### Kilometer 3
+
+\includegraphics{o_4}
+
+
+### Kilometer 4
+
+\includegraphics{o_5}
+
+
+### Kilometer 5
+
+\includegraphics{o_6}
+
+
+### Kilometer 6
+
+\includegraphics{o_7}
+
+
+### Kilometer 7
+
+\includegraphics{o_8}
+
+
+### Kilometer 8
+
+\includegraphics{o_9}
+
+
+### Kilometer 9
+
+\includegraphics{o_10}
+
+
+### Kilometer 10
+
+\includegraphics{o_11}
+
+
+### Kilometer 11
+
+\includegraphics{o_12}
+
+
+### Kilometer 12
+
+\includegraphics{o_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g115
+
+g215
+
+g315
+
+```
+
+
+\newpage
+
+## Khung - Puja
+
+4466 metres
+
+### Full flight
+
+\includegraphics{p_1}
+
+### Kilometer 1
+
+\includegraphics{p_2}
+
+
+### Kilometer 2
+
+\includegraphics{p_3}
+
+
+### Kilometer 3
+
+\includegraphics{p_4}
+
+
+### Kilometer 4
+
+\includegraphics{p_5}
+
+
+### Kilometer 5
+
+\includegraphics{p_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g116
+
+g216
+
+g316
+
+```
+
+
+\newpage
+
+## Liwang - Puja
+
+2738 metres
+
+### Full flight
+
+\includegraphics{q_1}
+
+### Kilometer 1
+
+\includegraphics{q_2}
+
+
+### Kilometer 2
+
+\includegraphics{q_3}
+
+
+### Kilometer 3
+
+\includegraphics{q_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g117
+
+g217
+
+g317
+
+```
+
+
+\newpage
+
+## Narikot - Puja
+
+3561 metres
+
+### Full flight
+
+\includegraphics{r_1}
+
+### Kilometer 1
+
+\includegraphics{r_2}
+
+
+### Kilometer 2
+
+\includegraphics{r_3}
+
+
+### Kilometer 3
+
+\includegraphics{r_4}
+
+
+### Kilometer 4
+
+\includegraphics{r_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g118
+
+g218
+
+g318
+
+```
+
+
+\newpage
+
+## Dharmawati - Lung
+
+5914 metres
+
+### Full flight
+
+\includegraphics{s_1}
+
+### Kilometer 1
+
+\includegraphics{s_2}
+
+
+### Kilometer 2
+
+\includegraphics{s_3}
+
+
+### Kilometer 3
+
+\includegraphics{s_4}
+
+
+### Kilometer 4
+
+\includegraphics{s_5}
+
+
+### Kilometer 5
+
+\includegraphics{s_6}
+
+
+### Kilometer 6
+
+\includegraphics{s_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g119
+
+g219
+
+g319
+
+```
+
+
+\newpage
+
+## Okharkot - Tusara
+
+3653 metres
+
+### Full flight
+
+\includegraphics{t_1}
+
+### Kilometer 1
+
+\includegraphics{t_2}
+
+
+### Kilometer 2
+
+\includegraphics{t_3}
+
+
+### Kilometer 3
+
+\includegraphics{t_4}
+
+
+### Kilometer 4
+
+\includegraphics{t_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g120
+
+g220
+
+g320
+
+```
+
+
+\newpage
+
+## Badikot - Okharkot
+
+6477 metres
+
+### Full flight
+
+\includegraphics{u_1}
+
+### Kilometer 1
+
+\includegraphics{u_2}
+
+
+### Kilometer 2
+
+\includegraphics{u_3}
+
+
+### Kilometer 3
+
+\includegraphics{u_4}
+
+
+### Kilometer 4
+
+\includegraphics{u_5}
+
+
+### Kilometer 5
+
+\includegraphics{u_6}
+
+
+### Kilometer 6
+
+\includegraphics{u_7}
+
+
+### Kilometer 7
+
+\includegraphics{u_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g121
+
+g221
+
+g321
+
+```
+
+
+\newpage
+
+## Okharkot - Wangemarot
+
+7213 metres
+
+### Full flight
+
+\includegraphics{v_1}
+
+### Kilometer 1
+
+\includegraphics{v_2}
+
+
+### Kilometer 2
+
+\includegraphics{v_3}
+
+
+### Kilometer 3
+
+\includegraphics{v_4}
+
+
+### Kilometer 4
+
+\includegraphics{v_5}
+
+
+### Kilometer 5
+
+\includegraphics{v_6}
+
+
+### Kilometer 6
+
+\includegraphics{v_7}
+
+
+### Kilometer 7
+
+\includegraphics{v_8}
+
+
+### Kilometer 8
+
+\includegraphics{v_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g122
+
+g222
+
+g322
+
+```
+
+
+\newpage
+
+## Chuja - Okharkot
+
+4333 metres
+
+### Full flight
+
+\includegraphics{w_1}
+
+### Kilometer 1
+
+\includegraphics{w_2}
+
+
+### Kilometer 2
+
+\includegraphics{w_3}
+
+
+### Kilometer 3
+
+\includegraphics{w_4}
+
+
+### Kilometer 4
+
+\includegraphics{w_5}
+
+
+### Kilometer 5
+
+\includegraphics{w_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g123
+
+g223
+
+g323
+
+```
+
+
+\newpage
+
+## Okharkot - Torwang
+
+3971 metres
+
+### Full flight
+
+\includegraphics{x_1}
+
+### Kilometer 1
+
+\includegraphics{x_2}
+
+
+### Kilometer 2
+
+\includegraphics{x_3}
+
+
+### Kilometer 3
+
+\includegraphics{x_4}
+
+
+### Kilometer 4
+
+\includegraphics{x_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g124
+
+g224
+
+g324
+
+```
+
+
+\newpage
+
+## Dharmawati - Maranthana
+
+3839 metres
+
+### Full flight
+
+\includegraphics{y_1}
+
+### Kilometer 1
+
+\includegraphics{y_2}
+
+
+### Kilometer 2
+
+\includegraphics{y_3}
+
+
+### Kilometer 3
+
+\includegraphics{y_4}
+
+
+### Kilometer 4
+
+\includegraphics{y_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g125
+
+g225
+
+g325
+
+```
+
+
+\newpage
+
+## Bijuli - Dharampani
+
+5649 metres
+
+### Full flight
+
+\includegraphics{z_1}
+
+### Kilometer 1
+
+\includegraphics{z_2}
+
+
+### Kilometer 2
+
+\includegraphics{z_3}
+
+
+### Kilometer 3
+
+\includegraphics{z_4}
+
+
+### Kilometer 4
+
+\includegraphics{z_5}
+
+
+### Kilometer 5
+
+\includegraphics{z_6}
+
+
+### Kilometer 6
+
+\includegraphics{z_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g126
+
+g226
+
+g326
+
+```
+
+
+\newpage
+
+## Dangwang - Dharampani
+
+14037 metres
+
+### Full flight
+
+\includegraphics{aa_1}
+
+### Kilometer 1
+
+\includegraphics{aa_2}
+
+
+### Kilometer 2
+
+\includegraphics{aa_3}
+
+
+### Kilometer 3
+
+\includegraphics{aa_4}
+
+
+### Kilometer 4
+
+\includegraphics{aa_5}
+
+
+### Kilometer 5
+
+\includegraphics{aa_6}
+
+
+### Kilometer 6
+
+\includegraphics{aa_7}
+
+
+### Kilometer 7
+
+\includegraphics{aa_8}
+
+
+### Kilometer 8
+
+\includegraphics{aa_9}
+
+
+### Kilometer 9
+
+\includegraphics{aa_10}
+
+
+### Kilometer 10
+
+\includegraphics{aa_11}
+
+
+### Kilometer 11
+
+\includegraphics{aa_12}
+
+
+### Kilometer 12
+
+\includegraphics{aa_13}
+
+
+### Kilometer 13
+
+\includegraphics{aa_14}
+
+
+### Kilometer 14
+
+\includegraphics{aa_15}
+
+
+### Kilometer 15
+
+\includegraphics{aa_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g127
+
+g227
+
+g327
+
+```
+
+
+\newpage
+
+## Dharampani - RuspurKot
+
+3278 metres
+
+### Full flight
+
+\includegraphics{bb_1}
+
+### Kilometer 1
+
+\includegraphics{bb_2}
+
+
+### Kilometer 2
+
+\includegraphics{bb_3}
+
+
+### Kilometer 3
+
+\includegraphics{bb_4}
+
+
+### Kilometer 4
+
+\includegraphics{bb_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g128
+
+g228
+
+g328
+
+```
+
+
+\newpage
+
+## Dharampani - Pakala
+
+7266 metres
+
+### Full flight
+
+\includegraphics{cc_1}
+
+### Kilometer 1
+
+\includegraphics{cc_2}
+
+
+### Kilometer 2
+
+\includegraphics{cc_3}
+
+
+### Kilometer 3
+
+\includegraphics{cc_4}
+
+
+### Kilometer 4
+
+\includegraphics{cc_5}
+
+
+### Kilometer 5
+
+\includegraphics{cc_6}
+
+
+### Kilometer 6
+
+\includegraphics{cc_7}
+
+
+### Kilometer 7
+
+\includegraphics{cc_8}
+
+
+### Kilometer 8
+
+\includegraphics{cc_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g129
+
+g229
+
+g329
+
+```
+
+
+\newpage
+
+## Hansapur - Tiram
+
+10229 metres
+
+### Full flight
+
+\includegraphics{dd_1}
+
+### Kilometer 1
+
+\includegraphics{dd_2}
+
+
+### Kilometer 2
+
+\includegraphics{dd_3}
+
+
+### Kilometer 3
+
+\includegraphics{dd_4}
+
+
+### Kilometer 4
+
+\includegraphics{dd_5}
+
+
+### Kilometer 5
+
+\includegraphics{dd_6}
+
+
+### Kilometer 6
+
+\includegraphics{dd_7}
+
+
+### Kilometer 7
+
+\includegraphics{dd_8}
+
+
+### Kilometer 8
+
+\includegraphics{dd_9}
+
+
+### Kilometer 9
+
+\includegraphics{dd_10}
+
+
+### Kilometer 10
+
+\includegraphics{dd_11}
+
+
+### Kilometer 11
+
+\includegraphics{dd_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g130
+
+g230
+
+g330
+
+```
+
+
+\newpage
+
+## Bangesal - Tiram
+
+11483 metres
+
+### Full flight
+
+\includegraphics{ee_1}
+
+### Kilometer 1
+
+\includegraphics{ee_2}
+
+
+### Kilometer 2
+
+\includegraphics{ee_3}
+
+
+### Kilometer 3
+
+\includegraphics{ee_4}
+
+
+### Kilometer 4
+
+\includegraphics{ee_5}
+
+
+### Kilometer 5
+
+\includegraphics{ee_6}
+
+
+### Kilometer 6
+
+\includegraphics{ee_7}
+
+
+### Kilometer 7
+
+\includegraphics{ee_8}
+
+
+### Kilometer 8
+
+\includegraphics{ee_9}
+
+
+### Kilometer 9
+
+\includegraphics{ee_10}
+
+
+### Kilometer 10
+
+\includegraphics{ee_11}
+
+
+### Kilometer 11
+
+\includegraphics{ee_12}
+
+
+### Kilometer 12
+
+\includegraphics{ee_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g131
+
+g231
+
+g331
+
+```
+
+
+\newpage
+
+## Dungegadi - Tiram
+
+7089 metres
+
+### Full flight
+
+\includegraphics{ff_1}
+
+### Kilometer 1
+
+\includegraphics{ff_2}
+
+
+### Kilometer 2
+
+\includegraphics{ff_3}
+
+
+### Kilometer 3
+
+\includegraphics{ff_4}
+
+
+### Kilometer 4
+
+\includegraphics{ff_5}
+
+
+### Kilometer 5
+
+\includegraphics{ff_6}
+
+
+### Kilometer 6
+
+\includegraphics{ff_7}
+
+
+### Kilometer 7
+
+\includegraphics{ff_8}
+
+
+### Kilometer 8
+
+\includegraphics{ff_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g132
+
+g232
+
+g332
+
+```
+
+
+\newpage
+
+## Dhuwang - Tiram
+
+7850 metres
+
+### Full flight
+
+\includegraphics{gg_1}
+
+### Kilometer 1
+
+\includegraphics{gg_2}
+
+
+### Kilometer 2
+
+\includegraphics{gg_3}
+
+
+### Kilometer 3
+
+\includegraphics{gg_4}
+
+
+### Kilometer 4
+
+\includegraphics{gg_5}
+
+
+### Kilometer 5
+
+\includegraphics{gg_6}
+
+
+### Kilometer 6
+
+\includegraphics{gg_7}
+
+
+### Kilometer 7
+
+\includegraphics{gg_8}
+
+
+### Kilometer 8
+
+\includegraphics{gg_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g133
+
+g233
+
+g333
+
+```
+
+
+\newpage
+
+## Dharampani - Khaira
+
+7558 metres
+
+### Full flight
+
+\includegraphics{hh_1}
+
+### Kilometer 1
+
+\includegraphics{hh_2}
+
+
+### Kilometer 2
+
+\includegraphics{hh_3}
+
+
+### Kilometer 3
+
+\includegraphics{hh_4}
+
+
+### Kilometer 4
+
+\includegraphics{hh_5}
+
+
+### Kilometer 5
+
+\includegraphics{hh_6}
+
+
+### Kilometer 6
+
+\includegraphics{hh_7}
+
+
+### Kilometer 7
+
+\includegraphics{hh_8}
+
+
+### Kilometer 8
+
+\includegraphics{hh_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g134
+
+g234
+
+g334
+
+```
+
+
+\newpage
+
+## Ramdi - Tiram
+
+6244 metres
+
+### Full flight
+
+\includegraphics{ii_1}
+
+### Kilometer 1
+
+\includegraphics{ii_2}
+
+
+### Kilometer 2
+
+\includegraphics{ii_3}
+
+
+### Kilometer 3
+
+\includegraphics{ii_4}
+
+
+### Kilometer 4
+
+\includegraphics{ii_5}
+
+
+### Kilometer 5
+
+\includegraphics{ii_6}
+
+
+### Kilometer 6
+
+\includegraphics{ii_7}
+
+
+### Kilometer 7
+
+\includegraphics{ii_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g135
+
+g235
+
+g335
+
+```
+
+
+\newpage
+
+## Baraula - Pakala
+
+3601 metres
+
+### Full flight
+
+\includegraphics{jj_1}
+
+### Kilometer 1
+
+\includegraphics{jj_2}
+
+
+### Kilometer 2
+
+\includegraphics{jj_3}
+
+
+### Kilometer 3
+
+\includegraphics{jj_4}
+
+
+### Kilometer 4
+
+\includegraphics{jj_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g136
+
+g236
+
+g336
+
+```
+
+
+\newpage
+
+## Rajbara - Syauliwang
+
+6862 metres
+
+### Full flight
+
+\includegraphics{kk_1}
+
+### Kilometer 1
+
+\includegraphics{kk_2}
+
+
+### Kilometer 2
+
+\includegraphics{kk_3}
+
+
+### Kilometer 3
+
+\includegraphics{kk_4}
+
+
+### Kilometer 4
+
+\includegraphics{kk_5}
+
+
+### Kilometer 5
+
+\includegraphics{kk_6}
+
+
+### Kilometer 6
+
+\includegraphics{kk_7}
+
+
+### Kilometer 7
+
+\includegraphics{kk_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g137
+
+g237
+
+g337
+
+```
+
+
+\newpage
+
+## Arkha - Rajbara
+
+3305 metres
+
+### Full flight
+
+\includegraphics{ll_1}
+
+### Kilometer 1
+
+\includegraphics{ll_2}
+
+
+### Kilometer 2
+
+\includegraphics{ll_3}
+
+
+### Kilometer 3
+
+\includegraphics{ll_4}
+
+
+### Kilometer 4
+
+\includegraphics{ll_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g138
+
+g238
+
+g338
+
+```
+
+
+\newpage
+
+## Baraula - Dangwang
+
+5588 metres
+
+### Full flight
+
+\includegraphics{mm_1}
+
+### Kilometer 1
+
+\includegraphics{mm_2}
+
+
+### Kilometer 2
+
+\includegraphics{mm_3}
+
+
+### Kilometer 3
+
+\includegraphics{mm_4}
+
+
+### Kilometer 4
+
+\includegraphics{mm_5}
+
+
+### Kilometer 5
+
+\includegraphics{mm_6}
+
+
+### Kilometer 6
+
+\includegraphics{mm_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g139
+
+g239
+
+g339
+
+```
+
+
+\newpage
+
+## Bangesal - Hansapur
+
+2532 metres
+
+### Full flight
+
+\includegraphics{nn_1}
+
+### Kilometer 1
+
+\includegraphics{nn_2}
+
+
+### Kilometer 2
+
+\includegraphics{nn_3}
+
+
+### Kilometer 3
+
+\includegraphics{nn_2}
+
+
+
+### Additional plots
+
+```{r}
+
+g140
+
+g240
+
+g340
+
+```
+
+

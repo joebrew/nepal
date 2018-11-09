@@ -1,0 +1,1948 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={DrOTS Nepal Flight Plans},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{DrOTS Nepal Flight Plans}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{}
+    \preauthor{}\postauthor{}
+    \date{}
+    \predate{}\postdate{}
+  
+\pagenumbering{gobble}
+\usepackage{longtable}
+\usepackage[utf8]{inputenc}
+\usepackage{changepage}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage{colortbl}
+\usepackage{xcolor}
+% Font
+\usepackage{fontspec}
+\setmainfont{Swift-Regular_43151.ttf}
+\setsansfont[BoldFont={Swift-Bold_43130.ttf}]{Swift-Regular_43151.ttf}
+% \setmonofont{Swift-Regular_43151.ttf}
+\renewcommand{\familydefault}{\sfdefault}
+% \usepackage{fontspec}
+% \setmainfont{Lato-Regular.ttf}
+% \setsansfont[BoldFont={Lato-Bold.ttf}]{Lato-Regular.ttf}
+% \renewcommand{\familydefault}{\sfdefault}
+
+\def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
+\let\endchangemargin=\endlist
+\renewcommand{\rmdefault}{ppl}
+
+\usepackage{multicol}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{lipsum}
+
+% \usepackage{todonotes} % for side notes
+\usepackage[colorinlistoftodos]{todonotes} % for side notes
+\usepackage{lmodern}
+\usepackage{fancyhdr} % Headers and footers
+\pagestyle{fancy} % All pages have headers and footers
+\fancyhead{} % Blank out the default header
+\fancyfoot{} % Blank out the default footer
+\fancyhead[C]{DrOTS}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\newcommand{\footremember}[2]{%
+    \footnote{#2}
+    \newcounter{#1}
+    \setcounter{#1}{\value{footnote}}%
+}
+\newcommand{\footrecall}[1]{%
+    \footnotemark[\value{#1}]%
+}
+
+\def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
+\let\endchangemargin=\endlist
+
+\widowpenalties 1 150
+
+\makeatletter
+\renewcommand\footnotesize{%
+   \@setfontsize\footnotesize\@ixpt{11}%
+   \abovedisplayskip 8\p@ \@plus2\p@ \@minus4\p@
+   \abovedisplayshortskip \z@ \@plus\p@
+   \belowdisplayshortskip 4\p@ \@plus2\p@ \@minus2\p@
+   \def\@listi{\leftmargin\leftmargini
+               \topsep 4\p@ \@plus2\p@ \@minus2\p@
+               \parsep 2\p@ \@plus\p@ \@minus\p@
+               \itemsep \parsep}%
+   \belowdisplayskip \abovedisplayskip
+}
+\makeatother
+
+\DeclareTextCommandDefault{\nobreakspace}{\leavevmode\nobreak\ }
+
+\begin{document}
+\maketitle
+
+\begin{center}
+\begin{large}
+
+DrOTS Nepal, Nepal Flying Labs, Birat Nepal Medical Trust
+
+\end{large}
+\end{center}
+
+\vspace{5mm}
+
+\begin{center}
+\textbf{Abstract}  
+\end{center}
+
+\vspace{5mm}
+
+\begin{center}
+\begin{changemargin}{3cm}{3cm} 
+
+This document contains visuals of all planned flights in Pyuthan for the period from January 2019 through September 2019.
+
+\end{changemargin}
+\end{center}
+
+\vspace{20mm}
+
+\noindent\fbox{%
+    \parbox{\textwidth}{%
+        \subsection*{Contents}
+        \begin{itemize}
+          \item Overview map
+          \item Flight specific strip maps
+        \end{itemize}
+        \vspace{2mm}
+    }%
+}
+
+\vfill
+\null
+
+\vspace{3mm}
+
+\newpage
+
+\section{Overview}\label{overview}
+
+The below map shows all flights planned in the Pyuthan district.
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+\newpage
+
+\section{Strip maps}\label{strip-maps}
+
+The below show strip maps (both complete and kilometer-specific) with a
+500 meter buffer.
+
+\newpage
+
+\subsection{Belwaspur - Jumrikanda}\label{belwaspur---jumrikanda}
+
+6073 metres
+
+\subsubsection{Full flight}\label{full-flight}
+
+\includegraphics{a_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1}
+
+\includegraphics{a_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2}
+
+\includegraphics{a_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3}
+
+\includegraphics{a_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4}
+
+\includegraphics{a_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5}
+
+\includegraphics{a_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6}
+
+\includegraphics{a_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7}
+
+\includegraphics{a_2}
+
+\subsubsection{Additional plots}\label{additional-plots}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-9-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-9-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-9-3.pdf}
+
+\newpage
+
+\subsection{Dakhanwadi - Jumrikanda}\label{dakhanwadi---jumrikanda}
+
+5830 metres
+
+\subsubsection{Full flight}\label{full-flight-1}
+
+\includegraphics{b_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-1}
+
+\includegraphics{b_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-1}
+
+\includegraphics{b_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-1}
+
+\includegraphics{b_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-1}
+
+\includegraphics{b_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-1}
+
+\includegraphics{b_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-1}
+
+\includegraphics{b_2}
+
+\subsubsection{Additional plots}\label{additional-plots-1}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-10-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-10-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-10-3.pdf}
+
+\newpage
+
+\subsection{Baraula - Dharampani}\label{baraula---dharampani}
+
+9205 metres
+
+\subsubsection{Full flight}\label{full-flight-2}
+
+\includegraphics{c_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-2}
+
+\includegraphics{c_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-2}
+
+\includegraphics{c_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-2}
+
+\includegraphics{c_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-2}
+
+\includegraphics{c_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-2}
+
+\includegraphics{c_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-2}
+
+\includegraphics{c_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7-1}
+
+\includegraphics{c_8}
+
+\subsubsection{Kilometer 8}\label{kilometer-8}
+
+\includegraphics{c_9}
+
+\subsubsection{Kilometer 9}\label{kilometer-9}
+
+\includegraphics{c_10}
+
+\subsubsection{Kilometer 10}\label{kilometer-10}
+
+\includegraphics{c_2}
+
+\subsubsection{Additional plots}\label{additional-plots-2}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-11-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-11-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-11-3.pdf}
+
+\newpage
+
+\subsection{Sari - Swargadwarikhal}\label{sari---swargadwarikhal}
+
+7811 metres
+
+\subsubsection{Full flight}\label{full-flight-3}
+
+\includegraphics{d_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-3}
+
+\includegraphics{d_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-3}
+
+\includegraphics{d_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-3}
+
+\includegraphics{d_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-3}
+
+\includegraphics{d_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-3}
+
+\includegraphics{d_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-3}
+
+\includegraphics{d_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7-2}
+
+\includegraphics{d_8}
+
+\subsubsection{Kilometer 8}\label{kilometer-8-1}
+
+\includegraphics{d_2}
+
+\subsubsection{Additional plots}\label{additional-plots-3}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-12-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-12-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-12-3.pdf}
+
+\newpage
+
+\subsection{Kochiwang -
+Swargadwarikhal}\label{kochiwang---swargadwarikhal}
+
+6166 metres
+
+\subsubsection{Full flight}\label{full-flight-4}
+
+\includegraphics{e_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-4}
+
+\includegraphics{e_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-4}
+
+\includegraphics{e_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-4}
+
+\includegraphics{e_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-4}
+
+\includegraphics{e_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-4}
+
+\includegraphics{e_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-4}
+
+\includegraphics{e_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7-3}
+
+\includegraphics{e_2}
+
+\subsubsection{Additional plots}\label{additional-plots-4}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-13-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-13-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-13-3.pdf}
+
+\newpage
+
+\subsection{Dhobaghat(UdayapurKo -
+Gothiwang}\label{dhobaghatudayapurko---gothiwang}
+
+6825 metres
+
+\subsubsection{Full flight}\label{full-flight-5}
+
+\includegraphics{f_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-5}
+
+\includegraphics{f_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-5}
+
+\includegraphics{f_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-5}
+
+\includegraphics{f_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-5}
+
+\includegraphics{f_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-5}
+
+\includegraphics{f_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-5}
+
+\includegraphics{f_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7-4}
+
+\includegraphics{f_2}
+
+\subsubsection{Additional plots}\label{additional-plots-5}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-14-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-14-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-14-3.pdf}
+
+\newpage
+
+\subsection{Dhobaghat(UdayapurKo -
+Markawang}\label{dhobaghatudayapurko---markawang}
+
+4162 metres
+
+\subsubsection{Full flight}\label{full-flight-6}
+
+\includegraphics{g_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-6}
+
+\includegraphics{g_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-6}
+
+\includegraphics{g_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-6}
+
+\includegraphics{g_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-6}
+
+\includegraphics{g_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-6}
+
+\includegraphics{g_2}
+
+\subsubsection{Additional plots}\label{additional-plots-6}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-15-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-15-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-15-3.pdf}
+
+\newpage
+
+\subsection{Dhobaghat(UdayapurKo -
+Nayagaun}\label{dhobaghatudayapurko---nayagaun}
+
+4215 metres
+
+\subsubsection{Full flight}\label{full-flight-7}
+
+\includegraphics{h_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-7}
+
+\includegraphics{h_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-7}
+
+\includegraphics{h_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-7}
+
+\includegraphics{h_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-7}
+
+\includegraphics{h_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-7}
+
+\includegraphics{h_2}
+
+\subsubsection{Additional plots}\label{additional-plots-7}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-16-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-16-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-16-3.pdf}
+
+\newpage
+
+\subsection{Barjiwang - Jumrikanda}\label{barjiwang---jumrikanda}
+
+4242 metres
+
+\subsubsection{Full flight}\label{full-flight-8}
+
+\includegraphics{i_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-8}
+
+\includegraphics{i_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-8}
+
+\includegraphics{i_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-8}
+
+\includegraphics{i_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-8}
+
+\includegraphics{i_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-8}
+
+\includegraphics{i_2}
+
+\subsubsection{Additional plots}\label{additional-plots-8}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-17-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-17-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-17-3.pdf}
+
+\newpage
+
+\subsection{Jumrikanda - Phopli}\label{jumrikanda---phopli}
+
+5921 metres
+
+\subsubsection{Full flight}\label{full-flight-9}
+
+\includegraphics{j_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-9}
+
+\includegraphics{j_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-9}
+
+\includegraphics{j_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-9}
+
+\includegraphics{j_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-9}
+
+\includegraphics{j_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-9}
+
+\includegraphics{j_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-6}
+
+\includegraphics{j_2}
+
+\subsubsection{Additional plots}\label{additional-plots-9}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-18-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-18-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-18-3.pdf}
+
+\newpage
+
+\subsection{Damri - Khawang}\label{damri---khawang}
+
+6785 metres
+
+\subsubsection{Full flight}\label{full-flight-10}
+
+\includegraphics{k_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-10}
+
+\includegraphics{k_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-10}
+
+\includegraphics{k_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-10}
+
+\includegraphics{k_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-10}
+
+\includegraphics{k_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-10}
+
+\includegraphics{k_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-7}
+
+\includegraphics{k_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7-5}
+
+\includegraphics{k_2}
+
+\subsubsection{Additional plots}\label{additional-plots-10}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-19-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-19-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-19-3.pdf}
+
+\newpage
+
+\subsection{Khawang - Ligha}\label{khawang---ligha}
+
+5682 metres
+
+\subsubsection{Full flight}\label{full-flight-11}
+
+\includegraphics{l_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-11}
+
+\includegraphics{l_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-11}
+
+\includegraphics{l_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-11}
+
+\includegraphics{l_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-11}
+
+\includegraphics{l_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-11}
+
+\includegraphics{l_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-8}
+
+\includegraphics{l_2}
+
+\subsubsection{Additional plots}\label{additional-plots-11}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-20-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-20-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-20-3.pdf}
+
+\newpage
+
+\subsection{Khawang - Syauliwang}\label{khawang---syauliwang}
+
+9167 metres
+
+\subsubsection{Full flight}\label{full-flight-12}
+
+\includegraphics{m_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-12}
+
+\includegraphics{m_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-12}
+
+\includegraphics{m_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-12}
+
+\includegraphics{m_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-12}
+
+\includegraphics{m_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-12}
+
+\includegraphics{m_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-9}
+
+\includegraphics{m_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7-6}
+
+\includegraphics{m_8}
+
+\subsubsection{Kilometer 8}\label{kilometer-8-2}
+
+\includegraphics{m_9}
+
+\subsubsection{Kilometer 9}\label{kilometer-9-1}
+
+\includegraphics{m_10}
+
+\subsubsection{Kilometer 10}\label{kilometer-10-1}
+
+\includegraphics{m_2}
+
+\subsubsection{Additional plots}\label{additional-plots-12}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-21-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-21-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-21-3.pdf}
+
+\newpage
+
+\subsection{Khawang - Rajbara}\label{khawang---rajbara}
+
+9255 metres
+
+\subsubsection{Full flight}\label{full-flight-13}
+
+\includegraphics{n_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-13}
+
+\includegraphics{n_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-13}
+
+\includegraphics{n_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-13}
+
+\includegraphics{n_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-13}
+
+\includegraphics{n_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-13}
+
+\includegraphics{n_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-10}
+
+\includegraphics{n_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7-7}
+
+\includegraphics{n_8}
+
+\subsubsection{Kilometer 8}\label{kilometer-8-3}
+
+\includegraphics{n_9}
+
+\subsubsection{Kilometer 9}\label{kilometer-9-2}
+
+\includegraphics{n_10}
+
+\subsubsection{Kilometer 10}\label{kilometer-10-2}
+
+\includegraphics{n_2}
+
+\subsubsection{Additional plots}\label{additional-plots-13}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-22-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-22-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-22-3.pdf}
+
+\newpage
+
+\subsection{Arkha - Khawang}\label{arkha---khawang}
+
+11173 metres
+
+\subsubsection{Full flight}\label{full-flight-14}
+
+\includegraphics{o_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-14}
+
+\includegraphics{o_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-14}
+
+\includegraphics{o_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-14}
+
+\includegraphics{o_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-14}
+
+\includegraphics{o_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-14}
+
+\includegraphics{o_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-11}
+
+\includegraphics{o_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7-8}
+
+\includegraphics{o_8}
+
+\subsubsection{Kilometer 8}\label{kilometer-8-4}
+
+\includegraphics{o_9}
+
+\subsubsection{Kilometer 9}\label{kilometer-9-3}
+
+\includegraphics{o_10}
+
+\subsubsection{Kilometer 10}\label{kilometer-10-3}
+
+\includegraphics{o_11}
+
+\subsubsection{Kilometer 11}\label{kilometer-11}
+
+\includegraphics{o_12}
+
+\subsubsection{Kilometer 12}\label{kilometer-12}
+
+\includegraphics{o_2}
+
+\subsubsection{Additional plots}\label{additional-plots-14}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-23-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-23-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-23-3.pdf}
+
+\newpage
+
+\subsection{Khung - Puja}\label{khung---puja}
+
+4466 metres
+
+\subsubsection{Full flight}\label{full-flight-15}
+
+\includegraphics{p_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-15}
+
+\includegraphics{p_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-15}
+
+\includegraphics{p_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-15}
+
+\includegraphics{p_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-15}
+
+\includegraphics{p_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-15}
+
+\includegraphics{p_2}
+
+\subsubsection{Additional plots}\label{additional-plots-15}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-24-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-24-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-24-3.pdf}
+
+\newpage
+
+\subsection{Liwang - Puja}\label{liwang---puja}
+
+2738 metres
+
+\subsubsection{Full flight}\label{full-flight-16}
+
+\includegraphics{q_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-16}
+
+\includegraphics{q_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-16}
+
+\includegraphics{q_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-16}
+
+\includegraphics{q_2}
+
+\subsubsection{Additional plots}\label{additional-plots-16}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-25-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-25-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-25-3.pdf}
+
+\newpage
+
+\subsection{Narikot - Puja}\label{narikot---puja}
+
+3561 metres
+
+\subsubsection{Full flight}\label{full-flight-17}
+
+\includegraphics{r_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-17}
+
+\includegraphics{r_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-17}
+
+\includegraphics{r_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-17}
+
+\includegraphics{r_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-16}
+
+\includegraphics{r_2}
+
+\subsubsection{Additional plots}\label{additional-plots-17}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-26-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-26-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-26-3.pdf}
+
+\newpage
+
+\subsection{Dharmawati - Lung}\label{dharmawati---lung}
+
+5914 metres
+
+\subsubsection{Full flight}\label{full-flight-18}
+
+\includegraphics{s_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-18}
+
+\includegraphics{s_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-18}
+
+\includegraphics{s_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-18}
+
+\includegraphics{s_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-17}
+
+\includegraphics{s_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-16}
+
+\includegraphics{s_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-12}
+
+\includegraphics{s_2}
+
+\subsubsection{Additional plots}\label{additional-plots-18}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-27-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-27-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-27-3.pdf}
+
+\newpage
+
+\subsection{Okharkot - Tusara}\label{okharkot---tusara}
+
+3653 metres
+
+\subsubsection{Full flight}\label{full-flight-19}
+
+\includegraphics{t_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-19}
+
+\includegraphics{t_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-19}
+
+\includegraphics{t_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-19}
+
+\includegraphics{t_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-18}
+
+\includegraphics{t_2}
+
+\subsubsection{Additional plots}\label{additional-plots-19}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-28-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-28-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-28-3.pdf}
+
+\newpage
+
+\subsection{Badikot - Okharkot}\label{badikot---okharkot}
+
+6477 metres
+
+\subsubsection{Full flight}\label{full-flight-20}
+
+\includegraphics{u_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-20}
+
+\includegraphics{u_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-20}
+
+\includegraphics{u_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-20}
+
+\includegraphics{u_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-19}
+
+\includegraphics{u_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-17}
+
+\includegraphics{u_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-13}
+
+\includegraphics{u_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7-9}
+
+\includegraphics{u_2}
+
+\subsubsection{Additional plots}\label{additional-plots-20}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-29-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-29-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-29-3.pdf}
+
+\newpage
+
+\subsection{Okharkot - Wangemarot}\label{okharkot---wangemarot}
+
+7213 metres
+
+\subsubsection{Full flight}\label{full-flight-21}
+
+\includegraphics{v_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-21}
+
+\includegraphics{v_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-21}
+
+\includegraphics{v_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-21}
+
+\includegraphics{v_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-20}
+
+\includegraphics{v_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-18}
+
+\includegraphics{v_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-14}
+
+\includegraphics{v_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7-10}
+
+\includegraphics{v_8}
+
+\subsubsection{Kilometer 8}\label{kilometer-8-5}
+
+\includegraphics{v_2}
+
+\subsubsection{Additional plots}\label{additional-plots-21}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-30-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-30-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-30-3.pdf}
+
+\newpage
+
+\subsection{Chuja - Okharkot}\label{chuja---okharkot}
+
+4333 metres
+
+\subsubsection{Full flight}\label{full-flight-22}
+
+\includegraphics{w_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-22}
+
+\includegraphics{w_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-22}
+
+\includegraphics{w_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-22}
+
+\includegraphics{w_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-21}
+
+\includegraphics{w_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-19}
+
+\includegraphics{w_2}
+
+\subsubsection{Additional plots}\label{additional-plots-22}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-31-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-31-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-31-3.pdf}
+
+\newpage
+
+\subsection{Okharkot - Torwang}\label{okharkot---torwang}
+
+3971 metres
+
+\subsubsection{Full flight}\label{full-flight-23}
+
+\includegraphics{x_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-23}
+
+\includegraphics{x_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-23}
+
+\includegraphics{x_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-23}
+
+\includegraphics{x_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-22}
+
+\includegraphics{x_2}
+
+\subsubsection{Additional plots}\label{additional-plots-23}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-32-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-32-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-32-3.pdf}
+
+\newpage
+
+\subsection{Dharmawati - Maranthana}\label{dharmawati---maranthana}
+
+3839 metres
+
+\subsubsection{Full flight}\label{full-flight-24}
+
+\includegraphics{y_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-24}
+
+\includegraphics{y_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-24}
+
+\includegraphics{y_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-24}
+
+\includegraphics{y_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-23}
+
+\includegraphics{y_2}
+
+\subsubsection{Additional plots}\label{additional-plots-24}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-33-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-33-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-33-3.pdf}
+
+\newpage
+
+\subsection{Bijuli - Dharampani}\label{bijuli---dharampani}
+
+5649 metres
+
+\subsubsection{Full flight}\label{full-flight-25}
+
+\includegraphics{z_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-25}
+
+\includegraphics{z_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-25}
+
+\includegraphics{z_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-25}
+
+\includegraphics{z_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-24}
+
+\includegraphics{z_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-20}
+
+\includegraphics{z_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-15}
+
+\includegraphics{z_2}
+
+\subsubsection{Additional plots}\label{additional-plots-25}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-34-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-34-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-34-3.pdf}
+
+\newpage
+
+\subsection{Dangwang - Dharampani}\label{dangwang---dharampani}
+
+14037 metres
+
+\subsubsection{Full flight}\label{full-flight-26}
+
+\includegraphics{aa_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-26}
+
+\includegraphics{aa_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-26}
+
+\includegraphics{aa_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-26}
+
+\includegraphics{aa_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-25}
+
+\includegraphics{aa_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-21}
+
+\includegraphics{aa_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-16}
+
+\includegraphics{aa_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7-11}
+
+\includegraphics{aa_8}
+
+\subsubsection{Kilometer 8}\label{kilometer-8-6}
+
+\includegraphics{aa_9}
+
+\subsubsection{Kilometer 9}\label{kilometer-9-4}
+
+\includegraphics{aa_10}
+
+\subsubsection{Kilometer 10}\label{kilometer-10-4}
+
+\includegraphics{aa_11}
+
+\subsubsection{Kilometer 11}\label{kilometer-11-1}
+
+\includegraphics{aa_12}
+
+\subsubsection{Kilometer 12}\label{kilometer-12-1}
+
+\includegraphics{aa_13}
+
+\subsubsection{Kilometer 13}\label{kilometer-13}
+
+\includegraphics{aa_14}
+
+\subsubsection{Kilometer 14}\label{kilometer-14}
+
+\includegraphics{aa_15}
+
+\subsubsection{Kilometer 15}\label{kilometer-15}
+
+\includegraphics{aa_2}
+
+\subsubsection{Additional plots}\label{additional-plots-26}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-35-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-35-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-35-3.pdf}
+
+\newpage
+
+\subsection{Dharampani - RuspurKot}\label{dharampani---ruspurkot}
+
+3278 metres
+
+\subsubsection{Full flight}\label{full-flight-27}
+
+\includegraphics{bb_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-27}
+
+\includegraphics{bb_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-27}
+
+\includegraphics{bb_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-27}
+
+\includegraphics{bb_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-26}
+
+\includegraphics{bb_2}
+
+\subsubsection{Additional plots}\label{additional-plots-27}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-36-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-36-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-36-3.pdf}
+
+\newpage
+
+\subsection{Dharampani - Pakala}\label{dharampani---pakala}
+
+7266 metres
+
+\subsubsection{Full flight}\label{full-flight-28}
+
+\includegraphics{cc_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-28}
+
+\includegraphics{cc_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-28}
+
+\includegraphics{cc_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-28}
+
+\includegraphics{cc_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-27}
+
+\includegraphics{cc_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-22}
+
+\includegraphics{cc_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-17}
+
+\includegraphics{cc_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7-12}
+
+\includegraphics{cc_8}
+
+\subsubsection{Kilometer 8}\label{kilometer-8-7}
+
+\includegraphics{cc_2}
+
+\subsubsection{Additional plots}\label{additional-plots-28}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-37-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-37-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-37-3.pdf}
+
+\newpage
+
+\subsection{Hansapur - Tiram}\label{hansapur---tiram}
+
+10229 metres
+
+\subsubsection{Full flight}\label{full-flight-29}
+
+\includegraphics{dd_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-29}
+
+\includegraphics{dd_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-29}
+
+\includegraphics{dd_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-29}
+
+\includegraphics{dd_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-28}
+
+\includegraphics{dd_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-23}
+
+\includegraphics{dd_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-18}
+
+\includegraphics{dd_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7-13}
+
+\includegraphics{dd_8}
+
+\subsubsection{Kilometer 8}\label{kilometer-8-8}
+
+\includegraphics{dd_9}
+
+\subsubsection{Kilometer 9}\label{kilometer-9-5}
+
+\includegraphics{dd_10}
+
+\subsubsection{Kilometer 10}\label{kilometer-10-5}
+
+\includegraphics{dd_11}
+
+\subsubsection{Kilometer 11}\label{kilometer-11-2}
+
+\includegraphics{dd_2}
+
+\subsubsection{Additional plots}\label{additional-plots-29}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-38-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-38-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-38-3.pdf}
+
+\newpage
+
+\subsection{Bangesal - Tiram}\label{bangesal---tiram}
+
+11483 metres
+
+\subsubsection{Full flight}\label{full-flight-30}
+
+\includegraphics{ee_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-30}
+
+\includegraphics{ee_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-30}
+
+\includegraphics{ee_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-30}
+
+\includegraphics{ee_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-29}
+
+\includegraphics{ee_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-24}
+
+\includegraphics{ee_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-19}
+
+\includegraphics{ee_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7-14}
+
+\includegraphics{ee_8}
+
+\subsubsection{Kilometer 8}\label{kilometer-8-9}
+
+\includegraphics{ee_9}
+
+\subsubsection{Kilometer 9}\label{kilometer-9-6}
+
+\includegraphics{ee_10}
+
+\subsubsection{Kilometer 10}\label{kilometer-10-6}
+
+\includegraphics{ee_11}
+
+\subsubsection{Kilometer 11}\label{kilometer-11-3}
+
+\includegraphics{ee_12}
+
+\subsubsection{Kilometer 12}\label{kilometer-12-2}
+
+\includegraphics{ee_2}
+
+\subsubsection{Additional plots}\label{additional-plots-30}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-39-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-39-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-39-3.pdf}
+
+\newpage
+
+\subsection{Dungegadi - Tiram}\label{dungegadi---tiram}
+
+7089 metres
+
+\subsubsection{Full flight}\label{full-flight-31}
+
+\includegraphics{ff_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-31}
+
+\includegraphics{ff_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-31}
+
+\includegraphics{ff_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-31}
+
+\includegraphics{ff_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-30}
+
+\includegraphics{ff_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-25}
+
+\includegraphics{ff_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-20}
+
+\includegraphics{ff_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7-15}
+
+\includegraphics{ff_8}
+
+\subsubsection{Kilometer 8}\label{kilometer-8-10}
+
+\includegraphics{ff_2}
+
+\subsubsection{Additional plots}\label{additional-plots-31}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-40-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-40-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-40-3.pdf}
+
+\newpage
+
+\subsection{Dhuwang - Tiram}\label{dhuwang---tiram}
+
+7850 metres
+
+\subsubsection{Full flight}\label{full-flight-32}
+
+\includegraphics{gg_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-32}
+
+\includegraphics{gg_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-32}
+
+\includegraphics{gg_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-32}
+
+\includegraphics{gg_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-31}
+
+\includegraphics{gg_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-26}
+
+\includegraphics{gg_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-21}
+
+\includegraphics{gg_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7-16}
+
+\includegraphics{gg_8}
+
+\subsubsection{Kilometer 8}\label{kilometer-8-11}
+
+\includegraphics{gg_2}
+
+\subsubsection{Additional plots}\label{additional-plots-32}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-41-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-41-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-41-3.pdf}
+
+\newpage
+
+\subsection{Dharampani - Khaira}\label{dharampani---khaira}
+
+7558 metres
+
+\subsubsection{Full flight}\label{full-flight-33}
+
+\includegraphics{hh_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-33}
+
+\includegraphics{hh_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-33}
+
+\includegraphics{hh_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-33}
+
+\includegraphics{hh_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-32}
+
+\includegraphics{hh_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-27}
+
+\includegraphics{hh_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-22}
+
+\includegraphics{hh_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7-17}
+
+\includegraphics{hh_8}
+
+\subsubsection{Kilometer 8}\label{kilometer-8-12}
+
+\includegraphics{hh_2}
+
+\subsubsection{Additional plots}\label{additional-plots-33}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-42-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-42-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-42-3.pdf}
+
+\newpage
+
+\subsection{Ramdi - Tiram}\label{ramdi---tiram}
+
+6244 metres
+
+\subsubsection{Full flight}\label{full-flight-34}
+
+\includegraphics{ii_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-34}
+
+\includegraphics{ii_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-34}
+
+\includegraphics{ii_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-34}
+
+\includegraphics{ii_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-33}
+
+\includegraphics{ii_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-28}
+
+\includegraphics{ii_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-23}
+
+\includegraphics{ii_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7-18}
+
+\includegraphics{ii_2}
+
+\subsubsection{Additional plots}\label{additional-plots-34}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-43-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-43-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-43-3.pdf}
+
+\newpage
+
+\subsection{Baraula - Pakala}\label{baraula---pakala}
+
+3601 metres
+
+\subsubsection{Full flight}\label{full-flight-35}
+
+\includegraphics{jj_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-35}
+
+\includegraphics{jj_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-35}
+
+\includegraphics{jj_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-35}
+
+\includegraphics{jj_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-34}
+
+\includegraphics{jj_2}
+
+\subsubsection{Additional plots}\label{additional-plots-35}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-44-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-44-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-44-3.pdf}
+
+\newpage
+
+\subsection{Rajbara - Syauliwang}\label{rajbara---syauliwang}
+
+6862 metres
+
+\subsubsection{Full flight}\label{full-flight-36}
+
+\includegraphics{kk_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-36}
+
+\includegraphics{kk_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-36}
+
+\includegraphics{kk_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-36}
+
+\includegraphics{kk_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-35}
+
+\includegraphics{kk_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-29}
+
+\includegraphics{kk_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-24}
+
+\includegraphics{kk_7}
+
+\subsubsection{Kilometer 7}\label{kilometer-7-19}
+
+\includegraphics{kk_2}
+
+\subsubsection{Additional plots}\label{additional-plots-36}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-45-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-45-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-45-3.pdf}
+
+\newpage
+
+\subsection{Arkha - Rajbara}\label{arkha---rajbara}
+
+3305 metres
+
+\subsubsection{Full flight}\label{full-flight-37}
+
+\includegraphics{ll_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-37}
+
+\includegraphics{ll_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-37}
+
+\includegraphics{ll_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-37}
+
+\includegraphics{ll_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-36}
+
+\includegraphics{ll_2}
+
+\subsubsection{Additional plots}\label{additional-plots-37}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-46-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-46-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-46-3.pdf}
+
+\newpage
+
+\subsection{Baraula - Dangwang}\label{baraula---dangwang}
+
+5588 metres
+
+\subsubsection{Full flight}\label{full-flight-38}
+
+\includegraphics{mm_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-38}
+
+\includegraphics{mm_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-38}
+
+\includegraphics{mm_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-38}
+
+\includegraphics{mm_4}
+
+\subsubsection{Kilometer 4}\label{kilometer-4-37}
+
+\includegraphics{mm_5}
+
+\subsubsection{Kilometer 5}\label{kilometer-5-30}
+
+\includegraphics{mm_6}
+
+\subsubsection{Kilometer 6}\label{kilometer-6-25}
+
+\includegraphics{mm_2}
+
+\subsubsection{Additional plots}\label{additional-plots-38}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-47-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-47-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-47-3.pdf}
+
+\newpage
+
+\subsection{Bangesal - Hansapur}\label{bangesal---hansapur}
+
+2532 metres
+
+\subsubsection{Full flight}\label{full-flight-39}
+
+\includegraphics{nn_1}
+
+\subsubsection{Kilometer 1}\label{kilometer-1-39}
+
+\includegraphics{nn_2}
+
+\subsubsection{Kilometer 2}\label{kilometer-2-39}
+
+\includegraphics{nn_3}
+
+\subsubsection{Kilometer 3}\label{kilometer-3-39}
+
+\includegraphics{nn_2}
+
+\subsubsection{Additional plots}\label{additional-plots-39}
+
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-48-1.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-48-2.pdf}
+\includegraphics{strip_maps_files/figure-latex/unnamed-chunk-48-3.pdf}
+
+
+\end{document}
