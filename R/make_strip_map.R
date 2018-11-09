@@ -13,7 +13,6 @@
 #' @import mapview
 #' @import rgeos
 #' @import rgdal
-
 #' @export
 
 make_strip_map <- function(df){

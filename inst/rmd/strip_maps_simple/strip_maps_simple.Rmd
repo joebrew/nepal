@@ -1,0 +1,376 @@
+---
+title: DrOTS Nepal Flight Plans
+date: ''
+output: 
+  pdf_document:
+    pandoc_args: [
+      "+RTS", "-K16000m",
+      "-RTS"
+    ]
+    keep_tex: true
+    latex_engine: xelatex
+    number_sections: true
+    includes:
+      in_header: preamble.sty
+fig_width: 4
+fig_height: 2.6
+bibliography: bibliography.bib
+csl: journal-of-health-economics.csl
+---
+
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE, comment = NA, error= FALSE, cache = FALSE}
+# Packages
+library(tidyverse)
+library(knitr)
+library(Hmisc)
+library(knitr)
+library(RColorBrewer)
+library(extrafont)
+library(databrew)
+library(nepal)
+library(sp)
+library(leaflet)
+library(mapview)
+library(geosphere)
+library(ggthemes)
+library(ggrepel)
+loadfonts()
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=FALSE,
+	             cache=FALSE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE,
+               dev = "cairo_pdf",
+               fig.pos="H"#,
+               # fig.path = 'figures/'
+               )
+opts_knit$set(width=75)
+options(xtable.comment = FALSE)
+```
+
+
+
+\begin{center}
+\begin{large}
+
+```{r, results = 'asis', eval = TRUE}
+cat(
+  paste0(
+    'DrOTS Nepal, Nepal Flying Labs, Birat Nepal Medical Trust'
+  # 'Joe Brew\\footremember{db}{Databrew, Toronto, Canada}\\footremember{cism}{Centro de Investigação em Saúde de Manhiça: Vila da Manhiça, Bairro Cambeve, Rua 12, Distrito da Manhiça, CP 1929, Maputo, Mozambique, Mozambique} \\footnote{Corresponding Author}  Ben Brew\\footrecall{db}   Xing Brew\\footrecall{db}'
+  )
+)
+
+```
+
+\end{large}
+\end{center}
+
+\vspace{5mm}
+
+
+\vspace{5mm}
+\begin{center}
+\begin{changemargin}{3cm}{3cm} 
+
+This document contains visuals of and data relating to planned flights in Pyuthan for the period from January 2019 through September 2019.
+
+\end{changemargin}
+\end{center}
+
+\vspace{20mm}
+
+\noindent\fbox{%
+    \parbox{\textwidth}{%
+        \subsection*{Contents}
+        \begin{itemize}
+          \item Overview map
+          \item Flight specific strip maps
+        \end{itemize}
+        \vspace{2mm}
+    }%
+}
+
+\vfill
+\null
+
+
+
+\vspace{3mm}
+
+\newpage
+
+# Overview  
+
+The below map shows all flights planned in the Pyuthan district.
+
+```{r}
+# x <- hps <- nepal::pyuthan_health_facilities
+# y <- hps[hps@data$HF_TYPE == 'Sub Health Post' |
+#            (hps@data$VDC_NAME1 == 'Bijubar' &
+#             hps@data$HF_TYPE == 'Hospital') | 
+#             hps@data$VDC_NAME1 =='Swargadwarikhal' ,]
+# y$hospital <- (y@data$VDC_NAME1 == 'Bijubar' &
+#             y@data$HF_TYPE == 'Hospital') | 
+#             y@data$VDC_NAME1 =='Swargadwarikhal'
+# cc <- coordinates(y)
+# cc <- data.frame(cc)
+# names(cc) <- c('x', 'y')
+# y@data <- bind_cols(y@data, cc)
+# y$distances <- y$min_distance <- y$min_name <- y$route <- y$x_end <- y$y_end<- NA
+# for(i in 1:nrow(y)){
+#   x <- distGeo(p1 = y[i,],
+#                             p2 = y)
+#   closest_index <- order(x)[2]
+#   closest_distance <- x[closest_index]
+#   closest_name <- as.character(y$VDC_NAME1[closest_index])
+#   closest_type <- as.character(y$HF_TYPE)
+#   route <- sort(c(as.character(y$VDC_NAME1[i]),
+#                 closest_name))
+#   route <- paste0(route, collapse = ' - ')
+#   y_end <- y@data$y[closest_index]
+#   x_end <- y@data$x[closest_index]
+#   # y$distances[i] <- list(x)
+#   y$min_distance[i] <- closest_distance
+#   y$min_name[i] <- closest_name
+#   y$route[i] <- route
+#   y$x_end[i] <- x_end
+#   y$y_end[i] <- y_end
+# }
+# 
+# 
+# 
+# only_short <- y@data #%>% dplyr::distinct(route, .keep_all = T)
+# only_short <- only_short %>%
+#   mutate(xmid = (x + x_end)/2,
+#          ymid = (y+y_end)/2)
+# only_short_single <- only_short %>% dplyr::distinct(route, .keep_all = T)
+# ggplot(data = only_short) +
+#   geom_point(aes(x = x,y=y,
+#                  color = hospital)) +
+#   geom_segment(data = only_short_single,
+#                aes(x = x,
+#            y = y,
+#            xend = x_end,
+#            yend = y_end)) +
+#   geom_text_repel(
+#     data = only_short_single,
+#     aes(x = xmid,
+#         y = ymid,
+#         label = paste0(route, '\n',
+#                        round(min_distance/1000, digits = 1),
+#                        ' km')),
+#     size = rel(2)
+#   )
+```
+
+```{r, fig.height = 7}
+x <- hps <- nepal::pyuthan_health_facilities
+y <- hps[hps@data$HF_TYPE %in%  c('Sub Health Post', 'Health Post') |
+           (hps@data$VDC_NAME1 == 'Bijubar' &
+            hps@data$HF_TYPE == 'Hospital') | 
+            hps@data$VDC_NAME1 =='Swargadwarikhal' ,]
+y$hospital <- (y@data$VDC_NAME1 == 'Bijubar' &
+            y@data$HF_TYPE == 'Hospital') | 
+            y@data$VDC_NAME1 =='Swargadwarikhal'
+y$health_post <- y$HF_TYPE == 'Health Post'
+y$sub_health_post <- y$HF_TYPE == 'Sub Health Post'
+y$hub <- y$hospital | y$VDC_NAME1 == 'Khawang'
+y$type <- ifelse(y$hub, 'Hub',
+                 ifelse(y$health_post, 'Health post',
+                        ifelse(y$sub_health_post, 'Sub health post', NA)))
+
+cc <- coordinates(y)
+cc <- data.frame(cc)
+names(cc) <- c('x', 'y')
+y@data <- bind_cols(y@data, cc)
+y$distances <- y$min_distance <- y$min_name <- y$route <- y$x_end <- y$y_end<- NA
+for(i in 1:nrow(y)){
+  if(y$type[i] != 'Hub'){
+    this_type <- y$type[i]
+  x <- distGeo(p1 = y[i,],p2 = y)
+  keep_index <- 1:nrow(y)
+  keep_index <- keep_index[keep_index != i]
+  keep_index <- which(y$hub)
+
+  hosp_index <- which.min(x[keep_index])
+  closest_index <- keep_index[hosp_index]
+  closest_distance <- x[closest_index]
+  closest_name <- as.character(y$VDC_NAME1[closest_index])
+  closest_type <- as.character(y$HF_TYPE)
+  route <- sort(c(as.character(y$VDC_NAME1[i]),
+                closest_name))
+  route <- paste0(route, collapse = ' - ')
+  y_end <- y@data$y[closest_index]
+  x_end <- y@data$x[closest_index]
+  # y$distances[i] <- list(x)
+  y$min_distance[i] <- closest_distance
+  y$min_name[i] <- closest_name
+  y$route[i] <- route
+  y$x_end[i] <- x_end
+  y$y_end[i] <- y_end
+  }
+}
+
+only_short <- y@data %>% 
+  # filter(min_distance <= max_distance) %>%
+  filter(min_distance > 0)
+only_short <- only_short %>%
+  mutate(xmid = x,#(x + x_end)/2,
+         ymid = y)#(y+y_end)/2)
+only_short_single <- only_short %>% dplyr::distinct(route, .keep_all = T)
+
+
+
+ggplot(data = only_short) +
+  geom_polygon(data = pyuthan_fortified,
+               aes(x = long,
+                   y = lat,
+                   group = group),
+               fill = 'grey',
+               alpha = 0.4,
+               lwd = 0.2,
+               color = 'black') +
+  geom_point(data = y@data,
+             aes(x = x,y=y,
+                 color = type),
+             size = 2) +
+  geom_text(data = y@data,
+                   aes(x = x,y=y,
+                       label = VDC_NAME1),
+                  alpha = 0.6,
+                  size = 3,
+            nudge_y = 0.01) +
+  # geom_point(aes(x = x,y=y,
+  #                color = HF_TYPE)) +
+  geom_segment(data = only_short_single,
+               aes(x = x,
+           y = y,
+           xend = x_end,
+           yend = y_end),
+           color = 'red',
+           alpha = 0.4) +
+  geom_text(
+    data = only_short_single,
+    aes(x = xmid,
+        y = ymid,
+        label = paste0(#route, '\n',
+                       round(min_distance/1000, digits = 1),
+                       ' km')),
+    size = rel(2.2),
+    alpha = 0.6,
+    color = 'darkred',
+    nudge_y = -0.01
+    # segment.colour = 'white'
+  ) +
+  theme_map() +
+  scale_color_manual(name = '',
+                     values = databrew::make_colors(3))
+
+```
+
+\newpage
+
+
+# Strip maps
+
+The below show strip maps (both complete and kilometer-specific) with a 500 meter buffer.
+
+```{r}
+flights <- only_short_single
+flights$distance <- flights$min_distance
+# flights <- flights %>% arrange(distance)
+
+# flights <- flights[1,]
+titles <- distances <- subtitles <- rep(NA, nrow(flights))
+for(i in 1:nrow(flights)){
+  if(i <= 26){
+      this_letter <- letters[i]
+    } else {
+      this_letter <- paste0(rep(letters[i - 26], 2), collapse = '')
+    }
+    message('FLIGHT NUMBER ',i,'\nLETTER ', this_letter )
+
+  sub_flight <- flights[i,]
+  sub_df <- make_flight_path(x = c(sub_flight$x, sub_flight$x_end),
+                           y = c(sub_flight$y, sub_flight$y_end))
+  # sm <- make_strip_map(df = sub_df)
+  sm <- as.list(1:ceiling(max(sub_df$d)/1000))
+  g1 <- nepal::make_flight_path_elevation_plot(df = sub_df)
+  g2 <- nepal::make_flight_path_plot(df = sub_df)
+  g3 <- nepal::make_flight_path_population_plot(df = sub_df)
+  assign(paste0('g1', i),
+         g1,
+         envir = .GlobalEnv)
+  assign(paste0('g2', i),
+         g2,
+         envir = .GlobalEnv)
+  assign(paste0('g3', i),
+         g3,
+         envir = .GlobalEnv)
+  titles[i] <- sub_flight$route
+  distances[i] <- sub_flight$distance
+  
+  # Save
+  file_list <- list()
+  for(z in 1:length(sm)){
+    
+    this_file_name <- paste0(this_letter, "_", z, ".png")
+
+    file_name <- paste0(getwd(), '/', this_file_name)
+  #   mapshot(sm[[z]], file = file_name,
+  #       remove_controls = c("zoomControl", "layersControl", "homeButton",
+  # "scaleBar"))
+    file_list[[z]] <- this_file_name
+  }
+  file_list <- unlist(file_list)
+  file_list <- gsub('.png', '', file_list, fixed = TRUE)
+  if(length(file_list) == 1){
+    subtitles[i] <- paste0('### Full flight\n\n\\includegraphics{', file_list, '}', collapse = '')
+  } else {
+    subtitles[i] <- 
+      paste0('### Full flight\n\n\\includegraphics{',
+             file_list[1],
+             '}\n\n',
+             paste0('### Kilometer ', 1:length(file_list), '\n\n\\includegraphics{',file_list[2:length(file_list)], '}\n\n' , collapse = '\n')
+             )
+  }
+}
+
+nums <- 1:nrow(flights)
+content <- paste0('\\newpage\n\n## ', titles, '\n\n',
+                  round(distances, digits = 0), ' metres\n\n',
+                  
+                  subtitles, '\n\n### Additional plots\n\n',
+                  '```{r}\n\n',
+                  paste0('g1', nums, '\n\n',
+                         'g2', nums, '\n\n',
+                         'g3', nums, '\n\n```\n\n')
+                  )
+```
+
+
+```{r}
+# Write our order / child-calls to a doc
+file_connection <- file('babies.Rmd')
+writeLines(paste0('---\noutput: pdf_document\n---\n\n', 
+                  paste0(content, collapse = '\n'), collapse = '\n'), 
+           file_connection)
+close(file_connection)
+
+```
+
+```{r child='babies.Rmd', echo = FALSE}
+```
+
+```{r, results='hide'}
+# file.remove('babies.Rmd')
+```
+
+
+

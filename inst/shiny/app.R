@@ -357,8 +357,12 @@ server <- function(input, output) {
     if(ok){
       fluidPage(
         fluidRow(
-          h3('Download report'),
-          downloadButton('report', 'Download report.', width = '100%'),
+          column(6,
+                 h3('Download report'),
+                 downloadButton('report', 'Download report.', width = '100%')),
+          column(6,
+                 h3('Download raw data'),
+                 downloadButton("downloadData", "Download raw data", width = '100%')),
           h3('Geo-coordinates'),
           plotOutput('flight_path_plot')
         )
@@ -460,12 +464,12 @@ server <- function(input, output) {
       addAwesomeMarkers(data = hf_shp,
                  icon = hf_shp_icons,
                  # popup = hf_hp$VDC_NAME1,
-                 label = hf_hp$VDC_NAME1,
+                 label = hf_shp$VDC_NAME1,
                  group = 'Sub health posts') %>%
       addAwesomeMarkers(data = hf_lab,
                  icon = hf_lab_icons,
                  # popup = hf_hp$VDC_NAME1,
-                 label = hf_hp$VDC_NAME1,
+                 label = hf_lab$VDC_NAME1,
                  group = 'Hospitals/labs') %>%
       addLegend(pal = pal, values = values(r),
                 position = 'bottomleft',
@@ -516,6 +520,15 @@ server <- function(input, output) {
     
       
   })
+  
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      paste('raw', ".csv", sep = "")
+    },
+    content = function(file) {
+      write.csv(flight_path(), file, row.names = FALSE)
+    }
+  )
   
   output$raw_data <- DT::renderDataTable({
     df <- flight_path()
