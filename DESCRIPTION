@@ -41,6 +41,7 @@ Imports:
     geosphere,
     plotly,
     ggrepel,
-    databrew
+    databrew,
+    rgeos
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0

@@ -5,8 +5,8 @@ account: joebrew
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 254789
-bundleId: 1670796
+bundleId: 1694600
 url: https://joebrew.shinyapps.io/nepal/
-when: 1540849921.2068
+when: 1541956685.03747
 asMultiple: FALSE
 asStatic: FALSE
