@@ -61,7 +61,7 @@ options(xtable.comment = FALSE)
 ```{r, results = 'asis', eval = TRUE}
 cat(
   paste0(
-    'DrOTS Nepal, Nepal Flying Labs, Birat Nepal Medical Trust'
+    'Civial Aviation Authority of Nepal\nBabarmahal, Kathmandu\nApplication for Drone / Paragliding'
   # 'Joe Brew\\footremember{db}{Databrew, Toronto, Canada}\\footremember{cism}{Centro de Investigação em Saúde de Manhiça: Vila da Manhiça, Bairro Cambeve, Rua 12, Distrito da Manhiça, CP 1929, Maputo, Mozambique, Mozambique} \\footnote{Corresponding Author}  Ben Brew\\footrecall{db}   Xing Brew\\footrecall{db}'
   )
 )
@@ -73,12 +73,93 @@ cat(
 
 \vspace{5mm}
 
+\textbf{Applicant:}  
+
+BNMT Nepal  
+Lazimpat, Kathmandu, Ward No. 2   
+Email: bnmtnepal@bnmt.org.np   
+Phone: +977 1-4436434, 4428240  
+Fax: +977 1 4439108   
+
+\textbf{Operations Manager:}
+
+Pravin Lamsal  
+Email : prabeenlamsal02@gmail.com  
+Telephone: 9851191862  
+
+\textbf{Aircraft Details:}
+
+DJI M100 (Without camera since the objective of the project is collection of sputum samples for laboratory TB diagnosis)  
+
+Weight: 3.4kg  
+
+Weight with payload: 3.6kg  
+
+\textbf{Purpose:}  
+Transport of sputum samples (200 gm) from rural health posts to laboratory diagnostic facilities
+
+\textbf{Flight details:}  
+
+
+```{r}
+all_files <- dir('data')
+file_list <- list()
+for(i in 1:length(all_files)){
+  message('reading file ', i, ' of ', length(all_files))
+  this_file <- all_files[i]
+  this_route <- gsub('.csv', '', this_file, fixed = TRUE)
+  file_list[[i]] <-
+    read_csv(paste0('data/',this_file)) %>% mutate(route = this_route)
+}
+all_flights <- bind_rows(file_list)
+
+x <- all_flights %>%
+  group_by(route) %>%
+  summarise(
+    `Date(s)` = 'Jan-Mar 2019',
+    `Time(s)` = 'Daylight',
+    `Take Off Site` = dplyr::first(unlist(lapply(strsplit(route, ' - '), function(x){x[1]}))),
+    `Landing Site` = dplyr::first(unlist(lapply(strsplit(route, ' - '), function(x){x[2]}))),
+    Coordinates = 
+              paste0('(',
+                     round(dplyr::first(x), digits = 3),
+                     ', ',
+                     round(dplyr::first(y), digits = 3), ') - (',
+                     round(dplyr::last(x), digits = 3),
+                     ', ',
+                    round( dplyr::last(y), digits = 3), ')'),
+            Duration = paste0(ceiling(max(d) / 15 / 60),' minutes'),
+            Altitude = paste0(floor(min(elevation)), ' - ',
+                              ceiling(max(elevation))),
+            `Proposed Height` = '50-100 meters') %>%
+  dplyr::select(-route)
+library(knitr)
+library(kableExtra)
+knitr::kable(x, format = 'latex', booktabls = 'T') %>%
+  kable_styling(position = 'center',
+                font_size = 7)
+```
+
+Note: We will be carrying out "on demand" flights: 1 per day on average, maximum of 5. QGround Control will be the software used for planning missions, and customized software will be used by drone operators. The drone pilot can manually take over drone at any point for security. Full flight routes in appendix.
+
+
+\textbf{Application Submitted By:}
+
+Signature:  
+
+Name:  
+
+Date:  
+
+
+\newpage
+
 
 \vspace{5mm}
 \begin{center}
 \begin{changemargin}{3cm}{3cm} 
 
-This document contains visuals of and data relating to planned flights in Pyuthan for the period from January 2019 through September 2019.
+This appendeix contains visuals of and data relating to planned flights in Pyuthan for the period from January 2019 through September 2019.
 
 \end{changemargin}
 \end{center}
@@ -103,24 +184,13 @@ This document contains visuals of and data relating to planned flights in Pyutha
 
 \vspace{3mm}
 
+
+
 \newpage
 
 # Overview  
 
 The below map shows all flights planned in the Pyuthan district.
-
-```{r}
-all_files <- dir('data')
-file_list <- list()
-for(i in 1:length(all_files)){
-  message('reading file ', i, ' of ', length(all_files))
-  this_file <- all_files[i]
-  this_route <- gsub('.csv', '', this_file, fixed = TRUE)
-  file_list[[i]] <-
-    read_csv(paste0('data/',this_file)) %>% mutate(route = this_route)
-}
-all_flights <- bind_rows(file_list)
-```
 
 ```{r, fig.height = 7}
 x <- hps <- nepal::pyuthan_health_facilities
@@ -201,8 +271,8 @@ for(i in 1:length(unique_flights)){
 
   sub_df <- flights %>%
     filter(route == this_flight)
-  # sm <- make_strip_map(df = sub_df)
-  sm <- as.list(1:ceiling(max(sub_df$d)/1000))
+  sm <- make_strip_map(df = sub_df)
+  # sm <- as.list(1:ceiling(max(sub_df$d)/1000))
   g1 <- nepal::make_flight_path_elevation_plot(df = sub_df)
   g2 <- nepal::make_flight_path_plot(df = sub_df)
   g3 <- nepal::make_flight_path_population_plot(df = sub_df)
@@ -225,9 +295,9 @@ for(i in 1:length(unique_flights)){
     this_file_name <- paste0(this_letter, "_", z, ".png")
 
     file_name <- paste0(getwd(), '/', this_file_name)
-  #   mapshot(sm[[z]], file = file_name,
-  #       remove_controls = c("zoomControl", "layersControl", "homeButton",
-  # "scaleBar"))
+    mapshot(sm[[z]], file = file_name,
+        remove_controls = c("zoomControl", "layersControl", "homeButton",
+  "scaleBar"))
     file_list[[z]] <- this_file_name
   }
   file_list <- unlist(file_list)
@@ -271,7 +341,7 @@ close(file_connection)
 ```
 
 ```{r, results='hide'}
-# file.remove('babies.Rmd')
+file.remove('babies.Rmd')
 ```
 
 
