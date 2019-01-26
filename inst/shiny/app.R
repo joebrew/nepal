@@ -19,6 +19,11 @@ sidebar <- dashboardSidebar(
       tabName = 'flight_planner',
       icon = icon('plane')),
     menuItem(
+      text = 'Timeline',
+      tabName = 'timeline',
+      icon = icon('calendar')
+    ),
+    menuItem(
       text="Main",
       tabName="main",
       icon=icon("database")),
@@ -96,6 +101,35 @@ body <- dashboardBody(
                  leafletOutput('leaf_misc',
                                height = '250px'))
         )
+      )
+    ),
+    tabItem(
+      tabName = 'timeline',
+      fluidPage(
+        fluidRow(
+          # h1(icon('line-chart'), align = 'center'),
+          h1('DrOTS Nepal timeline', align = 'center')
+        ),
+        fluidRow(
+          column(6,
+                 checkboxGroupInput('filter_groups',
+                                    'Filter organizations',
+                                    choices = c('BNMT','SBU','NFL', 'Other'),
+                                    selected = c('BNMT','SBU','NFL', 'Other'))),
+          column(6,
+                 checkboxGroupInput('filter_types',
+                                    'Filter categories',
+                                    choices = c('Events' = 'Event',
+                                                'Activities' = 'Activity',
+                                                'Reports' = 'Report'),
+                                    selected = c('Event',
+                                                 'Activity',
+                                                 'Report')))
+        ),
+        fluidRow(
+          timevisOutput('tv')
+        ),
+        br()
       )
     ),
     tabItem(
@@ -629,6 +663,40 @@ server <- function(input, output) {
       addPolylines(data = nepal::nep1,
                   color = 'red',
                   weight = 0.5)
+  })
+  
+  output$tv <- renderTimevis({
+    
+    df <- goog
+    # Perform filter operations here
+    fg <- input$filter_groups
+    ft <- input$filter_types
+    print('fg is ')
+    print(fg)
+    print('ft is ')
+    print(ft)
+    if(!is.null(fg)){
+      df <- df %>% filter(Group %in% fg)
+    }
+    if(!is.null(ft)){
+      df <- df %>% filter(Type %in% ft)
+    }
+    print(head(df))
+    df$id <- 1:nrow(df)
+    df$type <- ifelse(is.na(df$End), 'point', 'range')
+    group_df <- df %>%
+      group_by(content = Group) %>%
+      summarise(id = 1) %>%
+      mutate(id = cumsum(id))
+    df$group <- as.numeric(factor(df$Group))
+    df <- df %>%
+      dplyr::rename(content = Event,
+                    start = Start,
+                    end = End)
+    
+    timevis(data = df,
+            groups = group_df)
+    
   })
 
 }
