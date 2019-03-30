@@ -1,0 +1,295 @@
+---
+title: DrOTS Nepal Flight Plans
+date: ''
+output: pdf_document
+fig_width: 4
+fig_height: 2.6
+---
+
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE, comment = NA, error= FALSE, cache = FALSE}
+# Packages
+library(tidyverse)
+library(knitr)
+library(Hmisc)
+library(knitr)
+library(RColorBrewer)
+library(extrafont)
+library(databrew)
+library(nepal)
+library(sp)
+library(leaflet)
+library(mapview)
+library(geosphere)
+library(ggthemes)
+library(ggrepel)
+loadfonts()
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=FALSE,
+	             cache=FALSE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE,
+               dev = "cairo_pdf",
+               fig.pos="H"#,
+               # fig.path = 'figures/'
+               )
+opts_knit$set(width=75)
+options(xtable.comment = FALSE)
+```
+
+
+
+```{r}
+library(rasterVis)
+library(rgeos)
+health_posts <- nepal::health_posts
+hps <- health_posts
+coordinates(hps)<-~x+y
+proj4string(hps) <- proj4string(nep0)
+# Loop through each health post and get closest site
+hps@data$hub <- health_posts$hub <- NA
+hubs <- hps[hps@data$name %in% c('Hospital','Binghri'),]
+for(i in 1:nrow(hps@data)){
+  this_point <- hps[i,]
+  distances <- as.numeric(rgeos::gDistance(hubs, this_point, byid= T))
+  hps@data$hub[i] <-
+    health_posts$hub[i] <- 
+    hubs@data$name[which.min(distances)]
+}
+
+# Still need to do
+#Addapata to Bijuwar
+#Dakhanwadi to Bijuwar
+# Barjiwang to Binghri
+# Kochiwang to Binghri
+# Jumrikhanda to Bijuwar
+# Majhkot to hospital
+
+# Make flights (remove self flights)
+flights <- hps[hps@data$name != hps@data$hub,]
+flights_data <- flights@data
+
+# Make all flights by creating two rows per flight
+out_list <- list()
+for(i in 1:nrow(flights_data)){
+  this_hub <- flights_data$hub[i]
+  this_point <- flights_data$name[i]
+  route_name <- paste0(this_hub, ' - ',
+                       this_point)
+  this_point_data <- flights_data[i,] %>%
+    mutate(route = route_name)
+  this_hub_data <- hps@data[hps@data$name == this_hub,] %>%
+    mutate(route = route_name)
+  out_list[[i]] <- bind_rows(this_point_data,
+                             this_hub_data)
+}
+all_flights <- bind_rows(out_list) %>%
+  mutate(x = lng,
+         y = lat)
+
+library(ggrepel)
+ggplot() +
+  geom_polygon(data = pyuthan_fortified,
+               aes(x = long,
+                   y = lat,
+                   group = group),
+               fill = 'grey',
+               alpha = 0.4,
+               lwd = 0.2,
+               color = 'black') +
+  geom_path(data = all_flights,
+            aes(x = x,
+                y = y,
+                group = route),
+            color = 'darkred') +
+  geom_text_repel(data = hps@data,
+                   aes(x = lng,
+                       y=lat,
+                       label = name),
+                  alpha = 0.6,
+                  size = 3,
+            nudge_y = 0.01) +
+
+  theme_map() 
+```
+
+
+```{r}
+k <- all_flights %>%
+  dplyr::select(-name, -x,-y) %>%
+  dplyr::rename(elevation = z) %>%
+  filter(!duplicated(route)) %>%
+  dplyr::select(route, lng, lat, elevation, cell)
+names(k) <- Hmisc::capitalize(names(k))
+kable(k)
+```
+
+\newpage
+
+
+```{r}
+if(file.exists('~/Desktop/temp.RData')){
+  load('~/Desktop/temp.RData')
+} else {
+  
+library(geosphere)
+flights <- all_flights
+flights$distance <- NA
+# Get distance
+for(i in 1:nrow(flights)){
+  this_route <- flights$route[i]
+  these_data <- flights[flights$route == this_route,]
+  # these_data_sp <- these_data
+  # coordinates(these_data_sp) <- ~x+y
+  # proj4string(these_data_sp) <- proj4string(nep0)
+  this_distance <- distm(c(these_data$x[1],
+                           these_data$y[1]), 
+                         c(these_data$x[2],
+                           these_data$y[2]), fun = distHaversine)
+
+  flights$distance[i] <- this_distance
+}
+
+unique_flights <- unique(flights$route)
+titles <- distances <- subtitles <- rep(NA, length(unique_flights))
+
+# Make a list
+data_list <- name_list <- distance_list <- list()
+for(i in 1:length(unique_flights)){
+  this_flight <- unique_flights[i]
+  sub_df <- flights %>%
+    filter(route == this_flight)
+  fp <- make_flight_path(x = sub_df$x, y = sub_df$y)
+  data_list[[i]] <- fp
+  name_list[[i]] <- this_flight
+  distance_list[[i]] <- sub_df$distance[1]
+}
+
+
+
+
+# Main flights only
+main_only_list <- list()
+for(i in 1:length(unique_flights)){
+  this_flight <- unique_flights[i]
+  if(i <= 26){
+      this_letter <- letters[i]
+    } else {
+      this_letter <- paste0(rep(letters[i - 26], 2), collapse = '')
+    }
+    message('FLIGHT NUMBER ',i,'\nLETTER ', this_letter )
+
+  sub_df <- data_list[[i]]
+  # sm <- make_strip_map(df = sub_df)
+  # sm <- as.list(1:ceiling(max(sub_df$d)/1000))
+  g1 <- nepal::make_flight_path_elevation_plot(df = sub_df)
+  g2 <- nepal::make_flight_path_plot(df = sub_df)
+  g3 <- nepal::make_flight_path_population_plot(df = sub_df)
+  g4 <- nepal::make_strip_map(df = sub_df, every = 100000000)
+  assign(paste0('g1', i),
+         g1,
+         envir = .GlobalEnv)
+  assign(paste0('g2', i),
+         g2,
+         envir = .GlobalEnv)
+  assign(paste0('g3', i),
+         g3,
+         envir = .GlobalEnv)
+  assign(paste0('g4', i),
+         g4,
+         envir = .GlobalEnv)
+  titles[i] <- name_list[[i]]
+  distances[i] <- distance_list[[i]]
+}
+save.image('~/Desktop/temp.RData')
+}
+
+nums <- 1:length(unique_flights)
+content <- paste0('\\newpage\n\n## ', titles, '\n\n',
+                  round(distances, digits = 0), ' metres\n\n',
+                  '```{r}\n\n',
+                  paste0('g4', nums, '[[1]]\n\n',
+                         'g1', nums, '\n\n```\n\n')
+                         # 'Rmisc::multiplot(g1', nums, ', g2', nums, ', g3', nums, ', cols = 3)\n\n```\n\n')
+                  # paste0('g4', nums, '\n\n',
+                  #        'g1', nums, '\n\n',
+                  #        'g2', nums, '\n\n',
+                  #        'g3', nums, '\n\n```\n\n')
+                  )
+```
+
+
+```{r}
+# Write our order / child-calls to a doc
+file_connection <- file('babies.Rmd')
+writeLines(paste0('---\noutput: pdf_document\n---\n\n', 
+                  paste0(content, collapse = '\n'), collapse = '\n'), 
+           file_connection)
+close(file_connection)
+
+```
+
+```{r child='babies.Rmd', echo = FALSE}
+```
+
+```{r, results='hide'}
+file.remove('babies.Rmd')
+```
+
+```{r}
+# library(rgdal)
+library(maptools)
+# Save kml files
+dir.create('kmls')
+# for(i in 1:length(all_flights)){
+#   this_route <- all_flights$route[i]
+#   this_flight <- data_list[[i]]
+#   this_flight_sp <- this_flight
+#   coordinates(this_flight_sp) <- ~x+y
+#   proj4string(this_flight_sp) <- proj4string(nep0)
+#   # Downsample
+#   kms <- nrow(this_flight_sp@data) %/% 1000
+#   this_flight_sp <- this_flight_sp[c(1,(1+(1:kms) * 1000)),]
+#   # this_line <- SpatialLines(coordinates(this_flight_sp))
+#   # this_flight_sp <-
+#   #   SpatialLinesDataFrame(sl = this_flight_sp,
+#   #                         data = this_flight_sp@data)
+#   # # this_flight_sp <- SpatialPoints(this_flight_sp)
+#   # proj4string(this_flight_sp) <- proj4string(nep0)
+#   
+#   
+#   # writeOGR(this_flight_sp, paste0('kmls/',
+#   #                                 i,
+#   #                                 '_',
+#   #                                 this_route,
+#   #                                 '.kml'),
+#   #          layer="route",
+#   #          driver="KML")
+# 
+#   }
+for_kml_list <- list()
+for(i in 1:length(all_flights)){
+  this_route <- all_flights$route[i]
+  this_flight <- data_list[[i]]
+  for_kml_list[[i]] <- this_flight %>%
+    mutate(route = this_route)
+}
+for_kml <- bind_rows(for_kml_list)
+setwd('kmls')
+write_csv(for_kml, 'for_kml.csv')
+coordinates(for_kml) <- ~x+y
+proj4string(for_kml) <- proj4string(nep0)
+writeSpatialShape(for_kml, fn = 'routes')
+
+setwd('..')
+# coordinates(for_kml) <- ~x+y
+# proj4string(for_kml) <- proj4string(nep0)
+# writeOGR(for_kml, 'for_kml', 'routes', driver="ESRI Shapefile")
+
+
+```
+
