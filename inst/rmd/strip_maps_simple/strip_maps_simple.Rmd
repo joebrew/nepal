@@ -58,15 +58,12 @@ options(xtable.comment = FALSE)
 \begin{center}
 \begin{large}
 
-```{r, results = 'asis', eval = TRUE}
-cat(
-  paste0(
-    'Civial Aviation Authority of Nepal\nBabarmahal, Kathmandu\nApplication for Drone / Paragliding'
-  # 'Joe Brew\\footremember{db}{Databrew, Toronto, Canada}\\footremember{cism}{Centro de Investigação em Saúde de Manhiça: Vila da Manhiça, Bairro Cambeve, Rua 12, Distrito da Manhiça, CP 1929, Maputo, Mozambique, Mozambique} \\footnote{Corresponding Author}  Ben Brew\\footrecall{db}   Xing Brew\\footrecall{db}'
-  )
-)
+Civial Aviation Authority of Nepal   
 
-```
+Babarmahal, Kathmandu    
+
+Application for Drone / Paragliding   
+
 
 \end{large}
 \end{center}
@@ -135,9 +132,8 @@ x <- all_flights %>%
   dplyr::select(-route)
 library(knitr)
 library(kableExtra)
-knitr::kable(x, format = 'latex', booktabls = 'T') %>%
-  kable_styling(position = 'center',
-                font_size = 7)
+knitr::kable(x, format = 'latex') %>%
+  kable_styling(font_size = 8)
 ```
 
 Note: We will be carrying out "on demand" flights: 1 per day on average, maximum of 5. QGround Control will be the software used for planning missions, and customized software will be used by drone operators. The drone pilot can manually take over drone at any point for security. Full flight routes in appendix.
@@ -154,45 +150,24 @@ Date:
 
 \newpage
 
-
-\vspace{5mm}
 \begin{center}
-\begin{changemargin}{3cm}{3cm} 
 
-This appendeix contains visuals of and data relating to planned flights in Pyuthan for the period from January 2019 through September 2019.
+\textbf{APPENDIX}
 
-\end{changemargin}
 \end{center}
 
-\vspace{20mm}
-
-\noindent\fbox{%
-    \parbox{\textwidth}{%
-        \subsection*{Contents}
-        \begin{itemize}
-          \item Overview map
-          \item Flight specific strip maps
-        \end{itemize}
-        \vspace{2mm}
-    }%
-}
-
-\vfill
-\null
-
+This appendix contains visuals of and data relating to planned flights in Pyuthan for the period from January 2019 through September 2019.
 
 
 \vspace{3mm}
 
 
-
-\newpage
-
 # Overview  
 
 The below map shows all flights planned in the Pyuthan district.
 
-```{r, fig.height = 7}
+
+```{r, fig.height = 6.5}
 x <- hps <- nepal::pyuthan_health_facilities
 y <- hps[hps@data$HF_TYPE %in%  c('Sub Health Post', 'Health Post') |
            (hps@data$VDC_NAME1 == 'Bijubar' &
@@ -245,6 +220,7 @@ ggplot() +
 \newpage
 
 
+
 # Strip maps
 
 The below show strip maps (both complete and kilometer-specific) with a 500 meter buffer.
@@ -271,8 +247,8 @@ for(i in 1:length(unique_flights)){
 
   sub_df <- flights %>%
     filter(route == this_flight)
-  sm <- make_strip_map(df = sub_df)
-  # sm <- as.list(1:ceiling(max(sub_df$d)/1000))
+  # sm <- make_strip_map(df = sub_df)
+  sm <- as.list(1:ceiling(max(sub_df$d)/1000))
   g1 <- nepal::make_flight_path_elevation_plot(df = sub_df)
   g2 <- nepal::make_flight_path_plot(df = sub_df)
   g3 <- nepal::make_flight_path_population_plot(df = sub_df)
@@ -295,9 +271,9 @@ for(i in 1:length(unique_flights)){
     this_file_name <- paste0(this_letter, "_", z, ".png")
 
     file_name <- paste0(getwd(), '/', this_file_name)
-    mapshot(sm[[z]], file = file_name,
-        remove_controls = c("zoomControl", "layersControl", "homeButton",
-  "scaleBar"))
+  #   mapshot(sm[[z]], file = file_name,
+  #       remove_controls = c("zoomControl", "layersControl", "homeButton",
+  # "scaleBar"))
     file_list[[z]] <- this_file_name
   }
   file_list <- unlist(file_list)

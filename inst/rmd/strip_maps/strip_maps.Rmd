@@ -173,6 +173,7 @@ The below map shows all flights planned in the Pyuthan district.
 ```
 
 ```{r, fig.height = 7}
+library(nepal)
 x <- hps <- nepal::pyuthan_health_facilities
 y <- hps[hps@data$HF_TYPE %in%  c('Sub Health Post', 'Health Post') |
            (hps@data$VDC_NAME1 == 'Bijubar' &

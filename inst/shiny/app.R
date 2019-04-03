@@ -15,14 +15,14 @@ header <- dashboardHeader(title="Nepal Data Hub")
 sidebar <- dashboardSidebar(
   sidebarMenu(
     menuItem(
-      text = 'Flight planner',
-      tabName = 'flight_planner',
-      icon = icon('plane')),
-    menuItem(
       text = 'Timeline',
       tabName = 'timeline',
       icon = icon('calendar')
     ),
+    menuItem(
+      text = 'Flight planner',
+      tabName = 'flight_planner',
+      icon = icon('plane')),
     menuItem(
       text="Main",
       tabName="main",
@@ -111,12 +111,12 @@ body <- dashboardBody(
           h1('DrOTS Nepal timeline', align = 'center')
         ),
         fluidRow(
-          column(6,
+          column(4,
                  checkboxGroupInput('filter_groups',
                                     'Filter organizations',
                                     choices = c('BNMT','SBU','NFL', 'Other'),
                                     selected = c('BNMT','SBU','NFL', 'Other'))),
-          column(6,
+          column(4,
                  checkboxGroupInput('filter_types',
                                     'Filter categories',
                                     choices = c('Events' = 'Event',
@@ -124,10 +124,21 @@ body <- dashboardBody(
                                                 'Reports' = 'Report'),
                                     selected = c('Event',
                                                  'Activity',
-                                                 'Report')))
+                                                 'Report'))),
+          column(4,
+                 textInput('filter_people',
+                           'Filter people',
+                            value = ''))
+        ),
+        fluidRow(
+          textOutput('tv_text')
         ),
         fluidRow(
           timevisOutput('tv')
+        ),
+        h3('Raw data'),
+        fluidRow(
+          DT::dataTableOutput('tv_table')
         ),
         br()
       )
@@ -665,24 +676,45 @@ server <- function(input, output) {
                   weight = 0.5)
   })
   
-  output$tv <- renderTimevis({
-    
+  tv_data <- reactive({
     df <- goog
     # Perform filter operations here
     fg <- input$filter_groups
     ft <- input$filter_types
-    print('fg is ')
-    print(fg)
-    print('ft is ')
-    print(ft)
+    fp <- input$filter_people
     if(!is.null(fg)){
       df <- df %>% filter(Group %in% fg)
     }
     if(!is.null(ft)){
       df <- df %>% filter(Type %in% ft)
     }
-    print(head(df))
+    if(!is.null(fp)){
+      if(fp != ''){
+        if(fp != ' '){
+          df <- df %>%
+            filter(grepl(tolower(fp), tolower(Responsible)))
+        }
+      }
+    }
+    # print(head(df))
     df$id <- 1:nrow(df)
+    
+    df
+  })
+  
+  output$tv_text <- renderText(
+    paste(input$tv_selected, collapse = " ")
+  )
+
+  
+  output$tv_table <- DT::renderDataTable({
+    df <- tv_data()
+    df
+  })
+  
+  output$tv <- renderTimevis({
+    
+    df <- tv_data()
     df$type <- ifelse(is.na(df$End), 'point', 'range')
     group_df <- df %>%
       group_by(content = Group) %>%
@@ -692,10 +724,45 @@ server <- function(input, output) {
     df <- df %>%
       dplyr::rename(content = Event,
                     start = Start,
-                    end = End)
+                    end = End) %>%
+      mutate(content = paste0(
+        '<h5>', content,
+        '</h5>',
+        '<h5>', format(start, '%b %d'),
+        ifelse(!is.na(end), paste0(' to ', format(end, '%b %d'), collapse = NULL), ''),
+        '</h5>',
+        
+      # '</br>',
+      # '</p>',
+      # '<p>',
+      # '<br>',
+      
+      '<h6>',
+      ifelse(!is.na(Details),
+             paste0('(',Details,
+                    ifelse(!is.na(Responsible),
+                           paste0('[',
+                                  Responsible,
+                                  ']',
+                                  collapse = NULL),
+                           ''),
+                    ')', collapse = NULL),
+             ifelse(!is.na(Responsible),
+                    paste0('[',
+                           Responsible,
+                           ']',
+                           colapse = NULL),
+                    '')),
+      '</h6>'
+      ))
     
+    config <- list(
+      # editable = TRUE,
+      multiselect = TRUE)
+      
     timevis(data = df,
-            groups = group_df)
+            groups = group_df,
+            options = config)
     
   })
 

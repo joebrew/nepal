@@ -5,8 +5,9 @@ account: joebrew
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 254789
-bundleId: 1694638
+bundleId: 1983714
 url: https://joebrew.shinyapps.io/nepal/
-when: 1541959640.9786
+when: 1554287073.58258
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: goog.RData|map.html

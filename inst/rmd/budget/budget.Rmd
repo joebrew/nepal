@@ -57,6 +57,31 @@ budget <- gs_read(budget)
 - The in-kind (WeRobotics) funded project budget is `r sum(budget$usd[budget$phase <= 2 & budget$source == 'WeRobotics'])`
 
 
+### By category
+
+```{r}
+pd <- budget %>%
+  filter(source == 'SBU') %>%
+  group_by(partner, group) %>%
+  summarise(`$` = sum(usd)) %>%
+  ungroup %>%
+  group_by(partner) %>%
+  mutate(p = round(`$` / sum(`$`) * 100, digits = 1))
+
+ggplot(data = pd,
+       aes(x = group,
+           y = p)) +
+  geom_bar(stat = 'identity') +
+  facet_wrap(~partner) +
+  theme(axis.text.x = element_text(angle =90, hjust = 1, vjust = 0.5)) +
+  labs(x = '',
+       y = 'Percent of allotted budget') +
+  geom_text(aes(label = paste0('$', round(`$`, digits = -1), ' (', round(p, digits = 1), '%)')),
+            angle = 90,
+            nudge_y = 10) +
+  ylim(0,63) 
+```
+
 ### By phase
 
 (Including partner in-kind contributions)

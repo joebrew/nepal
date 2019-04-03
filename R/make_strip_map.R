@@ -2,6 +2,7 @@
 #' 
 #' Create a strip map plot
 #' @param df a dataframe generated from make_flight_path
+#' @param every the distance in meters the flight should be broken up into
 #' @return plot
 #' @import raster
 #' @import dplyr
@@ -15,12 +16,12 @@
 #' @import rgdal
 #' @export
 
-make_strip_map <- function(df){
+make_strip_map <- function(df, every = 1000){
   df$n <- 1:nrow(df)
   # Get number of kilometers
   max_d <- max(df$d)
   max_r <- nrow(df)
-  kms <- ceiling((max_d)/1000)
+  kms <- ceiling((max_d)/every)
   
   # Get a buffer
   df <- data.frame(df)
@@ -63,7 +64,7 @@ make_strip_map <- function(df){
       addPolygons(data = dfsbl,
                   weight = 1,
                   opacity = 0.3,
-                  fillOpacity = 0.1,
+                  fillOpacity = 0.03,
                   color = 'white')
     return(m)
   }
