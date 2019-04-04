@@ -4,10 +4,12 @@
 \alias{make_strip_map}
 \title{Make strip map plot}
 \usage{
-make_strip_map(df)
+make_strip_map(df, every = 1000)
 }
 \arguments{
 \item{df}{a dataframe generated from make_flight_path}
+
+\item{every}{the distance in meters the flight should be broken up into}
 }
 \value{
 plot
