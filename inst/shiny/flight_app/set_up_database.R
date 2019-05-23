@@ -37,13 +37,17 @@ users <- data.frame(
   stringsAsFactors = FALSE)
 
 flights <- data.frame(
-    user_email = c('joebrew@gmail.com', 'joe@databrew.cc'),
-    created_at = Sys.time(),
-    take_off = c('Binghri', 'Pyuthan'),
-    landing = c('Siri', 'Dharmawati'),
-    checklist_complete = c(TRUE, TRUE),
-    status = c('Success', 'Success'),
-    stringsAsFactors = FALSE)
+  flight_number = 1:2,
+  user_email = c('joebrew@gmail.com', 'joe@databrew.cc'),
+  created_at = Sys.time(),
+  take_off = c('Bhingri', 'Pyuthan'),
+  landing = c('Saari', 'Dharmawati'),
+  checklist_missing = c('',''),
+  status = c('Success', 'Success'),
+  cargo_quantity = c(0,3),
+  cargo_item = c('Nothing', 'Sputum samples'),
+  comment = '',
+  stringsAsFactors = FALSE)
 
 # Add tables to database
 write_table(connection_object = co,
@@ -52,3 +56,6 @@ write_table(connection_object = co,
 write_table(connection_object = co,
             table = 'flights',
             value = flights)
+
+# Disconnect from the db
+RPostgreSQL::dbDisconnect(co)
