@@ -100,3 +100,5 @@ flights <- get_data(query = 'SELECT * FROM flights',
                     connection_object = co)
 users <- get_data(query = 'SELECT * FROM users',
                     connection_object = co)
+tb <- get_data(query = 'SELECT * FROM tb',
+                  connection_object = co)

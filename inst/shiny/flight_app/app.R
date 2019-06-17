@@ -9,9 +9,7 @@ library(owmr)
 # Source set up file
 source('global.R')
 
-
-
-header <- dashboardHeader(title="DrOTS Air Operations",
+header <- dashboardHeader(title="DrOTS Dashboard",
                           tags$li(class = 'dropdown',  
                                   tags$style(type='text/css', "#log_out_ui {margin-right: 10px; margin-left: 10px; font-size:80%; margin-top: 10px; margin-bottom: -10px;}")),
                                   tags$li(class = 'dropdown',
@@ -27,6 +25,10 @@ sidebar <- dashboardSidebar(
       tabName="history",
       icon=icon("eye")),
     menuItem(
+      text = 'Ground operations',
+      tabName = 'ground',
+      icon = icon('eye')),
+    menuItem(
       text = 'About',
       tabName = 'about',
       icon = icon("cog", lib = "glyphicon"))
@@ -41,6 +43,11 @@ body <- dashboardBody(
     tabItem(
       tabName = 'history',
       uiOutput('ui_history')
+    ),
+    tabItem(
+      tabName = 'ground',
+      h1('Ground operations data entry'),
+      uiOutput('ui_ground')
     ),
     tabItem(
       tabName="main",
@@ -108,7 +115,8 @@ server <- function(input, output, session) {
   
   # Reactive values
   data <- reactiveValues(flights = flights,
-                         users = users)
+                         users = users,
+                         tb = tb)
   logged_in <- reactiveVal(value = FALSE)
   user <- reactiveVal(value = '')
   modal_text <- reactiveVal(value = '')
@@ -449,133 +457,133 @@ server <- function(input, output, session) {
   
   # Weather ui
   weather_table <- reactive({
-    data.frame()
-    # ok <- FALSE
-    # take_off_site <- input$take_off
-    # landing_site <- input$landing
-    # if(!is.null(take_off_site) &
-    #    !is.null(landing_site)){
-    #   if(take_off_site != '' &
-    #      landing_site != ''){
-    #    ok <- TRUE 
-    #   }
-    # }
-    # if(ok){
-    #   take_off_coords <- exact_coords %>%
-    #     filter(site_name == take_off_site)
-    #   landing_coords <- exact_coords %>%
-    #     filter(site_name == landing_site)
-    # 
-    #   
-    #   take_off_weather <- get_current(lon = take_off_coords$longitude,
-    #                                   lat = take_off_coords$latitude)
-    #   landing_weather <- get_current(lon = landing_coords$longitude,
-    #                                   lat = landing_coords$latitude)
-    #   if(length(take_off_weather) >2 &
-    #      length(landing_weather) > 2){
-    #     take_off_weather <- take_off_weather %>%
-    #       owmr_as_tibble()
-    #     landing_weather <- landing_weather %>%
-    #       owmr_as_tibble()
-    #     convert_weather <- function(x){
-    #       y <- x %>% dplyr::select(temp,
-    #                           humidity,
-    #                           weather_description,
-    #                           wind_speed,
-    #                           wind_deg,
-    #                           dt_sunrise_txt,
-    #                           dt_sunset_txt) %>%
-    #         mutate(temp = temp / 10) %>%
-    #         dplyr::rename(description = weather_description,
-    #                       sunrsise = dt_sunrise_txt,
-    #                       sunset = dt_sunset_txt,
-    #                       wind_degrees = wind_deg,
-    #                       temperature = temp)
-    #       names(y) <- Hmisc::capitalize(gsub('_', ' ', names(y)))
-    #       return(y)
-    #     }
-    #     weather <- bind_rows(
-    #       take_off_weather %>% convert_weather() %>% mutate(Where = 'Take-off'),
-    #       landing_weather %>% convert_weather() %>% mutate(Where = 'Landing')
-    #     ) %>%
-    #       gather(key, value, Temperature:Sunset) %>%
-    #       arrange(Where)
-    #     weather
-    #   }
-    # }
+    # data.frame()
+    ok <- FALSE
+    take_off_site <- input$take_off
+    landing_site <- input$landing
+    if(!is.null(take_off_site) &
+       !is.null(landing_site)){
+      if(take_off_site != '' &
+         landing_site != ''){
+       ok <- TRUE
+      }
+    }
+    if(ok){
+      take_off_coords <- exact_coords %>%
+        filter(site_name == take_off_site)
+      landing_coords <- exact_coords %>%
+        filter(site_name == landing_site)
+
+
+      take_off_weather <- get_current(lon = take_off_coords$longitude,
+                                      lat = take_off_coords$latitude)
+      landing_weather <- get_current(lon = landing_coords$longitude,
+                                      lat = landing_coords$latitude)
+      if(length(take_off_weather) >2 &
+         length(landing_weather) > 2){
+        take_off_weather <- take_off_weather %>%
+          owmr_as_tibble()
+        landing_weather <- landing_weather %>%
+          owmr_as_tibble()
+        convert_weather <- function(x){
+          y <- x %>% dplyr::select(temp,
+                              humidity,
+                              weather_description,
+                              wind_speed,
+                              wind_deg,
+                              dt_sunrise_txt,
+                              dt_sunset_txt) %>%
+            mutate(temp = temp / 10) %>%
+            dplyr::rename(description = weather_description,
+                          sunrsise = dt_sunrise_txt,
+                          sunset = dt_sunset_txt,
+                          wind_degrees = wind_deg,
+                          temperature = temp)
+          names(y) <- Hmisc::capitalize(gsub('_', ' ', names(y)))
+          return(y)
+        }
+        weather <- bind_rows(
+          take_off_weather %>% convert_weather() %>% mutate(Where = 'Take-off'),
+          landing_weather %>% convert_weather() %>% mutate(Where = 'Landing')
+        ) %>%
+          gather(key, value, Temperature:Sunset) %>%
+          arrange(Where)
+        weather
+      }
+    }
     
   })
   
   forecast_table <- reactive({
-    data.frame()
-    # ok <- FALSE
-    # take_off_site <- input$take_off
-    # landing_site <- input$landing
-    # if(!is.null(take_off_site) &
-    #    !is.null(landing_site)){
-    #   if(take_off_site != '' &
-    #      landing_site != ''){
-    #     ok <- TRUE 
-    #   }
-    # }
-    # if(ok){
-    #   take_off_coords <- exact_coords %>%
-    #     filter(site_name == take_off_site)
-    #   landing_coords <- exact_coords %>%
-    #     filter(site_name == landing_site)
-    #   
-    #   
-    #   take_off_weather <- get_forecast(lon = take_off_coords$longitude,
-    #                                   lat = take_off_coords$latitude)
-    #   landing_weather <- get_forecast(lon = landing_coords$longitude,
-    #                                  lat = landing_coords$latitude)
-    #   if(length(take_off_weather) >2 &
-    #      length(landing_weather) > 2){
-    #     take_off_weather <- take_off_weather %>%
-    #       owmr_as_tibble()
-    #     landing_weather <- landing_weather %>%
-    #       owmr_as_tibble()
-    #     add_rain <- function(x){
-    #       if('rain_3h' %in% names(x)){
-    #         x$rain_3h <- NA
-    #         return(x)
-    #       }
-    #     }
-    #     take_off_weather <- add_rain(take_off_weather)
-    #     landing_weather <- add_rain(landing_weather)
-    #     save(take_off_weather,
-    #          landing_weather,
-    #          file = 'weather.RData')
-    #     convert_forecast <- function(x){
-    #       y <- x %>% dplyr::select(dt_txt,
-    #                                temp,
-    #                                humidity,
-    #                                weather_description,
-    #                                wind_speed,
-    #                                wind_deg,
-    #                                clouds_all,
-    #                                rain_3h) %>%
-    #         mutate(temp = temp / 10) %>%
-    #         dplyr::rename(description = weather_description,
-    #                       cloud_cover = clouds_all,
-    #                       date_time = dt_txt,
-    #                       rain = rain_3h,
-    #                       wind_degrees = wind_deg,
-    #                       temperature = temp)
-    #       names(y) <- Hmisc::capitalize(gsub('_', ' ', names(y)))
-    #       return(y)
-    #     }
-    #     weather <- bind_rows(
-    #       take_off_weather %>% convert_forecast() %>% mutate(Where = 'Take-off'),
-    #       landing_weather %>% convert_forecast() %>% mutate(Where = 'Landing')
-    #     ) %>%
-    #       # gather(key, value, Temperature:Rain) %>%
-    #       arrange(Where)
-    #     weather
-    #   }
-    # } else {
-    #   NULL
-    # }
+    # data.frame()
+    ok <- FALSE
+    take_off_site <- input$take_off
+    landing_site <- input$landing
+    if(!is.null(take_off_site) &
+       !is.null(landing_site)){
+      if(take_off_site != '' &
+         landing_site != ''){
+        ok <- TRUE
+      }
+    }
+    if(ok){
+      take_off_coords <- exact_coords %>%
+        filter(site_name == take_off_site)
+      landing_coords <- exact_coords %>%
+        filter(site_name == landing_site)
+
+
+      take_off_weather <- get_forecast(lon = take_off_coords$longitude,
+                                      lat = take_off_coords$latitude)
+      landing_weather <- get_forecast(lon = landing_coords$longitude,
+                                     lat = landing_coords$latitude)
+      if(length(take_off_weather) >2 &
+         length(landing_weather) > 2){
+        take_off_weather <- take_off_weather %>%
+          owmr_as_tibble()
+        landing_weather <- landing_weather %>%
+          owmr_as_tibble()
+        add_rain <- function(x){
+          if('rain_3h' %in% names(x)){
+            x$rain_3h <- NA
+            return(x)
+          }
+        }
+        take_off_weather <- add_rain(take_off_weather)
+        landing_weather <- add_rain(landing_weather)
+        save(take_off_weather,
+             landing_weather,
+             file = 'weather.RData')
+        convert_forecast <- function(x){
+          y <- x %>% dplyr::select(dt_txt,
+                                   temp,
+                                   humidity,
+                                   weather_description,
+                                   wind_speed,
+                                   wind_deg,
+                                   clouds_all,
+                                   rain_3h) %>%
+            mutate(temp = temp / 10) %>%
+            dplyr::rename(description = weather_description,
+                          cloud_cover = clouds_all,
+                          date_time = dt_txt,
+                          rain = rain_3h,
+                          wind_degrees = wind_deg,
+                          temperature = temp)
+          names(y) <- Hmisc::capitalize(gsub('_', ' ', names(y)))
+          return(y)
+        }
+        weather <- bind_rows(
+          take_off_weather %>% convert_forecast() %>% mutate(Where = 'Take-off'),
+          landing_weather %>% convert_forecast() %>% mutate(Where = 'Landing')
+        ) %>%
+          # gather(key, value, Temperature:Rain) %>%
+          arrange(Where)
+        weather
+      }
+    } else {
+      NULL
+    }
   })
   
   
@@ -692,6 +700,113 @@ server <- function(input, output, session) {
     selectInput('landing',
                 'Landing at',
                 choices = possible_landing_sites)
+  })
+  
+  output$ui_ground <- renderUI({
+    li <- logged_in()
+    
+    if(li){
+      fluidPage(
+        fluidRow(
+          column(4, 
+                 textInput('ground_id',
+                           'ID number')),
+          column(4,
+                 textInput('ground_name_index_case',
+                           'Name of index case')),
+          column(4,
+                 radioButtons('ground_sex_index_case',
+                              'Sex',
+                              choices = c('M', 'F', 'Unknown'),
+                              selected = 'Unknown'))
+        ),
+        fluidRow(
+          column(4,
+                 textInput('ground_name_contact',
+                           'Name of contact')),
+          column(4,
+                 sliderInput('ground_age',
+                             'Age',
+                             min = 0,
+                             max = 100,
+                             value = 20, step = 1)),
+          column(4,
+                 textInput('ground_address',
+                           'Address'))
+        ),
+        fluidRow(
+          column(4,
+                 textInput('ground_diagnosis_center',
+                           'Diagnosis center')),
+          column(4,
+                 dateInput('ground_test_date',
+                           'Test date',
+                           min = '2019-01-01',
+                           max = '2019-12-31')),
+          column(4,
+                 textInput('ground_lab_no',
+                           'Lab number'))
+        ),
+        fluidRow(
+          column(4,
+                 textInput('ground_contact_tracer',
+                           'Contact tracer')),
+          column(4,
+                 textInput('ground_test_result',
+                           'Test result')),
+          column(4,
+                 radioButtons('ground_screening_opd_contact_tracing',
+                           'OPD screening or contact tracing',
+                           choices = c('OPD screening',
+                                       'Contact tracing')))
+        ),
+        fluidRow(
+          column(4,
+                 textInput('ground_remarks',
+                           'Remarks')),
+          column(4,
+                 textInput('ground_flight_number',
+                           'Flight number')),
+          column(4,
+                 actionButton('ground_submit',
+                              'Submit'))
+        )
+      )
+    } else {
+      h3('Please log in first.')
+    }
+  })
+  
+  # Observe the submission of ground data and add to database
+  observeEvent(input$ground_submit, {
+    
+    ground <- tibble(
+      id = input$ground_id,
+      name_index_case = input$ground_name_index_case,
+      name_contact = input$ground_name_contact,
+      age = input$ground_age,
+      address = input$ground_address,
+      sex_index_case = input$ground_sex_index_case,
+      test_date = input$ground_test_date,
+      lab_no = input$ground_lab_no,
+      contact_tracer = input$ground_contact_tracer,
+      test_result = input$ground_test_result,
+      screening_opd_contact_tracing = input$ground_screening_opd_contact_tracing,
+      remarks = input$ground_remarks,
+      flight_number = input$ground_flight_number)
+    
+    
+    # Update the database
+    message('Updating the tb table with the following data')
+    # print(ground)
+    update_db(data = ground,
+              table_name = 'tb',
+              connection_object = co)
+    # Update the in-session data (reactive)
+    # Update the reactive objects
+    data$tb <- get_data(query = 'SELECT * FROM tb',
+                             connection_object = co)
+                   
   })
   
   output$leafy <- renderLeaflet({

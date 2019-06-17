@@ -14,6 +14,8 @@ library(gsheet)
 library(yaml)
 library(httr)
 library(RPostgreSQL)
+library(nepal)
+
 
 # Define health_post locations
 
@@ -56,6 +58,29 @@ write_table(connection_object = co,
 write_table(connection_object = co,
             table = 'flights',
             value = flights)
+
+# Read in tb data sent from Shraddha
+library(readxl)
+tb <- read_excel('data/DrOTS case details-Pyuthan.xlsx', skip = 2)
+# Change up the names
+names(tb) <- c('id',
+               'name_index_case',
+               'sex_index_case',
+               'name_contact',
+               'age',
+               'sex',
+               'address',
+               'diagnosis_center',
+               'test_date',
+               'lab_no',
+               'contact_tracer',
+               'test_result',
+               'screening_opd_contact_tracing',
+               'remarks')
+tb$flight_number <- NA
+write_table(connection_object = co,
+            table = 'tb',
+            value = tb)
 
 # Disconnect from the db
 RPostgreSQL::dbDisconnect(co)

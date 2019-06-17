@@ -42,6 +42,8 @@ Imports:
     plotly,
     ggrepel,
     databrew,
-    rgeos
+    rgeos,
+    mapview,
+    owmr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0
