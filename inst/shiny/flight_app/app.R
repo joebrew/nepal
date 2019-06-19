@@ -3,8 +3,8 @@ library(shinydashboard)
 library(tidyverse)
 library(ggplot2)
 library(leaflet)
-library(nepal)
 library(owmr)
+library(RPostgreSQL)
 
 # Source set up file
 source('global.R')
@@ -551,9 +551,6 @@ server <- function(input, output, session) {
         }
         take_off_weather <- add_rain(take_off_weather)
         landing_weather <- add_rain(landing_weather)
-        save(take_off_weather,
-             landing_weather,
-             file = 'weather.RData')
         convert_forecast <- function(x){
           y <- x %>% dplyr::select(dt_txt,
                                    temp,
@@ -736,8 +733,9 @@ server <- function(input, output, session) {
         ),
         fluidRow(
           column(4,
-                 textInput('ground_diagnosis_center',
-                           'Diagnosis center')),
+                 selectInput('ground_diagnosis_center',
+                           'Diagnosis center',
+                           choices = c('Bhingri PHC', 'Pyuthan Hospital'))),
           column(4,
                  dateInput('ground_test_date',
                            'Test date',
@@ -752,13 +750,17 @@ server <- function(input, output, session) {
                  textInput('ground_contact_tracer',
                            'Contact tracer')),
           column(4,
-                 textInput('ground_test_result',
-                           'Test result')),
-          column(4,
                  radioButtons('ground_screening_opd_contact_tracing',
                            'OPD screening or contact tracing',
                            choices = c('OPD screening',
-                                       'Contact tracing')))
+                                       'Contact tracing'))),
+          column(2,
+                 radioButtons('ground_test_type',
+                              'Test type',
+                              choices = c('Smear microscopy',
+                                          'GeneXpert'))),
+          column(2,
+                 uiOutput('ground_test_result_ui'))
         ),
         fluidRow(
           column(4,
@@ -988,6 +990,37 @@ server <- function(input, output, session) {
     # Update the reactive object
     data$flights <- get_data(query = 'SELECT * FROM flights',
                              connection_object = co)
+    
+  })
+  
+  output$ground_test_result_ui <- renderUI({
+    
+    x <- input$ground_test_type
+    if(!is.null(x)){
+      if(x == 'Smear microscopy'){
+        selectizeInput('ground_test_result',
+                       'Test result',
+                       choices = c('',
+                                   'Negative',
+                                   '1+',
+                                   '2+',
+                                   '3+'),
+                       options = list(create = TRUE))
+      } else {
+        selectizeInput('ground_test_result',
+                       'Test result',
+                       choices = c('',
+                                   'MTB not detected',
+                                   'MTB detected Rif sensitive',
+                                   'MTB detected Rif resistant',
+                                   'Indeterminate',
+                                   'Error',
+                                   'Invalid',
+                                   'No result'),
+                       options = list(create = TRUE))
+      }
+    }
+    
     
   })
   

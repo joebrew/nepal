@@ -1,8 +1,12 @@
-local <- TRUE
-library(nepal)
+local <- FALSE
 library(tidyverse)
 library(yaml)
 library(owmr)
+
+functions <- dir('R')
+for(i in 1:length(functions)){
+  source(paste0('R/', functions[i]))
+}
 
 # Get credentials
 if(local){
@@ -18,7 +22,8 @@ owm_key <- creds$owm_key
 Sys.setenv(OWM_API_KEY = owm_key)
 
 # Read in the waypoints
-waypoints <- nepal::plans
+load('plans.rda')
+waypoints <- plans
 waypoints <- waypoints %>% filter(longitude != 0)
 unique_flights <- waypoints %>%
   group_by(take_off, landing) %>% tally %>%

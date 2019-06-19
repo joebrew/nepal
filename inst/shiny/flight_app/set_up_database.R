@@ -1,5 +1,5 @@
 # Define whether setting up local or remote db
-local <- TRUE
+local <- FALSE
 
 # To be run just once
 # First, create database in psql:
@@ -14,7 +14,6 @@ library(gsheet)
 library(yaml)
 library(httr)
 library(RPostgreSQL)
-library(nepal)
 
 
 # Define health_post locations
@@ -39,7 +38,7 @@ users <- data.frame(
   stringsAsFactors = FALSE)
 
 flights <- data.frame(
-  flight_number = 1:2,
+  flight_number = -1:0,
   user_email = c('joebrew@gmail.com', 'joe@databrew.cc'),
   created_at = Sys.time(),
   take_off = c('Bhingri', 'Pyuthan'),
