@@ -1,0 +1,172 @@
+---
+output:
+  html_document:
+    theme: united
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+options(scipen=999)
+
+library(knitr)
+# Basic knitr options
+opts_chunk$set(comment = NA, 
+               echo = FALSE, 
+               warning = FALSE, 
+               message = FALSE, 
+               error = TRUE, 
+               cache = F,
+               fig.width = 7,
+               fig.height = 5)
+knit_engines$set(asis = function(options) {
+  if (options$echo && options$eval) knit_child(text = options$code)
+})
+```
+
+```{r}
+library(leaflet)
+library(leaflet.extras)
+library(sp)
+library(raster)
+library(ggmap)
+library(dplyr)
+library(maptools)
+library(rgdal)
+library(RColorBrewer)
+library(googlesheets)
+library(knitr)
+library(tidyr)
+library(databrew)
+library(vilaweb)
+if('gs.RData' %in% dir()){
+  load('gs.RData')
+} else {
+  budget <- gs_title('Nepal DrOTS combined budgets')
+  budget <- gs_read(budget)
+  save(budget, file = 'gs.RData')
+}
+
+make_number <- scales::comma
+```
+
+# Budget overview {.tabset .tabset-fade} 
+
+<img src="img/mountains_small.png" alt="logo" width='100%' style="float: center;align:center;">
+
+
+## Summary
+
+### Overview
+
+- Total project budget is `r make_number(sum(budget$usd))`. 
+- Contribution from Simons Foundation: 500,000
+- Contribution from WeRobotics: `r make_number(sum(budget$usd[budget$phase <= 2 & budget$source == 'WeRobotics']))`
+
+### By recipient partner
+
+```{r}
+wr_con <- sum(budget$usd[budget$phase <= 2 & budget$source == 'WeRobotics'])
+wr_receive <- budget %>%
+  filter(source == 'SBU') %>%
+  group_by(partner) %>%
+  summarise(`$` = sum(usd)) %>%
+  ungroup %>% filter(partner == 'WeRobotics') %>% .$`$`
+sbu_receive <- budget %>%
+  filter(source == 'SBU') %>%
+  group_by(partner) %>%
+  summarise(`$` = sum(usd)) %>%
+  ungroup %>% filter(partner == 'SBU') %>% .$`$`
+sbu_give <- budget %>%
+  filter(source == 'SBU') %>%
+  group_by(partner) %>%
+  summarise(`$` = sum(usd)) %>%
+  ungroup %>% filter(partner != 'SBU') %>% .$`$` %>% sum
+
+bnmt_receive <- budget %>%
+  filter(source == 'SBU') %>%
+  group_by(partner) %>%
+  summarise(`$` = sum(usd)) %>%
+  ungroup %>% filter(partner == 'BNMT') %>% .$`$`
+```
+
+- *Stony Brook Universty* 
+  - Received $500,000 from the Simons Foundation  
+  - Allotted `r make_number(sbu_receive)` for its own project expenses
+  - Allotted `r make_number(sbu_give)` to to project expenses through partners (WeRobotics and BNMT)
+
+- *WeRobotics*: 
+  - Contributed `r make_number(wr_con)` of its own funding to project operations
+  - Received `r make_number(wr_receive)` for project expenses from SBU (fully dispersed)
+  
+- *BNMT*:
+  - Was allotted `r make_number(bnmt_receive)` for project expenses from SBU
+  - $150,000 has already been dispersed (3 of 4 installments) 
+  - A 42,290.80 transfer is pending  
+
+### By partner and category
+
+The below charts show the breakdown of how each of the 3 groups are spending their respective budgets.
+
+```{r}
+make_chart <- function(partny = 'SBU',
+                       sbu_source_only = TRUE){
+  pd <- budget
+  if(sbu_source_only){
+    pd <- pd %>% filter(source == 'SBU') 
+  }
+  pd <- pd %>%
+  group_by(partner, group) %>%
+  summarise(`$` = sum(usd)) %>%
+  ungroup %>%
+  group_by(partner) %>%
+  mutate(p = round(`$` / sum(`$`) * 100, digits = 1))
+  plot_data <- pd %>% filter(partner == partny) %>%
+           mutate(group = gsub(' ', '\n', group))
+  ggplot(data = plot_data,
+       aes(x = group,
+           y = p)) +
+  geom_bar(stat = 'identity',
+           fill = 'darkorange',
+           alpha = 0.5) +
+    ggthemes::theme_fivethirtyeight() +
+  theme(axis.text.x = element_text(angle =90, hjust = 1, vjust = 0.5)) +
+  labs(x = '',
+       y = 'Percent of allotted budget') +
+  geom_text(aes(label = paste0('$', make_number(round(`$`), digits = -1), '\n(', round(p, digits = 1), '%)'),
+                y = ifelse(p > 10, p-5, p+5)),
+            angle = 90,
+            size = 5) +
+    labs(title = partny,
+         subtitle = paste0('$', make_number(sum(plot_data$`$`))))
+}
+
+```
+
+#### SBU
+
+```{r}
+make_chart('SBU')
+```
+
+#### BNMT
+
+```{r}
+make_chart('BNMT')
+```
+
+#### WeRobotics
+
+The below shows the categorized budget items of the money given to WeRobotics from Simons (through SBU):
+
+```{r}
+make_chart('WeRobotics')
+```
+
+
+## Raw data
+
+The below shows the full, itemized project budget.
+
+```{r}
+databrew::prettify(budget %>% dplyr::select(group, item, usd, partner, phase, source, details))
+```
