@@ -1,0 +1,207 @@
+---
+output:
+  html_document:
+    theme: united
+    highlight: tango
+---
+
+
+
+
+```{r setup, include=FALSE}
+library(knitr)
+# Basic knitr options
+opts_chunk$set(comment = NA, 
+               echo = FALSE, 
+               warning = FALSE, 
+               message = FALSE, 
+               error = TRUE, 
+               cache = F,
+               fig.width = 4,
+               fig.height = 3)
+knit_engines$set(asis = function(options) {
+  if (options$echo && options$eval) knit_child(text = options$code)
+})
+```
+
+```{r}
+library(leaflet)
+library(leaflet.extras)
+library(sp)
+library(raster)
+library(ggmap)
+library(dplyr)
+library(maptools)
+library(rgdal)
+library(RColorBrewer)
+library(nd3)
+```
+
+```{r}
+nodes <-
+  data.frame(name = c('Symptomatic patients | &household contacts',#0
+                      'DrOTS',#1
+                      'Tested',#2
+                      'TB,',#3
+                      'TP',#4,
+                      'High adherence',#5,
+                      'Treatment success',#6,
+                      'Treatment failure',#7,
+                      'Low adherence',#8
+                      'Treatment success',#9,
+                      'Treatment faliure',#10,
+                      'FN', #11,
+                      'No TB', #12,
+                      'TN | Survival', #13,
+                      'FP', #14,
+                      'High adherence | Survival', #15,
+                      'Low adherence | Survival', #16,
+                      'Not tested', #17,
+                      'TB | Undetected', #18,
+                      'No TB | Survival', #19
+                      'DOTS', #20,
+                      'Tested',#21,
+                      'TB', #22,
+                      'TP', #23,
+                      'High adherence', #24,
+                      'Treatment success', #25,
+                      'Treatment failure', #26,
+                      'Low adherence', #27,
+                      'Treatment success', #28
+                      'Treatment failure', #29,
+                      'FN | Repeated testing', #30,
+                      'FN', #31,
+                      'TP', #32,
+                      'High adherence', #33,
+                      'Treatment success', #34,
+                      'Treatment failure', #35
+                      'Low adherence', #36,
+                      'Treatment success', #37
+                      'Treatment failure', #38
+                      'No TB', #39
+                      'TN | Survival', #40,
+                      'FP', #41,
+                      'High adherence | Surival', #42
+                      'Low adherence | Survival', #43
+                      'Not tested', #44,
+                      'TB | Undetected', #45
+                      'No TB | Survival' #46
+                      ),
+             size = 20) %>%
+  mutate(index = 0:(length(size)-1)) #%>%
+  # mutate(name = paste0(index, ' ', name))
+groups <- rep(1, 47)
+groups[nodes$index %in% c(6,7,9,10,13,15,16,18,19,25,26,28,29,31,34,35,37,38,40,42,43,45,46)] <- 2
+groups[1] <- 3
+groups[nodes$index %in% c(1,20)] <- 4
+nodes$group <- groups
+nodes$group <-
+  ifelse(nodes$group == 1, ' Probability node',
+         ifelse(nodes$group == 2, 'Terminal node',
+                ifelse(nodes$group == 3, 'Decision node','Arms')))
+
+makey <- function(x,y,z){
+  data.frame(source = x,
+            target = y,
+            value = z)
+}
+links <- 
+  data.frame(source = c(0,
+                        1,
+                        2,
+                        3,
+                        4),
+             target = c(1,
+                        2,
+                        3,
+                        4,
+                        5),
+             value =  c(0.5,
+                        0.95,
+                        0.01,
+                        0.88,
+                        0.9)) %>%
+  bind_rows(
+    data.frame(source = c(5,5,4,8,8),
+             target = c(6,7,8,9,10),
+             value =  c(0.9,0.1,0.1,0.8,0.2))
+    ) %>%
+  bind_rows(
+    makey(3,11,0.12),
+    makey(2,12,0.99),
+    makey(12,13,0.98),
+    makey(12,14,0.02),
+    makey(14,15,0.9),
+    makey(14,16,0.1),
+    makey(1,17, 0.05),
+    makey(17,18,0.01),
+    makey(17,19,0.99),
+    makey(0,20,0.5),
+    makey(20, 21, 0.2),
+    makey(21,22, 0.01),
+    makey(22,23,0.64),
+    makey(23,24,0.6),
+    makey(24,25,0.9),
+    makey(24,26,0.1),
+    makey(23,27,0.4),
+    makey(27,28,0.8),
+    makey(27,29,0.2),
+    makey(22,30, 0.36),
+    makey(30,31,0.36),
+    makey(30,32,0.64),
+    makey(32,33,0.6),
+    makey(32,36,0.4),
+    makey(33,34,0.9),
+    makey(33,35,0.1),
+    makey(36,37,0.8),
+    makey(36,38,0.1),
+    makey(21,39, 0.99),
+    makey(39,40,0.98),
+    makey(39,41, 0.02),
+    makey(41, 42, 0.6),
+    makey(41, 43, 0.4),
+    makey(20, 44, 0.8),
+    makey(44,45, 0.01),
+    makey(44,46, 0.99)
+  )
+
+
+forceNetwork(Links = links, Nodes = nodes,
+            Source = "source", Target = "target",
+            Value = "value", NodeID = "name",
+            Group = "group", opacity = 0.8,
+            radiusCalculation = JS(" d.nodesize^2+10"),
+            arrows = TRUE,
+            # Opacity of nodes when you hover it
+                 opacityNoHover = 0.8,                                               # Opacity of nodes you do not hover
+                 colourScale = JS("d3.scaleOrdinal(d3.schemeCategory10);"),          # Javascript expression, schemeCategory10 and schemeCategory20 work
+                 fontSize = 17,                                                      # Font size of labels
+                 # fontFamily = "serif",                                               # Font family for labels
+                 
+                 # custom edges
+                 # Value="my_width",
+                 # linkColour = c("grey","orange"),                                    # colour of edges
+                 linkWidth = "function(d) { return (d.value^5)*0.4}",
+                 
+                 # layout
+                 linkDistance = 30,                                                 # link size, if higher, more space between nodes
+                 charge = -50,                                                       # if highly negative, more space betqeen nodes
+                 
+                 # -- general parameters
+                 height = NULL,                                                      # height of frame area in pixels
+                 width = NULL,
+                 zoom = TRUE,                                                        # Can you zoom on the figure
+                 legend = TRUE,                                                      # add a legend?
+                 bounded = TRUE)
+
+
+nd3::sankeyNetwork(Links = links, Nodes = nodes,
+                       Source = "source", Target = "target",
+                       Value = "value", NodeID = "name",
+                   NodeGroup = "group",
+                       fontSize= 12, nodeWidth = 20,
+                   height = 1000,
+                     colourScale = JS("d3.scaleOrdinal(d3.schemeCategory10);"),
+                   width = 1000)
+
+```
